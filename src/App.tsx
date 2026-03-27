@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Music, 
@@ -40,38 +40,43 @@ import {
   Sun,
   ChevronLeft,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  ShoppingBag,
+  User as UserIcon
 } from 'lucide-react';
 import { Tab, AppState, User, AuthStatus, LessonReport, MonthlyReport } from './types';
 import { audio } from './lib/audio';
 import { auth, signInWithGoogle, logout } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { listAllLessonReports, listAllMonthlyReports } from './services/dataService';
+import { listAllLessonReports, listAllMonthlyReports, saveUserProgress, getUserProgress } from './services/dataService';
 import { useAppContext } from './contexts/AppContext';
 
-// Componentes da V2
+import PresentationPage from "./components/PresentationPage";
 import RockstarJourney from './components/RockstarJourney';
 import TunerModule from './components/TunerModule';
 import Dashboard from './components/Dashboard';
-import AnatomyGame from "./components/games/AnatomyGame";
+import AnatomyGame from './components/AnatomyGame';
 import EarTraining from './components/EarTraining';
-import RhythmInvaders from './components/RhythmInvaders';
-import KonnakkolBuilder from './components/KonnakkolBuilder';
-import ActivityStudio from './components/ActivityStudio';
-import LessonPlan from './components/LessonPlan';
-import Metronome from './components/Metronome';
-import MusicalWheel from './components/MusicalWheel';
-import FretboardFollower from './components/FretboardFollower';
 import EchoGame from './components/EchoGame';
 import ChordLab from './components/ChordLab';
-import RhythmChallenge from './components/RhythmChallenge';
-import RhythmicDictation from './components/RhythmicDictation';
+import RhythmInvaders from './components/RhythmInvaders';
+import KonnakkolBuilder from './components/KonnakkolBuilder';
+import MusicalWheel from './components/MusicalWheel';
+import FretboardFollower from './components/FretboardFollower';
 import FretboardMaster from './components/FretboardMaster';
 import TablatureModule from './components/TablatureModule';
+import RhythmChallenge from './components/RhythmChallenge';
+import RhythmSequencer from './components/RhythmSequencer';
+import Leaderboard from './components/Leaderboard';
+import RhythmicDictation from './components/RhythmicDictation';
+import ActivityStudio from './components/ActivityStudio';
+import NPCGuide from './components/NPCGuide';
+import PedagogyLibrary from './components/PedagogyLibrary';
+import LessonPlan from './components/LessonPlan';
+import Metronome from './components/Metronome';
 import LessonReportForm from './components/LessonReportForm';
 import MonthlyReportForm from './components/MonthlyReportForm';
 import ReportsHistory from './components/ReportsHistory';
-import PedagogyLibrary from './components/PedagogyLibrary';
 import StudentManager from './components/StudentManager';
 import ClassroomManager from './components/ClassroomManager';
 import BrandHeader from './components/BrandHeader';
@@ -79,7 +84,10 @@ import LessonConsole from './components/LessonConsole';
 import DirectorDashboard from './components/DirectorDashboard';
 import AppSettings from './components/AppSettings';
 import FloatingToolbar from './components/FloatingToolbar';
-import PresentationPage from "./components/PresentationPage";
+import AvatarShop from './components/AvatarShop';
+import AvatarCustomizer from './components/AvatarCustomizer';
+import { SKINS } from './constants/skins';
+import { haptics } from './lib/haptics';
 
 // Import New Dynamics
 import { ElefantePassarinho } from './components/games/ElefantePassarinho';
@@ -127,6 +135,10 @@ function AppV2() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [tvMode, setTvMode] = useState(() => localStorage.getItem('rh_tv_mode') === 'true');
+  const [npcMessage, setNpcMessage] = useState<string | undefined>(undefined);
+  const [npcContext, setNpcContext] = useState<'lessonStart' | 'correct' | 'wrong' | 'worldComplete' | 'unlock'>('lessonStart');
+  const [npcState, setNpcState] = useState<'idle' | 'celebrating' | 'encouraging'>('idle');
+
   const [state, setState] = useState<AppState>({
     user: {
       uid: 'dev-user-id',
@@ -147,11 +159,38 @@ function AppV2() {
       repertoire: 70,
       expression: 90
     },
+    avatar: {
+      head: 'h-default',
+      body: 'b-default',
+      instrument: 'i-default',
+      background: 'bg-default'
+    },
+    inventory: ['h-default', 'b-default', 'i-default', 'bg-default'],
     currentClassroomId: undefined,
     currentStudentId: undefined,
     lessonReports: [],
     monthlyReports: []
   });
+
+  // Load progress on auth
+  useEffect(() => {
+    if (state.user?.uid) {
+      const loadProgress = async () => {
+        const progress = await getUserProgress(state.user!.uid);
+        if (progress) {
+          setState(prev => ({ ...prev, xp: progress.xp, coins: progress.coins }));
+        }
+      };
+      loadProgress();
+    }
+  }, [state.user?.uid]);
+
+  // Save progress on change
+  useEffect(() => {
+    if (state.user?.uid) {
+      saveUserProgress(state.user.uid, state.xp, state.coins);
+    }
+  }, [state.xp, state.coins, state.user?.uid]);
 
   useEffect(() => {
     localStorage.setItem('rh_tv_mode', String(tvMode));
@@ -233,7 +272,11 @@ function AppV2() {
 
   const addXP = (amount: number) => {
     setState(prev => ({ ...prev, xp: prev.xp + amount }));
-    if (amount > 0) audio.playSuccess();
+    if (amount > 0) {
+      audio.playSuccess();
+      haptics.medium();
+      setNpcState('celebrating');
+    }
   };
 
   const addCoins = (amount: number) => {
@@ -304,10 +347,13 @@ function AppV2() {
       label: 'Aula',
       items: [
         { id: 'dashboard', label: 'Início', icon: Home, color: 'text-redhouse-muted' },
+        { id: 'leaderboard', label: 'Hall da Fama', icon: Trophy, color: 'text-pedagogy-yellow' },
         { id: 'rockstar-journey', label: 'Jornada do Rockstar', icon: Star, color: 'text-yellow-500' },
         { id: 'lesson-console', label: 'Console de Aula', icon: Monitor, color: 'text-pedagogy-red' },
         { id: 'lesson-plan', label: 'Plano de Aula', icon: BookOpen, color: 'text-pedagogy-blue' },
         { id: 'metronome', label: 'Metrônomo', icon: RotateCw, color: 'text-redhouse-muted' },
+        { id: 'avatar-customizer', label: 'Meu Avatar', icon: UserIcon, color: 'text-pedagogy-blue' },
+        { id: 'avatar-shop', label: 'Loja de Skins', icon: ShoppingBag, color: 'text-pedagogy-yellow' },
         { id: 'director-dashboard', label: 'Painel Diretor', icon: ShieldCheck, color: 'text-pedagogy-purple' },
       ]
     },
@@ -327,6 +373,7 @@ function AppV2() {
         { id: 'echo-game', label: 'Jogo do Eco', icon: Volume2, color: 'text-pedagogy-purple' },
         { id: 'rhythm-invaders', label: 'Rhythm Invaders', icon: Zap, color: 'text-pedagogy-yellow' },
         { id: 'rhythm-challenge', label: 'Desafio Rítmico', icon: Activity, color: 'text-pedagogy-red' },
+        { id: 'rhythm-sequencer', label: 'Estúdio de Beats', icon: Zap, color: 'text-pedagogy-purple' },
         { id: 'rhythmic-dictation', label: 'Ditado Rítmico', icon: Printer, color: 'text-pedagogy-blue' },
         { id: 'musical-wheel', label: 'Roda Musical', icon: RotateCw, color: 'text-pedagogy-orange' },
         { id: 'konnakkol', label: 'Konnakkol', icon: Mic2, color: 'text-pedagogy-green' },
@@ -485,12 +532,14 @@ function AppV2() {
         <div className={`flex items-center gap-4 ${isSidebarCollapsed ? 'flex-col' : ''}`}>
           <div className="relative group/avatar">
             <div className="absolute inset-0 bg-redhouse-primary/20 blur-xl group-hover/avatar:bg-redhouse-primary/40 transition-all rounded-full" />
-            <div className="w-12 h-12 bg-white rounded-2xl border border-redhouse-border flex items-center justify-center text-xl shadow-2xl relative z-10 overflow-hidden ring-1 ring-redhouse-border group-hover/avatar:scale-110 transition-transform">
-              {state.user?.photoURL ? (
-                <img src={state.user.photoURL} alt={state.user.name || ''} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-              ) : (
-                "👦🏻"
-              )}
+            <div className={`w-12 h-12 rounded-2xl border border-white/10 flex items-center justify-center text-xl shadow-2xl relative z-10 overflow-hidden ring-1 ring-white/20 group-hover/avatar:scale-110 transition-transform ${SKINS.find(s => s.id === state.avatar.background)?.color || 'bg-slate-800'}`}>
+              <div className="absolute inset-0 flex items-center justify-center scale-[0.3]">
+                 <div className={`w-32 h-32 rounded-full flex items-center justify-center relative ${SKINS.find(s => s.id === state.avatar.body)?.color || 'bg-red-600'}`}>
+                  <div className={`absolute -top-8 w-20 h-20 rounded-full border-4 border-white shadow-xl flex items-center justify-center ${SKINS.find(s => s.id === state.avatar.head)?.color || 'bg-slate-500'}`}>
+                    {React.createElement(SKINS.find(s => s.id === state.avatar.head)?.icon || Zap, { className: "w-10 h-10 text-white" })}
+                  </div>
+                </div>
+              </div>
             </div>
             
             {/* Theme Toggle Overlay for Collapsed Sidebar */}
@@ -638,6 +687,14 @@ function AppV2() {
         </header>
 
         <div className="max-w-6xl mx-auto">
+          {/* NPC Guide Integration */}
+          <NPCGuide 
+            message={npcMessage} 
+            context={npcContext} 
+            state={npcState} 
+            onClose={() => setNpcState('idle')}
+          />
+          
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -672,17 +729,43 @@ function AppV2() {
                 <PresentationPage />
               )}
               {activeTab === 'pedagogy-library' && <PedagogyLibrary />}
-              {activeTab === 'anatomy' && <AnatomyGame addXP={addXP} />}
-              {activeTab === 'ear-training' && <EarTraining addXP={addXP} />}
-              {activeTab === 'echo-game' && <EchoGame addXP={addXP} />}
-              {activeTab === 'chord-lab' && <ChordLab addXP={addXP} />}
-              {activeTab === 'rhythm-invaders' && <RhythmInvaders addXP={addXP} />}
+              {activeTab === 'anatomy' && <AnatomyGame addXP={addXP} addCoins={addCoins} />}
+              {activeTab === 'ear-training' && (
+                <EarTraining 
+                  addXP={addXP} 
+                  addCoins={addCoins}
+                  setNpcMessage={setNpcMessage}
+                  setNpcContext={setNpcContext}
+                  setNpcState={setNpcState}
+                />
+              )}
+              {activeTab === 'echo-game' && <EchoGame addXP={addXP} addCoins={addCoins} />}
+              {activeTab === 'chord-lab' && <ChordLab addXP={addXP} addCoins={addCoins} />}
+              {activeTab === 'rhythm-invaders' && <RhythmInvaders addXP={addXP} addCoins={addCoins} />}
               {activeTab === 'konnakkol' && <KonnakkolBuilder addXP={addXP} />}
               {activeTab === 'musical-wheel' && <MusicalWheel addXP={addXP} />}
               {activeTab === 'fretboard-follower' && <FretboardFollower addXP={addXP} />}
               {activeTab === 'fretboard-master' && <FretboardMaster addXP={addXP} />}
               {activeTab === 'tablature' && <TablatureModule />}
-              {activeTab === 'rhythm-challenge' && <RhythmChallenge addXP={addXP} />}
+              {activeTab === 'rhythm-challenge' && (
+                <RhythmChallenge 
+                  addXP={addXP} 
+                  addCoins={addCoins}
+                  setNpcMessage={setNpcMessage}
+                  setNpcContext={setNpcContext}
+                  setNpcState={setNpcState}
+                />
+              )}
+              {activeTab === 'rhythm-sequencer' && (
+                <RhythmSequencer 
+                  addXP={addXP} 
+                  addCoins={addCoins}
+                  setNpcMessage={setNpcMessage}
+                  setNpcContext={setNpcContext}
+                  setNpcState={setNpcState}
+                />
+              )}
+              {activeTab === 'leaderboard' && <Leaderboard />}
               {activeTab === 'rhythmic-dictation' && <RhythmicDictation addXP={addXP} />}
               {activeTab === 'activity-studio' && <ActivityStudio state={state} />}
               {activeTab === 'classrooms' && <ClassroomManager />}
@@ -714,6 +797,8 @@ function AppV2() {
               {activeTab === 'reports-history' && <ReportsHistory state={state} />}
               {activeTab === 'metronome' && <Metronome />}
               {activeTab === 'settings' && <AppSettings />}
+              {activeTab === 'avatar-shop' && <AvatarShop state={state} setState={setState} />}
+              {activeTab === 'avatar-customizer' && <AvatarCustomizer state={state} setState={setState} />}
               {activeTab === 'string-maze' && <StringMazeGame addXP={addXP} onComplete={() => addXP(50)} />}
               {activeTab === 'elefante-passarinho' && <ElefantePassarinho addXP={addXP} onComplete={() => addXP(50)} instrument={state.instrument} />}
               {activeTab === 'escada-das-cores' && <EscadaDasCores addXP={addXP} onComplete={() => addXP(50)} />}

@@ -56,7 +56,7 @@ export default function LessonConsole({ state, onFinishLesson }: LessonConsolePr
   }, [selectedClassroom]);
 
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval> | undefined;
+    let interval: any;
     if (isLessonActive) {
       interval = setInterval(() => {
         setTimer(prev => prev + 1);
@@ -78,18 +78,19 @@ export default function LessonConsole({ state, onFinishLesson }: LessonConsolePr
     }));
   };
 
-  const handleQuickAction = async (studentId: string, type: 'xp' | 'emoji', value: number | string) => {
+  const handleQuickAction = async (studentId: string, type: 'xp' | 'emoji', value: any) => {
     const attempt: ActivityAttempt = {
       id: `att-${Date.now()}-${studentId}`,
       studentId,
       classroomId: selectedClassroom,
       date: new Date().toISOString(),
       activityId: 'quick-action',
-      result: type === 'emoji' ? 'sucesso' : 'sucesso',
-      score: type === 'xp' ? Number(value) : 0,
-      notes: `Quick action: ${type} - ${value}`
+      result: type === 'emoji' ? value : 'XP Gain',
+      score: type === 'xp' ? value : 0,
+      notes: `Quick action: ${type}`
     };
     await saveActivityAttempt(attempt);
+    // In a real app, we'd update the local state too
   };
 
   if (isLoading) {

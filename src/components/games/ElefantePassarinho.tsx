@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { audio } from '../../lib/audio';
-import { Trophy, Music, Heart, Timer, Ear } from 'lucide-react';
+import { Trophy, Music, Heart, Timer } from 'lucide-react';
 import { getRandomDialogue } from '../../lib/npcDialogues';
 
 interface ElefantePassarinhoProps {
@@ -79,20 +79,16 @@ export const ElefantePassarinho: React.FC<ElefantePassarinhoProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[500px] p-8 rounded-[2rem] bg-slate-900/40 backdrop-blur-xl border border-white/10 overflow-hidden relative group">
-      {/* HUD Scanlines */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
-      
+    <div className="flex flex-col items-center justify-center min-h-[500px] p-6 bg-white rounded-3xl shadow-xl border-4 border-slate-900 overflow-hidden relative">
       {/* Header Info */}
-      <div className="absolute top-6 left-6 right-6 flex justify-between items-center z-10">
-        <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white/10 shadow-2xl">
-          <div className="w-2 h-2 rounded-full bg-redhouse-primary animate-pulse shadow-[0_0_8px_var(--color-redhouse-primary)]" />
+      <div className="absolute top-4 left-4 right-4 flex justify-between items-center">
+        <div className="flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full border-2 border-slate-900">
           <Timer className="w-5 h-5 text-redhouse-primary" />
-          <span className="font-black text-2xl italic tracking-tighter text-white">{timeLeft}s</span>
+          <span className="font-black text-xl">{timeLeft}s</span>
         </div>
-        <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white/10 shadow-2xl">
+        <div className="flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full border-2 border-slate-900">
           <Trophy className="w-5 h-5 text-yellow-500" />
-          <span className="font-black text-2xl italic tracking-tighter text-white">{score}<span className="text-white/30 mx-1">/</span>{ROUNDS}</span>
+          <span className="font-black text-xl">{score}/{ROUNDS}</span>
         </div>
       </div>
 
@@ -100,23 +96,20 @@ export const ElefantePassarinho: React.FC<ElefantePassarinhoProps> = ({
         {gameState === 'start' && (
           <motion.div
             key="start"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.1 }}
-            className="text-center relative z-10"
+            className="text-center"
           >
-            <div className="w-24 h-24 bg-redhouse-primary/20 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-redhouse-primary/30 shadow-[0_0_30px_rgba(239,68,68,0.2)]">
-              <Ear className="w-12 h-12 text-redhouse-primary" />
-            </div>
-            <h2 className="text-5xl font-black text-white mb-4 italic uppercase tracking-tighter">Elefante ou Passarinho?</h2>
-            <p className="text-xl text-slate-400 mb-10 max-w-md mx-auto font-bold italic uppercase tracking-tight">
-              Sintonize seu ouvido: é um som <span className="text-emerald-400">🐘 GRAVE</span> ou <span className="text-blue-400">🐦 AGUDO</span>?
+            <h2 className="text-4xl font-black text-slate-900 mb-4">Elefante ou Passarinho?</h2>
+            <p className="text-xl text-slate-600 mb-8 max-w-md mx-auto">
+              Ouça o som e decida: é um som 🐘 GRAVE (grosso) ou 🐦 AGUDO (fino)?
             </p>
             <button
               onClick={generateRound}
-              className="px-16 py-5 bg-redhouse-primary text-white font-black text-2xl rounded-2xl shadow-[0_10px_40px_rgba(239,68,68,0.4)] hover:scale-105 transition-all active:scale-95 border border-white/20 uppercase italic tracking-widest"
+              className="px-12 py-4 bg-redhouse-primary text-white font-black text-2xl rounded-2xl shadow-xl hover:scale-105 transition-transform border-4 border-slate-900"
             >
-              INICIAR PROTOCOLO
+              COMEÇAR!
             </button>
           </motion.div>
         )}
@@ -126,76 +119,63 @@ export const ElefantePassarinho: React.FC<ElefantePassarinhoProps> = ({
             key="game"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="w-full h-full flex flex-col items-center relative z-10"
+            className="w-full h-full flex flex-col items-center"
           >
-            <div className="text-3xl font-black text-white/20 mb-12 italic uppercase tracking-[0.2em]">Rodada {round} <span className="text-white/5 mx-2">_</span> {ROUNDS}</div>
+            <div className="text-2xl font-black text-slate-400 mb-8">Rodada {round} de {ROUNDS}</div>
             
-            <div className="grid grid-cols-2 gap-10 w-full max-w-3xl">
+            <div className="grid grid-cols-2 gap-8 w-full max-w-2xl">
               {/* Elefante - Grave */}
               <motion.button
-                whileHover={gameState === 'playing' ? { scale: 1.02, y: -5 } : {}}
-                whileTap={gameState === 'playing' ? { scale: 0.98 } : {}}
+                whileHover={gameState === 'playing' ? { scale: 1.05 } : {}}
+                whileTap={gameState === 'playing' ? { scale: 0.95 } : {}}
+                animate={lastResult === 'correct' && targetType === 'grave' ? { y: [0, -40, 0] } : {}}
                 onClick={() => handleAnswer('grave')}
                 disabled={gameState !== 'playing'}
-                className={`flex flex-col items-center justify-center p-12 rounded-[2.5rem] border-2 transition-all relative group/btn ${
+                className={`flex flex-col items-center justify-center p-8 rounded-3xl border-4 transition-all ${
                   gameState === 'feedback' && targetType === 'grave'
-                    ? 'bg-emerald-500/20 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.3)]'
+                    ? 'bg-green-100 border-green-500 shadow-[0_0_30px_rgba(34,197,94,0.3)]'
                     : gameState === 'feedback' && lastResult === 'wrong' && targetType !== 'grave'
-                    ? 'bg-red-500/5 border-red-500/20 opacity-30'
-                    : 'bg-black/40 border-white/5 hover:border-white/20'
+                    ? 'bg-red-50 border-red-200 opacity-50'
+                    : 'bg-slate-50 border-slate-900 hover:bg-white'
                 }`}
               >
-                <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover/btn:opacity-100 transition-opacity rounded-[2.5rem] pointer-events-none" />
-                <span className="text-9xl mb-6 drop-shadow-[0_0_20px_rgba(0,0,0,0.5)]">🐘</span>
-                <span className="text-3xl font-black text-white italic uppercase tracking-tighter">GRAVE</span>
-                <span className="text-[10px] font-black text-emerald-500/60 uppercase tracking-widest mt-2">{instrument === 'guitar' ? 'Cordas Grossas' : 'Som Encorpado'}</span>
+                <span className="text-8xl mb-4">🐘</span>
+                <span className="text-2xl font-black text-slate-900">GRAVE</span>
+                <span className="text-sm font-bold text-slate-500 uppercase">Cerdas Grossas</span>
               </motion.button>
 
               {/* Passarinho - Agudo */}
               <motion.button
-                whileHover={gameState === 'playing' ? { scale: 1.02, y: -5 } : {}}
-                whileTap={gameState === 'playing' ? { scale: 0.98 } : {}}
+                whileHover={gameState === 'playing' ? { scale: 1.05 } : {}}
+                whileTap={gameState === 'playing' ? { scale: 0.95 } : {}}
+                animate={lastResult === 'correct' && targetType === 'agudo' ? { y: [0, -40, 0] } : {}}
                 onClick={() => handleAnswer('agudo')}
                 disabled={gameState !== 'playing'}
-                className={`flex flex-col items-center justify-center p-12 rounded-[2.5rem] border-2 transition-all relative group/btn ${
+                className={`flex flex-col items-center justify-center p-8 rounded-3xl border-4 transition-all ${
                   gameState === 'feedback' && targetType === 'agudo'
-                    ? 'bg-blue-500/20 border-blue-500 shadow-[0_0_50px_rgba(59,130,246,0.3)]'
+                    ? 'bg-green-100 border-green-500 shadow-[0_0_30px_rgba(34,197,94,0.3)]'
                     : gameState === 'feedback' && lastResult === 'wrong' && targetType !== 'agudo'
-                    ? 'bg-red-500/5 border-red-500/20 opacity-30'
-                    : 'bg-black/40 border-white/5 hover:border-white/20'
+                    ? 'bg-red-50 border-red-200 opacity-50'
+                    : 'bg-slate-50 border-slate-900 hover:bg-white'
                 }`}
               >
-                <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover/btn:opacity-100 transition-opacity rounded-[2.5rem] pointer-events-none" />
-                <span className="text-9xl mb-6 drop-shadow-[0_0_20px_rgba(0,0,0,0.5)]">🐦</span>
-                <span className="text-3xl font-black text-white italic uppercase tracking-tighter">AGUDO</span>
-                <span className="text-[10px] font-black text-blue-500/60 uppercase tracking-widest mt-2">{instrument === 'guitar' ? 'Cordas Finas' : 'Som Brilhante'}</span>
+                <span className="text-8xl mb-4">🐦</span>
+                <span className="text-2xl font-black text-slate-900">AGUDO</span>
+                <span className="text-sm font-bold text-slate-500 uppercase">Cordas Finas</span>
               </motion.button>
             </div>
 
-            <div className="mt-16 flex flex-col items-center gap-4">
+            <div className="mt-12">
               <button 
                 onClick={() => {
                   const notes = targetType === 'grave' ? GRAVE_NOTES : AGUDO_NOTES;
-                  audio.playNote(notes[Math.floor(Math.random() * notes.length)], '2n');
+                  audio.playNote(notes[0], '2n');
                 }}
-                className="flex items-center gap-3 px-8 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-black text-white/60 hover:text-white transition-all border border-white/5 group/replay"
+                className="flex items-center gap-2 px-6 py-3 bg-slate-100 rounded-full font-bold text-slate-600 hover:bg-slate-200 transition-colors"
               >
-                <Music className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                REPETIR SINAL SONORO
+                <Music className="w-5 h-5" />
+                Ouvir novamente
               </button>
-              
-              <AnimatePresence>
-                {gameState === 'feedback' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className={`text-lg font-black uppercase italic tracking-widest ${lastResult === 'correct' ? 'text-emerald-400' : 'text-redhouse-primary'}`}
-                  >
-                    {lastResult === 'correct' ? 'Sinal Identificado!' : lastResult === 'timeout' ? 'Tempo Esgotado' : 'Frequência Incorreta'}
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </div>
           </motion.div>
         )}
@@ -203,39 +183,21 @@ export const ElefantePassarinho: React.FC<ElefantePassarinhoProps> = ({
         {gameState === 'finished' && (
           <motion.div
             key="finished"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center relative z-10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center"
           >
-            <div className="w-32 h-32 bg-yellow-500/20 rounded-[2rem] flex items-center justify-center mx-auto mb-8 border border-yellow-500/30 shadow-[0_0_50px_rgba(234,179,8,0.2)]">
-              <Trophy className="w-16 h-16 text-yellow-500" />
+            <div className="w-24 h-24 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-slate-900 shadow-xl">
+              <Trophy className="w-12 h-12 text-white" />
             </div>
-            <h2 className="text-5xl font-black text-white mb-2 italic uppercase tracking-tighter">Missão Cumprida!</h2>
-            <p className="text-xl text-slate-400 mb-12 font-bold italic uppercase">
-              Você identificou {score} de {ROUNDS} sinais com precisão!
+            <h2 className="text-4xl font-black text-slate-900 mb-2">Treinamento Concluído!</h2>
+            <p className="text-xl text-slate-600 mb-8">
+              Você acertou {score} de {ROUNDS} sons!
             </p>
-            
-            <div className="flex justify-center gap-8 mb-12">
-              <div className="bg-black/40 backdrop-blur-md p-8 rounded-3xl border border-white/10 min-w-[180px]">
-                <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">Recompensa XP</div>
-                <div className="text-5xl font-black text-redhouse-primary italic tracking-tighter">+{score * 10 + 30}</div>
-              </div>
-              <div className="bg-black/40 backdrop-blur-md p-8 rounded-3xl border border-white/10 min-w-[180px]">
-                <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">Precisão</div>
-                <div className="text-5xl font-black text-emerald-500 italic tracking-tighter">{Math.round((score/ROUNDS)*100)}%</div>
-              </div>
+            <div className="bg-slate-100 p-6 rounded-2xl border-2 border-slate-900 inline-block mb-8">
+              <div className="text-sm font-bold text-slate-500 uppercase mb-1">XP Ganhos</div>
+              <div className="text-4xl font-black text-redhouse-primary">+{score * 10 + 30} XP</div>
             </div>
-
-            <button
-              onClick={() => {
-                setGameState('start');
-                setRound(1);
-                setScore(0);
-              }}
-              className="px-12 py-4 bg-white/5 hover:bg-white/10 text-white font-black rounded-2xl transition-all border border-white/10 uppercase italic tracking-widest"
-            >
-              REPETIR TREINAMENTO
-            </button>
           </motion.div>
         )}
       </AnimatePresence>

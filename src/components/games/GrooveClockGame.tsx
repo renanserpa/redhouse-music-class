@@ -21,7 +21,7 @@ export default function GrooveClockGame({ onComplete, addXP }: GrooveClockGamePr
   const tolerance = 150; // ms
 
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval> | undefined;
+    let interval: any;
     if (isPlaying) {
       const msPerBeat = (60 / bpm) * 1000;
       interval = setInterval(() => {

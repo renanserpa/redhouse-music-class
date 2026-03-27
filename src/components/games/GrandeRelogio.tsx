@@ -97,34 +97,28 @@ export const GrandeRelogio: React.FC<GrandeRelogioProps> = ({
   }, [gameState]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[500px] p-8 rounded-[2.5rem] bg-slate-900/40 backdrop-blur-xl border border-white/10 overflow-hidden relative group">
-      {/* HUD Scanlines */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
-
+    <div className="flex flex-col items-center justify-center min-h-[500px] p-6 bg-white rounded-3xl shadow-xl border-4 border-slate-900 overflow-hidden relative">
       <AnimatePresence mode="wait">
         {gameState === 'start' && (
           <motion.div
             key="start"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 1.1 }}
-            className="text-center relative z-10"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center"
           >
-            <div className="w-24 h-24 bg-redhouse-primary/20 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-redhouse-primary/30 shadow-[0_0_30px_rgba(239,68,68,0.2)]">
-              <Clock className="w-12 h-12 text-redhouse-primary animate-pulse" />
-            </div>
-            <h2 className="text-5xl font-black text-white mb-4 italic uppercase tracking-tighter">O Grande Relógio</h2>
-            <p className="text-xl text-slate-400 mb-10 max-w-md mx-auto font-bold italic uppercase tracking-tight">
-              Sincronia Temporal: Siga a pulsação e clique exatamente no ápice do <span className="text-redhouse-primary underline decoration-2 underline-offset-4">Sinal Luminoso</span>.
+            <Clock className="w-16 h-16 text-redhouse-primary mx-auto mb-6" />
+            <h2 className="text-4xl font-black text-slate-900 mb-4">O Grande Relógio</h2>
+            <p className="text-xl text-slate-600 mb-8 max-w-md mx-auto">
+              Siga o pulso do relógio! Clique exatamente quando o círculo brilhar.
             </p>
             
-            <div className="flex gap-4 mb-10 justify-center">
+            <div className="flex gap-4 mb-8 justify-center">
               {[60, 80, 100].map(b => (
                 <button
                   key={b}
                   onClick={() => setBpm(b)}
-                  className={`px-8 py-4 rounded-2xl font-black border transition-all uppercase italic tracking-widest ${
-                    bpm === b ? 'bg-redhouse-primary text-white border-white/20 scale-110 shadow-[0_0_25px_rgba(239,68,68,0.4)]' : 'bg-white/5 text-white/30 border-white/5 hover:border-white/20'
+                  className={`px-6 py-3 rounded-xl font-black border-4 transition-all ${
+                    bpm === b ? 'bg-redhouse-primary text-white border-slate-900 scale-110' : 'bg-slate-100 text-slate-500 border-transparent'
                   }`}
                 >
                   {b} BPM
@@ -140,9 +134,9 @@ export const GrandeRelogio: React.FC<GrandeRelogioProps> = ({
                 setCombo(0);
                 startPulse();
               }}
-              className="px-16 py-5 bg-redhouse-primary text-white font-black text-2xl rounded-2xl shadow-[0_10px_40px_rgba(239,68,68,0.4)] hover:scale-105 transition-all active:scale-95 border border-white/20 uppercase italic tracking-widest"
+              className="px-12 py-4 bg-redhouse-primary text-white font-black text-2xl rounded-2xl shadow-xl hover:scale-105 transition-transform border-4 border-slate-900"
             >
-              INICIAR PROTOCOLO
+              COMEÇAR!
             </button>
           </motion.div>
         )}
@@ -152,56 +146,49 @@ export const GrandeRelogio: React.FC<GrandeRelogioProps> = ({
             key="playing"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="w-full flex flex-col items-center relative z-10"
+            className="w-full flex flex-col items-center"
           >
-            <div className="flex justify-between w-full max-w-lg mb-12">
-              <div className="bg-black/40 backdrop-blur-md px-8 py-4 rounded-2xl border border-white/10 shadow-2xl">
-                <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-1 italic">Scan Progress</div>
-                <div className="text-3xl font-black text-white italic tracking-tighter">{pulseCount}<span className="text-white/20 mx-1">/</span>{PULSES_PER_ROUND}</div>
+            <div className="flex justify-between w-full max-w-md mb-12">
+              <div className="bg-slate-100 px-6 py-3 rounded-2xl border-2 border-slate-900">
+                <div className="text-xs font-bold text-slate-500 uppercase">Pulso</div>
+                <div className="text-2xl font-black text-slate-900">{pulseCount}/{PULSES_PER_ROUND}</div>
               </div>
-              <div className="bg-black/40 backdrop-blur-md px-8 py-4 rounded-2xl border border-white/10 shadow-2xl">
-                <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-1 italic">Rhythm Combo</div>
-                <div className="text-3xl font-black text-redhouse-primary italic tracking-tighter flex items-center gap-2">
-                  <Zap className="w-6 h-6 fill-current animate-pulse" /> {combo}x
+              <div className="bg-slate-100 px-6 py-3 rounded-2xl border-2 border-slate-900">
+                <div className="text-xs font-bold text-slate-500 uppercase">Combo</div>
+                <div className="text-2xl font-black text-redhouse-primary flex items-center gap-2">
+                  <Zap className="w-5 h-5 fill-current" /> {combo}x
                 </div>
               </div>
             </div>
 
-            {/* Groove Circle - HUD Style */}
+            {/* Groove Circle */}
             <motion.button
               onMouseDown={handleTap}
               onTouchStart={handleTap}
               animate={{
-                scale: lastHitResult === 'perfect' ? 1.05 : lastHitResult === 'miss' ? 0.95 : 1,
+                scale: lastHitResult === 'perfect' ? 1.2 : lastHitResult === 'miss' ? 0.9 : 1,
+                backgroundColor: lastHitResult === 'perfect' ? '#22c55e' : lastHitResult === 'miss' ? '#ef4444' : '#ffffff'
               }}
-              className={`w-72 h-72 rounded-full border-4 transition-all flex items-center justify-center relative overflow-hidden shadow-2xl ${
-                lastHitResult === 'perfect' ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_50px_rgba(16,185,129,0.3)]' : 
-                lastHitResult === 'miss' ? 'border-red-500 bg-red-500/10 shadow-[0_0_50px_rgba(239,68,68,0.3)]' :
-                'border-white/10 bg-black/40'
-              }`}
+              className="w-64 h-64 rounded-full border-8 border-slate-900 shadow-2xl flex items-center justify-center relative overflow-hidden"
             >
-              {/* Visual Pulse - Animated Ring */}
+              {/* Visual Pulse */}
               <motion.div
-                key={pulseCount}
-                initial={{ scale: 0.5, opacity: 1, borderWidth: '10px' }}
-                animate={{ scale: 1.5, opacity: 0, borderWidth: '1px' }}
+                animate={{
+                  scale: [1, 1.5],
+                  opacity: [0.5, 0]
+                }}
                 transition={{
                   duration: 60 / bpm,
+                  repeat: Infinity,
                   ease: "easeOut"
                 }}
-                className="absolute inset-0 border-redhouse-primary rounded-full"
+                className="absolute inset-0 bg-redhouse-primary rounded-full"
               />
-              
-              <div className="relative z-10 text-4xl font-black text-white italic tracking-tighter uppercase drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]">
-                {lastHitResult === 'perfect' ? 'HIT!' : lastHitResult === 'miss' ? 'FAIL' : 'SYNC'}
-              </div>
-
-              {/* Central Core */}
-              <div className="absolute inset-[35%] bg-white/5 rounded-full border border-white/10 blur-sm" />
+              <div className="relative z-10 text-4xl font-black text-slate-900">TOQUE!</div>
             </motion.button>
 
-            <div className="mt-16 text-white/30 font-black uppercase italic tracking-[0.3em] text-[10px] animate-pulse">
-              Mantenha o pulso constante para sincronização total
+            <div className="mt-12 text-slate-400 font-bold">
+              Mantenha o ritmo constante!
             </div>
           </motion.div>
         )}
@@ -211,42 +198,40 @@ export const GrandeRelogio: React.FC<GrandeRelogioProps> = ({
             key="finished"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center relative z-10"
+            className="text-center"
           >
-            <div className={`w-32 h-32 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 border transition-all ${
-              (hits / PULSES_PER_ROUND) >= 0.7 
-                ? 'bg-emerald-500/20 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.2)]' 
-                : 'bg-redhouse-primary/20 border-redhouse-primary shadow-[0_0_50px_rgba(239,68,68,0.2)]'
+            <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-slate-900 shadow-xl ${
+              (hits / PULSES_PER_ROUND) >= 0.7 ? 'bg-green-500' : 'bg-red-500'
             }`}>
-              <Trophy className={`w-16 h-16 ${ (hits / PULSES_PER_ROUND) >= 0.7 ? 'text-emerald-400' : 'text-redhouse-primary' }`} />
+              <Trophy className="w-12 h-12 text-white" />
             </div>
-            <h2 className="text-5xl font-black text-white mb-2 italic uppercase tracking-tighter">
-              {(hits / PULSES_PER_ROUND) >= 0.7 ? 'Sincronia Estável!' : 'Falha na Frequência'}
+            <h2 className="text-4xl font-black text-slate-900 mb-2">
+              {(hits / PULSES_PER_ROUND) >= 0.7 ? 'Ritmo Perfeito!' : 'Quase lá!'}
             </h2>
-            <p className="text-xl text-slate-400 mb-12 font-bold italic uppercase">
-              Você estabilizou {hits} de {PULSES_PER_ROUND} ciclos temporais!
+            <p className="text-xl text-slate-600 mb-8">
+              Você acertou {hits} de {PULSES_PER_ROUND} pulsos!
             </p>
             
-            <div className="flex gap-8 justify-center mb-12">
-              <div className="bg-black/40 backdrop-blur-md p-8 rounded-3xl border border-white/10 min-w-[180px]">
-                <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2 italic">Precisão HUD</div>
-                <div className="text-5xl font-black text-white italic tracking-tighter">
+            <div className="flex gap-4 justify-center">
+              <div className="bg-slate-100 p-6 rounded-2xl border-2 border-slate-900">
+                <div className="text-sm font-bold text-slate-500 uppercase mb-1">Precisão</div>
+                <div className="text-4xl font-black text-slate-900">
                   {Math.round((hits / PULSES_PER_ROUND) * 100)}%
                 </div>
               </div>
               {(hits / PULSES_PER_ROUND) >= 0.7 && (
-                <div className="bg-black/40 backdrop-blur-md p-8 rounded-3xl border border-white/10 min-w-[180px]">
-                  <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2 italic">XP Capturado</div>
-                  <div className="text-5xl font-black text-redhouse-primary italic tracking-tighter">+30</div>
+                <div className="bg-slate-100 p-6 rounded-2xl border-2 border-slate-900">
+                  <div className="text-sm font-bold text-slate-500 uppercase mb-1">XP Ganhos</div>
+                  <div className="text-4xl font-black text-redhouse-primary">+30 XP</div>
                 </div>
               )}
             </div>
 
             <button
               onClick={() => setGameState('start')}
-              className="px-12 py-4 bg-white/5 hover:bg-white/10 text-white font-black rounded-2xl transition-all border border-white/10 uppercase italic tracking-widest"
+              className="mt-8 px-8 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors"
             >
-              REBOOT PROTOCOLO
+              Tentar Novamente
             </button>
           </motion.div>
         )}

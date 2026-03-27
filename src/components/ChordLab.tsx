@@ -24,6 +24,7 @@ interface ChordData {
 
 interface ChordLabProps {
   addXP: (amount: number) => void;
+  addCoins: (amount: number) => void;
 }
 
 const GUITAR_CHORDS: ChordData[] = [
@@ -119,7 +120,7 @@ const UKULELE_CHORDS: ChordData[] = [
   },
 ];
 
-export default function ChordLab({ addXP }: ChordLabProps) {
+export default function ChordLab({ addXP, addCoins }: ChordLabProps) {
   const [instrument, setInstrument] = useState<Instrument>('guitar');
   const [chords, setChords] = useState<ChordData[]>(GUITAR_CHORDS);
   const [selectedChord, setSelectedChord] = useState<ChordData>(GUITAR_CHORDS[0]);
@@ -183,136 +184,120 @@ export default function ChordLab({ addXP }: ChordLabProps) {
   const strings = Array.from({ length: numStrings }, (_, i) => i + 1);
 
   return (
-    <section className="bg-slate-950 rounded-[40px] p-6 md:p-8 shadow-2xl border-4 border-slate-900 transition-all relative overflow-hidden text-white font-sans">
-      {/* HUD Scanline Effect */}
-      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-50 bg-[size:100%_2px,3px_100%] opacity-10"></div>
-
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 relative z-10">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-lg -rotate-3 border-2 border-slate-700">
-            <GuitarIcon className="w-8 h-8 text-emerald-500" />
-          </div>
-          <div>
-            <h3 className="text-2xl font-black uppercase italic tracking-tighter shrink-0">Chord Laboratory</h3>
-            <p className="text-emerald-500 text-[10px] font-black uppercase tracking-widest whitespace-nowrap">Mapeamento de Ressonância</p>
-          </div>
+    <section className="bg-redhouse-card rounded-[40px] p-6 md:p-8 shadow-xl border-4 border-redhouse-border transition-colors">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+        <div className="flex items-center gap-3">
+          <span className="text-3xl text-redhouse-text">🧪</span>
+          <h3 className="text-2xl font-black uppercase italic text-redhouse-text">Laboratório de Acordes</h3>
         </div>
 
-        <div className="flex items-center gap-4 flex-wrap">
-          <div className="flex items-center gap-2 bg-slate-900 p-1.5 rounded-2xl border-2 border-slate-800 shadow-xl">
-            <button
-              onClick={() => { audio.playClick(); setInstrument('guitar'); }}
-              className={`px-5 py-2.5 rounded-xl font-black uppercase italic text-xs transition-all flex items-center gap-2 ${
-                instrument === 'guitar' ? 'bg-emerald-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'
-              }`}
-            >
-              <GuitarIcon className="w-4 h-4" /> Violão
-            </button>
-            <button
-              onClick={() => { audio.playClick(); setInstrument('ukulele'); }}
-              className={`px-5 py-2.5 rounded-xl font-black uppercase italic text-xs transition-all flex items-center gap-2 ${
-                instrument === 'ukulele' ? 'bg-emerald-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'
-              }`}
-            >
-              <Music className="w-4 h-4" /> Ukulele
-            </button>
-          </div>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => { audio.playClick(); toggleProfessorMode(); }}
-            className={`px-6 py-3 rounded-2xl font-black uppercase italic text-sm transition-all flex items-center gap-2 border-2 shadow-xl shrink-0 ${
-              isProfessorMode 
-                ? 'bg-indigo-600 border-indigo-400 text-white shadow-[0_0_20px_rgba(79,70,229,0.3)]' 
-                : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-300'
+        <div className="flex items-center gap-2 bg-redhouse-bg/50 p-1.5 rounded-2xl border-2 border-redhouse-border">
+          <button
+            onClick={() => setInstrument('guitar')}
+            className={`px-4 py-2 rounded-xl font-black uppercase italic text-xs transition-all flex items-center gap-2 ${
+              instrument === 'guitar' ? 'bg-redhouse-primary text-white shadow-lg' : 'text-redhouse-muted hover:text-redhouse-text'
             }`}
           >
-            <Pencil className="w-4 h-4" />
-            {isProfessorMode ? 'Sair do Modo' : 'Professor'}
-          </motion.button>
+            <GuitarIcon className="w-4 h-4" />
+            Violão
+          </button>
+          <button
+            onClick={() => setInstrument('ukulele')}
+            className={`px-4 py-2 rounded-xl font-black uppercase italic text-xs transition-all flex items-center gap-2 ${
+              instrument === 'ukulele' ? 'bg-redhouse-primary text-white shadow-lg' : 'text-redhouse-muted hover:text-redhouse-text'
+            }`}
+          >
+            <Music className="w-4 h-4" />
+            Ukulele
+          </button>
         </div>
+
+        <button
+          onClick={toggleProfessorMode}
+          className={`px-6 py-3 rounded-2xl font-black uppercase italic text-sm transition-all flex items-center gap-2 border-2 ${
+            isProfessorMode 
+              ? 'bg-pedagogy-purple border-pedagogy-purple/80 text-white shadow-lg' 
+              : 'bg-redhouse-card border-redhouse-border text-redhouse-muted hover:border-pedagogy-purple/50'
+          }`}
+        >
+          <Pencil className="w-4 h-4" />
+          {isProfessorMode ? 'Sair do Modo Professor' : 'Modo Professor'}
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Chord Selection Column */}
-        <div className="lg:col-span-4 space-y-6">
+        <div className="lg:col-span-4 space-y-4">
           <div className="flex items-center justify-between mb-2 px-2">
-            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Chord Library DB</h4>
-            <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">{chords.length} SLOTS</span>
+            <h4 className="text-xs font-black text-redhouse-muted uppercase tracking-widest">Biblioteca de Acordes</h4>
+            <span className="text-[10px] font-bold text-redhouse-muted uppercase bg-redhouse-bg/50 px-2 py-0.5 rounded-full">{chords.length} Acordes</span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 max-h-[520px] overflow-y-auto pr-2 scrollbar-hide">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3 max-h-[500px] overflow-y-auto pr-2 scrollbar-hide">
             {chords.map((chord) => (
               <motion.button
-                whileHover={{ scale: 1.02, x: 8 }}
+                whileHover={{ scale: 1.02, x: 5 }}
                 whileTap={{ scale: 0.98 }}
                 key={chord.name}
                 onClick={() => {
-                  audio.playClick();
                   setSelectedChord(chord);
                   if (isProfessorMode) setCustomChord({ ...chord });
                 }}
-                className={`w-full p-5 rounded-[2.5rem] border-4 transition-all flex items-center justify-between group relative overflow-hidden ${
+                className={`w-full p-4 rounded-[24px] border-4 transition-all flex items-center justify-between group relative overflow-hidden ${
                   selectedChord.name === chord.name 
-                    ? 'border-white bg-white text-slate-950 shadow-[0_0_30px_rgba(255,255,255,0.2)] z-10' 
-                    : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:border-slate-700 shadow-xl'
+                    ? 'border-redhouse-primary bg-redhouse-primary/10 text-redhouse-text shadow-2xl z-10' 
+                    : 'border-redhouse-border bg-redhouse-card text-redhouse-muted hover:border-redhouse-primary/30 shadow-md hover:shadow-lg'
                 }`}
               >
-                <div className="flex items-center gap-5">
-                  <div className={`w-12 h-12 rounded-2xl ${chord.color} flex items-center justify-center text-white shadow-inner border-2 border-white/20 -rotate-3 transition-transform group-hover:rotate-0`}>
-                    <Music className="w-6 h-6" />
+                <div className="flex items-center gap-4">
+                  <div className={`w-10 h-10 rounded-2xl ${chord.color} bg-gradient-to-br ${chord.gradient} flex items-center justify-center text-white shadow-inner border-2 border-white/20`}>
+                    <Music className="w-5 h-5" />
                   </div>
-                  <span className="font-black text-xl italic tracking-tighter uppercase">{chord.name}</span>
+                  <span className="font-black text-lg tracking-tight">{chord.name}</span>
                 </div>
-                {selectedChord.name === chord.name && <motion.div layoutId="active-dot" className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]"></motion.div>}
+                <div className={`w-3 h-3 rounded-full ${chord.color} bg-gradient-to-br ${chord.gradient} shadow-[0_0_10px_rgba(0,0,0,0.1)] group-hover:scale-125 transition-transform`}></div>
               </motion.button>
             ))}
             
             {isProfessorMode && (
-              <motion.button 
-                whileHover={{ scale: 1.02 }}
-                className="w-full p-5 rounded-[2.5rem] border-4 border-dashed border-slate-800 text-slate-500 hover:border-indigo-500 hover:text-indigo-400 transition-all flex items-center justify-center gap-3 font-black uppercase italic text-sm bg-indigo-500/5"
-              >
-                <Plus className="w-5 h-5" /> Novo Acorde
-              </motion.button>
+              <button className="w-full p-4 rounded-[24px] border-4 border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-400 hover:border-purple-500 hover:text-purple-500 transition-all flex items-center justify-center gap-2 font-black uppercase italic text-sm">
+                <Plus className="w-5 h-5" />
+                Novo Acorde
+              </button>
             )}
           </div>
         </div>
 
         {/* Visualization and Details Column */}
         <div className="lg:col-span-8 space-y-8">
-          <div className="bg-slate-900 rounded-[4rem] p-6 md:p-10 border-4 border-slate-800 shadow-inner flex flex-col items-center relative overflow-hidden">
-            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,rgba(6,182,212,0.1),transparent_70%)]"></div>
+          <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-[48px] p-6 md:p-10 border-4 border-zinc-100 dark:border-zinc-800 shadow-inner flex flex-col items-center relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-redhouse-primary/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
             
-            <div className="w-full max-w-[340px] bg-black rounded-[3.5rem] p-12 relative shadow-[0_0_80px_rgba(0,0,0,0.8)] mb-12 border-[12px] border-slate-800">
+            <div className="w-full max-w-md bg-zinc-900 dark:bg-black rounded-[40px] p-8 md:p-12 relative shadow-2xl mb-10 border-8 border-zinc-800 dark:border-zinc-950">
               {/* Nut */}
-              <div className="absolute top-0 left-0 right-0 h-10 bg-gradient-to-b from-slate-600 to-slate-800 rounded-t-[2.5rem] border-b-4 border-slate-950 flex items-center justify-center text-[10px] font-black text-slate-900 tracking-widest uppercase">NUT_PRIMARY</div>
+              <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-zinc-500 to-zinc-600 rounded-t-[32px] border-b-4 border-zinc-700"></div>
               
               {/* Strings */}
-              <div className="flex justify-between h-[450px] px-8 relative">
+              <div className="flex justify-between h-96 px-10 relative">
                 {strings.map((s) => (
                   <motion.div 
                     key={s} 
-                    animate={isStrumming ? { x: [0, 1, -1, 0], opacity: [1, 0.8, 1] } : {}}
-                    transition={{ duration: 0.1, repeat: isStrumming ? 3 : 0 }}
-                    className="w-[3px] bg-slate-700 h-full relative"
+                    animate={isStrumming ? { x: [0, 2, -2, 0] } : {}}
+                    transition={{ duration: 0.1, repeat: isStrumming ? 5 : 0 }}
+                    className="w-1 bg-zinc-700 h-full relative"
                   >
-                    {/* Shadow for strings */}
-                    <div className="absolute inset-0 blur-[1px] bg-cyan-500/10 mix-blend-screen"></div>
-
                     {/* Muted/Open Markers */}
-                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 font-black text-3xl italic">
-                      {(isProfessorMode && customChord ? customChord : selectedChord).mutedStrings.includes(s) && <span className="text-rose-500 drop-shadow-[0_0_10px_rgba(244,63,94,0.5)]">×</span>}
-                      {(isProfessorMode && customChord ? customChord : selectedChord).openStrings.includes(s) && <span className="text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.5)]">○</span>}
+                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 font-black text-2xl">
+                      {(isProfessorMode && customChord ? customChord : selectedChord).mutedStrings.includes(s) && <span className="text-red-500 drop-shadow-sm">×</span>}
+                      {(isProfessorMode && customChord ? customChord : selectedChord).openStrings.includes(s) && <span className="text-emerald-500 drop-shadow-sm">○</span>}
                     </div>
 
                     {/* Fret Click Areas (Professor Mode) */}
-                    {isProfessorMode && [1, 2, 4, 6].map((fret, idx) => (
+                    {isProfessorMode && [1, 2, 3, 4].map(fret => (
                       <div 
-                        key={idx}
-                        onClick={() => handleFretClick(s, idx + 1)}
-                        className="absolute w-12 h-20 -left-6 cursor-pointer z-50 hover:bg-white/10 transition-colors rounded-xl"
-                        style={{ top: `${(idx * 25) + 5}%` }}
+                        key={fret}
+                        onClick={() => handleFretClick(s, fret)}
+                        className="absolute w-12 h-20 -left-6 cursor-pointer z-20 hover:bg-white/5 transition-colors"
+                        style={{ top: `${(fret * 25) - 25}%` }}
                       />
                     ))}
                   </motion.div>
@@ -323,20 +308,16 @@ export default function ChordLab({ addXP }: ChordLabProps) {
                   {(isProfessorMode && customChord ? customChord : selectedChord).fingers.map((f, i) => (
                     <motion.div
                       key={`${selectedChord.name}-${i}`}
-                      initial={{ scale: 0, opacity: 0, rotate: -45 }}
-                      animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                      initial={{ scale: 0, opacity: 0, y: 20 }}
+                      animate={{ scale: 1, opacity: 1, y: 0 }}
                       exit={{ scale: 0, opacity: 0 }}
-                      className={`
-                        absolute w-12 h-12 rounded-full border-4 border-white shadow-[0_0_20px_rgba(0,0,0,0.5)] flex items-center justify-center font-black text-white text-xl 
-                        ${selectedChord.color} z-[60] group/finger
-                      `}
+                      className={`absolute w-10 h-10 md:w-12 md:h-12 rounded-full border-4 border-white shadow-2xl flex items-center justify-center font-black text-white text-lg md:text-xl ${selectedChord.color} bg-gradient-to-br ${selectedChord.gradient} z-30`}
                       style={{
                         left: `${((f.string - 1) * (100 / (numStrings - 1))) + 0}%`,
                         top: `${(f.fret * 25) - 12.5}%`,
                         transform: 'translateX(-50%)'
                       }}
                     >
-                      <div className="absolute inset-0 bg-white/20 rounded-full animate-ping opacity-20"></div>
                       {f.finger}
                     </motion.div>
                   ))}
@@ -344,64 +325,63 @@ export default function ChordLab({ addXP }: ChordLabProps) {
               </div>
 
               {/* Frets */}
-              <div className="flex flex-col justify-between h-[450px] absolute inset-0 py-12 pointer-events-none px-6">
+              <div className="flex flex-col justify-between h-96 absolute inset-0 py-12 pointer-events-none">
                 {[1, 2, 3, 4].map((f) => (
-                  <div key={f} className="h-2 bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 w-full shadow-2xl border-y border-slate-900/50"></div>
+                  <div key={f} className="h-1.5 bg-zinc-800 w-full shadow-sm"></div>
                 ))}
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-6 w-full max-w-lg">
+            <div className="flex flex-col sm:flex-row gap-4 w-full max-w-lg">
               <motion.button 
-                whileHover={{ scale: 1.05, y: -5 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => { audio.playStart(); playChord(); }}
-                className="flex-1 bg-emerald-600 text-white py-6 rounded-[2.5rem] font-black uppercase tracking-widest hover:bg-emerald-500 transition-all shadow-[0_0_40px_rgba(16,185,129,0.3)] flex items-center justify-center gap-4 text-xl border-b-8 border-emerald-800 active:border-b-0"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={playChord}
+                className="flex-1 bg-redhouse-primary text-white py-5 rounded-[28px] font-black uppercase tracking-widest hover:bg-redhouse-primary/90 transition-all shadow-xl flex items-center justify-center gap-4 text-lg border-b-8 border-redhouse-primary/70 active:border-b-0"
               >
-                <Play className="w-8 h-8 fill-white" /> TOCAR ACORDE
+                <Play className="w-6 h-6 fill-white" />
+                Tocar Acorde
               </motion.button>
               
-              <div className="bg-slate-950 p-6 rounded-[2.5rem] flex flex-col items-center justify-center text-center min-w-[140px] border-4 border-slate-800 shadow-xl">
-                <p className="text-[9px] font-black uppercase text-slate-500 tracking-widest leading-none mb-1">Ressonância</p>
-                <p className="font-black text-xl text-emerald-500 italic tracking-tighter leading-none">+5 XP</p>
+              <div className="bg-zinc-900 dark:bg-black text-white p-5 rounded-[28px] flex flex-col items-center justify-center text-center min-w-[120px] border-4 border-zinc-800 shadow-lg">
+                <Star className="w-5 h-5 text-yellow-400 mb-1 animate-pulse" />
+                <span className="text-[9px] font-black uppercase opacity-60">Recompensa</span>
+                <span className="font-black text-lg text-redhouse-primary">+5 XP</span>
               </div>
             </div>
 
             <motion.button 
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => { audio.playClick(); playIndividualNotes(); }}
-              className="mt-6 w-full max-w-lg bg-slate-800 text-white py-4 rounded-[2rem] font-black uppercase tracking-widest hover:bg-slate-700 transition-all shadow-xl flex items-center justify-center gap-3 text-sm border-b-4 border-slate-950 active:border-b-0"
+              onClick={playIndividualNotes}
+              className="mt-4 w-full max-w-lg bg-blue-500 text-white py-4 rounded-[28px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl flex items-center justify-center gap-3 text-md border-b-8 border-blue-700 active:border-b-0"
             >
-              <Music className="w-5 h-5 text-cyan-400" />
+              <Music className="w-5 h-5" />
               Tocar Notas Individuais
             </motion.button>
           </div>
 
-          {/* Composition Details Column */}
-          <div className="bg-slate-900 p-8 rounded-[4rem] border-4 border-slate-800 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
-            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-8 flex items-center gap-3">
-              <div className="p-2 bg-slate-950 rounded-xl border border-slate-800">
-                <Info className="w-4 h-4 text-cyan-500" />
+          {/* Notes and Frequencies Section */}
+          <div className="bg-white dark:bg-zinc-900 p-6 md:p-8 rounded-[40px] border-4 border-zinc-900 dark:border-zinc-800 shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-2 h-full bg-redhouse-primary"></div>
+            <h4 className="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-widest mb-6 flex items-center gap-3">
+              <div className="p-2 bg-zinc-100 dark:bg-zinc-800 rounded-xl">
+                <Info className="w-5 h-5 text-zinc-600 dark:text-zinc-400" />
               </div>
-              Composition Analysis
+              Composição do Som
             </h4>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {(isProfessorMode && customChord ? customChord : selectedChord).notes.map((freq, i) => (
                 <motion.div 
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
                   key={i} 
-                  className="flex flex-col p-5 bg-slate-950 rounded-[2rem] border-2 border-slate-800 transition-all hover:border-emerald-500/30 group"
+                  className="flex flex-col p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-3xl border-2 border-zinc-100 dark:border-zinc-800 transition-colors shadow-sm"
                 >
-                  <span className="text-[9px] font-black text-slate-600 uppercase mb-2 tracking-widest">OSN_{i+1}</span>
-                  <span className="font-black text-2xl text-white italic tracking-tighter group-hover:text-emerald-500 transition-colors">{(isProfessorMode && customChord ? customChord : selectedChord).noteNames[i]}</span>
-                  <div className="w-full h-1 bg-slate-900 rounded-full mt-3 relative overflow-hidden">
-                    <motion.div initial={{ x: '-100%' }} animate={{ x: '0%' }} transition={{ delay: 0.5 + i * 0.1 }} className="absolute inset-0 bg-cyan-500 opacity-30"></motion.div>
-                  </div>
-                  <span className="text-[9px] font-black text-slate-500 mt-2 font-mono">{freq.toFixed(2)} Hz</span>
+                  <span className="text-[10px] font-bold text-zinc-400 uppercase mb-1">Nota {i+1}</span>
+                  <span className="font-black text-xl text-zinc-900 dark:text-white">{(isProfessorMode && customChord ? customChord : selectedChord).noteNames[i]}</span>
+                  <span className="text-[10px] font-black text-blue-500 mt-2">{freq.toFixed(2)} Hz</span>
                 </motion.div>
               ))}
             </div>
@@ -409,24 +389,24 @@ export default function ChordLab({ addXP }: ChordLabProps) {
         </div>
       </div>
 
-      <div className="mt-12 bg-slate-900/50 p-8 rounded-[4rem] flex flex-col md:flex-row items-center gap-8 border-4 border-slate-800/50 backdrop-blur-sm relative z-10">
-        <div className="w-20 h-20 bg-slate-950 rounded-3xl border-4 border-slate-800 flex items-center justify-center text-4xl shadow-2xl shrink-0 -rotate-6">💡</div>
-        <div className="flex-1">
-          <h4 className="font-black text-xl mb-3 uppercase italic text-white tracking-tight">Guia de Leitura Dinâmica</h4>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="flex items-center gap-3">
-              <span className="w-10 h-10 bg-slate-950 rounded-xl border-2 border-emerald-500/30 flex items-center justify-center text-emerald-400 font-black text-lg italic shadow-[0_0_15px_rgba(52,211,153,0.2)]">○</span>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Corda Solta / Ressonante</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="w-10 h-10 bg-slate-950 rounded-xl border-2 border-rose-500/30 flex items-center justify-center text-rose-500 font-black text-lg shadow-[0_0_15px_rgba(244,63,94,0.2)]">×</span>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Corda Abafada / Silenciosa</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="w-10 h-10 bg-slate-950 rounded-xl border-2 border-slate-800 flex items-center justify-center text-white font-black text-lg italic shadow-xl">#</span>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Posicionamento Digital</span>
-            </div>
-          </div>
+      <div className="mt-12 bg-zinc-100 dark:bg-zinc-800/50 p-6 md:p-8 rounded-[40px] flex items-start gap-6 border-4 border-zinc-900 dark:border-zinc-800">
+        <div className="w-16 h-16 bg-white dark:bg-zinc-900 rounded-2xl border-4 border-zinc-900 dark:border-zinc-800 flex items-center justify-center text-3xl shadow-lg shrink-0">💡</div>
+        <div>
+          <h4 className="font-black text-xl mb-2 uppercase italic text-zinc-900 dark:text-white">Como ler o diagrama?</h4>
+          <ul className="text-zinc-600 dark:text-zinc-400 font-bold space-y-2 text-sm">
+            <li className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+              <span className="text-emerald-600 font-black">○</span> significa corda solta (pode tocar!)
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+              <span className="text-red-600 font-black">×</span> significa corda abafada (não toque!)
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-zinc-900 dark:bg-white rounded-full"></span>
+              Os números dentro das bolinhas indicam qual dedo usar (1=Indicador, 2=Médio...)
+            </li>
+          </ul>
         </div>
       </div>
     </section>

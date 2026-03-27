@@ -10,18 +10,19 @@ import { Play, RotateCcw, Trophy, Music, Volume2, CheckCircle2, XCircle } from '
 
 interface EchoGameProps {
   addXP: (amount: number) => void;
+  addCoins: (amount: number) => void;
 }
 
 const STRINGS = [
   { id: 0, label: 'E (Grave)', color: 'bg-orange-500', freq: 82.41 },
   { id: 1, label: 'A', color: 'bg-blue-500', freq: 110.00 },
   { id: 2, label: 'D', color: 'bg-emerald-500', freq: 146.83 },
-  { id: 3, label: 'G', color: 'bg-teal-500', freq: 196.00 },
+  { id: 3, label: 'G', color: 'bg-purple-500', freq: 196.00 },
   { id: 4, label: 'B', color: 'bg-rose-500', freq: 246.94 },
   { id: 5, label: 'E (Agudo)', color: 'bg-amber-500', freq: 329.63 },
 ];
 
-export default function EchoGame({ addXP }: EchoGameProps) {
+export default function EchoGame({ addXP, addCoins }: EchoGameProps) {
   const [sequence, setSequence] = useState<number[]>([]);
   const [userSequence, setUserSequence] = useState<number[]>([]);
   const [isPlayingSequence, setIsPlayingSequence] = useState(false);
@@ -31,7 +32,7 @@ export default function EchoGame({ addXP }: EchoGameProps) {
 
   const playString = useCallback((id: number, duration = 0.5) => {
     setActiveString(id);
-    audio.playTone(STRINGS[id].freq, '4n');
+    audio.playTone(STRINGS[id].freq, '8n');
     setTimeout(() => setActiveString(null), duration * 1000);
   }, []);
 
@@ -89,18 +90,14 @@ export default function EchoGame({ addXP }: EchoGameProps) {
 
   const resetGame = () => {
     setLevel(1);
-    setUserSequence([]);
-    setGameState('idle');
     startNewLevel(1);
   };
 
   return (
-    <section className="bg-slate-900/40 backdrop-blur-xl rounded-[3rem] p-8 border border-white/10 relative overflow-hidden text-white flex flex-col items-center">
-      {/* HUD Scanline Effect */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] z-50" />
+    <section className="bg-white rounded-[40px] p-8 shadow-xl border-4 border-slate-900 flex flex-col items-center">
       <div className="flex items-center justify-between w-full mb-8">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-teal-500 rounded-2xl flex items-center justify-center text-white shadow-lg -rotate-3">
+          <div className="w-12 h-12 bg-purple-500 rounded-2xl flex items-center justify-center text-white shadow-lg -rotate-3">
             <Volume2 className="w-6 h-6" />
           </div>
           <h3 className="text-2xl font-black uppercase italic">Eco do Lucca</h3>

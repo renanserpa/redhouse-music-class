@@ -18,19 +18,6 @@ import { AppState, LessonReport, MonthlyReport, Classroom, Student } from '../ty
 import { listClassrooms, listStudentsByClassroom } from '../services/dataService';
 import BrandHeader from './BrandHeader';
 
-interface ReportCardProps {
-  type: 'lesson' | 'monthly';
-  data: LessonReport | MonthlyReport;
-  isExpanded: boolean;
-  onToggle: () => void;
-  classroomName: string;
-  studentName?: string;
-}
-
-function isLessonReport(data: LessonReport | MonthlyReport): data is LessonReport {
-  return 'date' in data;
-}
-
 interface ReportsHistoryProps {
   state: AppState;
 }
@@ -177,10 +164,8 @@ export default function ReportsHistory({ state }: ReportsHistoryProps) {
   );
 }
 
-function ReportCard({ type, data, isExpanded, onToggle, classroomName, studentName }: ReportCardProps) {
-  const isLesson = isLessonReport(data);
-  const lessonData = isLesson ? data : null;
-  const monthlyData = !isLesson ? data as MonthlyReport : null;
+function ReportCard({ type, data, isExpanded, onToggle, classroomName, studentName }: any) {
+  const isLesson = type === 'lesson';
   
   return (
     <motion.div 
@@ -192,16 +177,16 @@ function ReportCard({ type, data, isExpanded, onToggle, classroomName, studentNa
         className="p-6 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition-colors"
       >
         <div className="flex items-center gap-6">
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-md ${isLesson ? 'bg-blue-500' : 'bg-rose-500'}`}>
+          <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-md ${isLesson ? 'bg-purple-500' : 'bg-rose-500'}`}>
             {isLesson ? <Clock className="w-6 h-6" /> : <User className="w-6 h-6" />}
           </div>
           
           <div className="space-y-1">
             <div className="flex items-center gap-3">
               <h3 className="font-black text-lg uppercase tracking-tight">
-                {isLesson ? `Aula: ${lessonData!.date}` : `Mensal: ${monthlyData!.month}`}
+                {isLesson ? `Aula: ${data.date}` : `Mensal: ${data.month}`}
               </h3>
-              <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase border ${isLesson ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-rose-50 border-rose-200 text-rose-600'}`}>
+              <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase border ${isLesson ? 'bg-purple-50 border-purple-200 text-purple-600' : 'bg-rose-50 border-rose-200 text-rose-600'}`}>
                 {isLesson ? 'Relatório de Aula' : 'Relatório Mensal'}
               </span>
             </div>
@@ -242,44 +227,44 @@ function ReportCard({ type, data, isExpanded, onToggle, classroomName, studentNa
             exit={{ height: 0, opacity: 0 }}
             className="border-t-2 border-slate-100 bg-slate-50/50"
           >
-          <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
               {isLesson ? (
                 <>
                   <div className="space-y-4">
                     <h4 className="text-[10px] font-black text-redhouse-primary uppercase tracking-widest">Conteúdo Trabalhado</h4>
-                    <p className="text-sm font-bold text-slate-600 leading-relaxed bg-white p-4 rounded-2xl border-2 border-slate-200">{lessonData!.workedContent}</p>
+                    <p className="text-sm font-bold text-slate-600 leading-relaxed bg-white p-4 rounded-2xl border-2 border-slate-200">{data.workedContent}</p>
                   </div>
                   <div className="space-y-4">
                     <h4 className="text-[10px] font-black text-redhouse-primary uppercase tracking-widest">Observações</h4>
-                    <p className="text-sm font-bold text-slate-600 leading-relaxed bg-white p-4 rounded-2xl border-2 border-slate-200">{lessonData!.observations || 'Nenhuma observação registrada.'}</p>
+                    <p className="text-sm font-bold text-slate-600 leading-relaxed bg-white p-4 rounded-2xl border-2 border-slate-200">{data.observations || 'Nenhuma observação registrada.'}</p>
                   </div>
                   <div className="md:col-span-2 space-y-4">
                     <h4 className="text-[10px] font-black text-redhouse-primary uppercase tracking-widest">Próximos Passos</h4>
-                    <p className="text-sm font-bold text-slate-600 leading-relaxed bg-white p-4 rounded-2xl border-2 border-slate-200">{lessonData!.nextSteps || 'Nenhum planejamento registrado.'}</p>
+                    <p className="text-sm font-bold text-slate-600 leading-relaxed bg-white p-4 rounded-2xl border-2 border-slate-200">{data.nextSteps || 'Nenhum planejamento registrado.'}</p>
                   </div>
                 </>
               ) : (
                 <>
                   <div className="space-y-4">
                     <h4 className="text-[10px] font-black text-redhouse-primary uppercase tracking-widest">Objetivos do Mês</h4>
-                    <p className="text-sm font-bold text-slate-600 leading-relaxed bg-white p-4 rounded-2xl border-2 border-slate-200">{monthlyData!.monthlyGoals}</p>
+                    <p className="text-sm font-bold text-slate-600 leading-relaxed bg-white p-4 rounded-2xl border-2 border-slate-200">{data.monthlyGoals}</p>
                   </div>
                   <div className="space-y-4">
                     <h4 className="text-[10px] font-black text-redhouse-primary uppercase tracking-widest">Destaque do Mês</h4>
-                    <p className="text-sm font-bold text-slate-600 leading-relaxed bg-white p-4 rounded-2xl border-2 border-slate-200">{monthlyData!.monthlyHighlight}</p>
+                    <p className="text-sm font-bold text-slate-600 leading-relaxed bg-white p-4 rounded-2xl border-2 border-slate-200">{data.monthlyHighlight}</p>
                   </div>
                   <div className="space-y-4">
                     <h4 className="text-[10px] font-black text-redhouse-primary uppercase tracking-widest">Níveis de Desenvolvimento</h4>
                     <div className="grid grid-cols-2 gap-2">
-                      <StatBadge label="Técnica" value={monthlyData!.technique} />
-                      <StatBadge label="Participação" value={monthlyData!.participation} />
-                      <StatBadge label="Concentração" value={monthlyData!.concentration} />
-                      <StatBadge label="Interesse" value={monthlyData!.interest} />
+                      <StatBadge label="Técnica" value={data.technique} />
+                      <StatBadge label="Participação" value={data.participation} />
+                      <StatBadge label="Concentração" value={data.concentration} />
+                      <StatBadge label="Interesse" value={data.interest} />
                     </div>
                   </div>
                   <div className="space-y-4">
                     <h4 className="text-[10px] font-black text-redhouse-primary uppercase tracking-widest">Orientações</h4>
-                    <p className="text-sm font-bold text-slate-600 leading-relaxed bg-white p-4 rounded-2xl border-2 border-slate-200">{monthlyData!.nextMonthGuidance}</p>
+                    <p className="text-sm font-bold text-slate-600 leading-relaxed bg-white p-4 rounded-2xl border-2 border-slate-200">{data.nextMonthGuidance}</p>
                   </div>
                 </>
               )}

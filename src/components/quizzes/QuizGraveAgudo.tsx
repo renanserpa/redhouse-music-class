@@ -35,7 +35,7 @@ export default function QuizGraveAgudo({ onComplete, addXP }: QuizGraveAgudoProp
     setIsPlaying(true);
     // Grave: E2 (low), Agudo: E4 (high)
     const freq = currentType === 'grave' ? 82.41 : 329.63;
-    await audio.playGuitar(freq, 1.5, 0.8);
+    await audio.playGuitar(freq, '2n');
     setIsPlaying(false);
   };
 

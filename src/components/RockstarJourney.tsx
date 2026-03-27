@@ -17,16 +17,16 @@ import {
   BookOpen,
   Monitor,
   Mic2,
-  Library,
-  Bug
+  Library
 } from 'lucide-react';
 import { AppState, Tab, Instrument } from '../types';
 import { audio } from '../lib/audio';
+import { SKINS } from '../constants/skins';
 import LessonPage from './LessonPage';
 import NPCGuide, { NPCState } from './NPCGuide';
 
 // Import Lesson Components
-import AnatomyGame from './games/AnatomyGame';
+import AnatomyGame from './AnatomyGame';
 import EarTraining from './EarTraining';
 import FretboardFollower from './FretboardFollower';
 import Metronome from './Metronome';
@@ -41,13 +41,11 @@ import TunerModule from './TunerModule';
 import { ElefantePassarinho } from './games/ElefantePassarinho';
 import { FabricaDeAcordes } from './games/FabricaDeAcordes';
 import { GrandeRelogio } from './games/GrandeRelogio';
+import ElephantBirdGame from './games/ElephantBirdGame';
 import StringMazeGame from './games/StringMazeGame';
+import GrooveClockGame from './games/GrooveClockGame';
 import RhythmDominoGame from './games/RhythmDominoGame';
-import DancaMaoDireita from './games/DancaMaoDireita';
-import EscadaDasCores from './games/EscadaDasCores';
-import SussurroOuTrovao from './games/SussurroOuTrovao';
-import SpiderWalk from './games/SpiderWalk';
-import SongwriterStudio from './games/SongwriterStudio';
+import ChordFactoryGame from './games/ChordFactoryGame';
 
 // Quizzes
 import QuizPartes from './quizzes/QuizPartes';
@@ -60,11 +58,6 @@ import { QuizElefantePassarinho } from './quizzes/QuizElefantePassarinho';
 import { QuizCordas } from './quizzes/QuizCordas';
 import { QuizAnatomia } from './quizzes/QuizAnatomia';
 import { QuizBatidasRitmo } from './quizzes/QuizBatidasRitmo';
-import QuizDedilhado from './quizzes/QuizDedilhado';
-import QuizCifrasMagicas from './quizzes/QuizCifrasMagicas';
-import QuizRitmicaAvancada from './quizzes/QuizRitmicaAvancada';
-import { QuizTabletura } from './quizzes/QuizTabletura';
-import { QuizPosicoes } from './quizzes/QuizPosicoes';
 
 interface Lesson {
   id: string;
@@ -114,30 +107,12 @@ const JOURNEY_DATA: Lesson[] = [
   { id: '5.2', title: 'Parabéns pra Você', description: 'A música mais famosa.', world: 5, component: 'tablature', icon: Music, type: 'lesson' },
   { id: '5.3', title: 'Believer (Imagine Dragons)', description: 'Ritmo e acordes.', world: 5, component: 'tablature', icon: Music, type: 'lesson', instruments: ['guitar'] },
   { id: '5.4', title: 'DESAFIO: Show Completo', description: 'Toque uma música do início ao fim!', world: 5, component: 'tablature', icon: Trophy, type: 'challenge' },
-  { id: '5.5', title: 'Songwriter Studio', description: 'Crie sua própria música com blocos de emoções.', world: 5, component: 'songwriter-studio', icon: Sparkles, type: 'lesson' },
-
-  // MUNDO 2 – Reino das Notas (new)
-  { id: '2.5', title: 'A Escada das Cores', description: 'Monte a escala com as cores do Maestro.', world: 2, component: 'escada-das-cores', icon: Music, type: 'lesson' },
-  { id: '2.6', title: 'Quiz: Cifras Mágicas', description: 'Domine as letras dos acordes!', world: 2, component: 'quiz-cifras-magicas', icon: Trophy, type: 'challenge' },
-
-  // MUNDO 3 – Montanha do Ritmo (new)
-  { id: '3.7', title: 'Sussurro ou Trovão?', description: 'Forte ou fraco — controle a dinâmica!', world: 3, component: 'sussurro-ou-trovao', icon: Zap, type: 'lesson' },
-  { id: '3.8', title: 'Quiz: Rítmica Avançada', description: 'Semínima, Mínima e Semibreve.', world: 3, component: 'quiz-ritmica-avancada', icon: Trophy, type: 'challenge' },
-
-  // MUNDO 4 – Floresta dos Acordes (new)
-  { id: '4.6', title: 'Dança da Mão Direita', description: 'Domine o P-I-M-A com ritmo!', world: 4, component: 'danca-mao-direita', icon: Gamepad2, type: 'lesson' },
-  { id: '4.7', title: 'Quiz: Tablatura', description: 'Leia tablatura como um pro!', world: 4, component: 'quiz-tabletura', icon: Trophy, type: 'challenge' },
-  { id: '4.8', title: 'Quiz: Dedilhado PIMA', description: 'Teste seus conhecimentos sobre PIMA.', world: 4, component: 'quiz-dedilhado', icon: Trophy, type: 'challenge' },
-  { id: '4.9', title: 'A Caminhada da Aranha', description: 'Treino rítmico com a aranha-astronauta!', world: 4, component: 'spider-walk', icon: Bug, type: 'challenge' },
-
-  // MUNDO 1 – Vale das Cordas (new)
-  { id: '1.6', title: 'Quiz: Posições e Postura', description: 'Polegar, coluna e posição certa!', world: 1, component: 'quiz-posicoes', icon: Trophy, type: 'challenge' },
 ];
 
 const WORLDS = [
   { id: 1, name: 'Vale das Cordas', color: 'bg-emerald-500', icon: '🌿' },
   { id: 2, name: 'Reino das Notas', color: 'bg-blue-500', icon: '🏔️' },
-  { id: 3, name: 'Montanha do Ritmo', color: 'bg-amber-500', icon: '⛰️' },
+  { id: 3, name: 'Montanha do Ritmo', color: 'bg-purple-500', icon: '⛰️' },
   { id: 4, name: 'Floresta dos Acordes', color: 'bg-orange-500', icon: '🌲' },
   { id: 5, name: 'Palco das Músicas', color: 'bg-redhouse-primary', icon: '🎸' },
 ];
@@ -158,6 +133,13 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
   const [npcContext, setNpcContext] = useState<'lessonStart' | 'correct' | 'wrong' | 'worldComplete' | 'unlock'>('lessonStart');
 
   const currentInstrument = state.instrument || 'guitar';
+
+  const currentSkins = {
+    head: SKINS.find(s => s.id === state.avatar.head),
+    body: SKINS.find(s => s.id === state.avatar.body),
+    instrument: SKINS.find(s => s.id === state.avatar.instrument),
+    background: SKINS.find(s => s.id === state.avatar.background),
+  };
 
   // Reset NPC state to idle after 3 seconds
   useEffect(() => {
@@ -222,15 +204,10 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
   };
 
   const isLessonLocked = (lessonId: string) => {
-    // For development/testing: Unlock all lessons
-    return false;
-    
-    /* Original logic:
     const index = filteredJourney.findIndex(l => l.id === lessonId);
     if (index === 0) return false;
     const previousLesson = filteredJourney[index - 1];
     return !completedLessons.includes(previousLesson.id);
-    */
   };
 
   const getLessonStatus = (lessonId: string) => {
@@ -241,15 +218,15 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
 
   const renderLessonComponent = (tab: Tab) => {
     switch (tab) {
-      case 'anatomy': return <AnatomyGame addXP={addXP} />;
-      case 'ear-training': return <EarTraining addXP={addXP} />;
+      case 'anatomy': return <AnatomyGame addXP={addXP} addCoins={addCoins} />;
+      case 'ear-training': return <EarTraining addXP={addXP} addCoins={addCoins} />;
       case 'fretboard-follower': return <FretboardFollower addXP={addXP} />;
       case 'metronome': return <Metronome />;
-      case 'rhythm-challenge': return <RhythmChallenge addXP={addXP} />;
-      case 'rhythm-invaders': return <RhythmInvaders addXP={addXP} />;
+      case 'rhythm-challenge': return <RhythmChallenge addXP={addXP} addCoins={addCoins} />;
+      case 'rhythm-invaders': return <RhythmInvaders addXP={addXP} addCoins={addCoins} />;
       case 'konnakkol': return <KonnakkolBuilder addXP={addXP} />;
       case 'tablature': return <TablatureModule />;
-      case 'chord-lab': return <ChordLab addXP={addXP} />;
+      case 'chord-lab': return <ChordLab addXP={addXP} addCoins={addCoins} />;
       case 'tuner': return <TunerModule />;
       case 'quiz-partes': return <QuizPartes addXP={addXP} onComplete={() => {}} />;
       case 'quiz-postura': return <QuizPostura addXP={addXP} onComplete={() => {}} />;
@@ -263,19 +240,13 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
       case 'quiz-batidas-ritmo': return <QuizBatidasRitmo addXP={addXP} onComplete={handleCompleteLesson} onUpdateNPC={(s, m) => { setNpcState(s); setNpcContext(s === 'celebrating' ? 'correct' : 'wrong'); }} instrument={currentInstrument} />;
       case 'grande-relogio': return <GrandeRelogio addXP={addXP} onComplete={handleCompleteLesson} onUpdateNPC={(s, m) => { setNpcState(s); setNpcContext(s === 'celebrating' ? 'correct' : 'wrong'); }} instrument={currentInstrument} />;
       case 'fabrica-de-acordes': return <FabricaDeAcordes addXP={addXP} onComplete={handleCompleteLesson} onUpdateNPC={(s, m) => { setNpcState(s); setNpcContext(s === 'celebrating' ? 'correct' : 'wrong'); }} instrument={currentInstrument} />;
+      case 'elephant-bird': return <ElephantBirdGame addXP={addXP} onComplete={handleCompleteLesson} />;
       case 'string-maze': return <StringMazeGame addXP={addXP} onComplete={handleCompleteLesson} />;
+      case 'groove-clock': return <GrooveClockGame addXP={addXP} onComplete={handleCompleteLesson} />;
+      case 'quiz-cifras': return <QuizCifras addXP={addXP} onComplete={handleCompleteLesson} />;
       case 'quiz-ritmo-avancado': return <QuizRitmoAvancado addXP={addXP} onComplete={handleCompleteLesson} />;
       case 'rhythm-domino': return <RhythmDominoGame addXP={addXP} onComplete={handleCompleteLesson} />;
-      case 'danca-mao-direita': return <DancaMaoDireita addXP={addXP} onComplete={handleCompleteLesson} />;
-      case 'escada-das-cores': return <EscadaDasCores addXP={addXP} onComplete={handleCompleteLesson} />;
-      case 'sussurro-ou-trovao': return <SussurroOuTrovao addXP={addXP} onComplete={handleCompleteLesson} />;
-      case 'quiz-dedilhado': return <QuizDedilhado addXP={addXP} onComplete={handleCompleteLesson} />;
-      case 'quiz-cifras-magicas': return <QuizCifrasMagicas addXP={addXP} onComplete={handleCompleteLesson} />;
-      case 'quiz-ritmica-avancada': return <QuizRitmicaAvancada addXP={addXP} onComplete={handleCompleteLesson} />;
-      case 'quiz-tabletura': return <QuizTabletura addXP={addXP} onComplete={handleCompleteLesson} />;
-      case 'quiz-posicoes': return <QuizPosicoes addXP={addXP} onComplete={handleCompleteLesson} />;
-      case 'spider-walk': return <SpiderWalk addXP={addXP} onComplete={handleCompleteLesson} />;
-      case 'songwriter-studio': return <SongwriterStudio addXP={addXP} onComplete={handleCompleteLesson} />;
+      case 'chord-factory': return <ChordFactoryGame addXP={addXP} onComplete={handleCompleteLesson} instrument={currentInstrument} />;
       default: return <div className="p-8 text-center">Componente em desenvolvimento...</div>;
     }
   };
@@ -298,12 +269,7 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
   }
 
   return (
-    <div className="min-h-screen bg-redhouse-bg p-4 md:p-8 pb-32 relative overflow-hidden">
-      {/* HUD Scanline Effect */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] z-50" />
-      
-      {/* HUD Grid/Background */}
-      <div className="absolute inset-0 opacity-[0.05] pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:40px_40px]" />
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 md:p-8 pb-32 relative">
       {/* Header */}
       <div className="max-w-6xl mx-auto mb-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
@@ -314,17 +280,17 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
               </div>
               <span className="text-xs font-black text-redhouse-primary uppercase italic tracking-widest">Caminho da Glória</span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-black text-redhouse-text uppercase italic tracking-tighter leading-none">
-              Jornada do <span className="text-redhouse-primary">Rockstar</span>
+            <h1 className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white uppercase italic tracking-tighter leading-none">
+              Jornada do <span className="text-redhouse-primary drop-shadow-sm">Rockstar</span>
             </h1>
-            <p className="text-redhouse-muted font-bold uppercase italic text-sm max-w-md leading-tight">
+            <p className="text-slate-500 dark:text-slate-400 font-bold uppercase italic text-sm max-w-md leading-tight">
               Domine o violão passo a passo e conquiste os palcos do mundo! 🎸✨
             </p>
           </div>
 
           <div className="flex flex-col items-end gap-4">
             {/* Instrument Toggle */}
-            <div className="bg-redhouse-card backdrop-blur-xl p-1.5 rounded-2xl border border-redhouse-border flex gap-1 shadow-2xl">
+            <div className="bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 flex gap-1 shadow-lg">
               <button
                 onClick={() => {
                   audio.playClick();
@@ -332,8 +298,8 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
                 }}
                 className={`px-6 py-2 rounded-xl font-black uppercase italic text-xs transition-all ${
                   currentInstrument === 'guitar' 
-                    ? 'bg-redhouse-primary text-white shadow-[0_0_20px_rgba(239,68,68,0.4)]' 
-                    : 'text-white/30 hover:text-white hover:bg-white/5'
+                    ? 'bg-redhouse-primary text-white shadow-md' 
+                    : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
                 }`}
               >
                 Violão
@@ -345,8 +311,8 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
                 }}
                 className={`px-6 py-2 rounded-xl font-black uppercase italic text-xs transition-all ${
                   currentInstrument === 'ukulele' 
-                    ? 'bg-redhouse-primary text-white shadow-[0_0_20px_rgba(239,68,68,0.4)]' 
-                    : 'text-white/30 hover:text-white hover:bg-white/5'
+                    ? 'bg-redhouse-primary text-white shadow-md' 
+                    : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
                 }`}
               >
                 Ukulele
@@ -354,29 +320,48 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
             </div>
 
             <div className="flex gap-4">
-              <motion.div 
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="bg-black/40 backdrop-blur-xl border-b-4 border-redhouse-primary rounded-3xl p-5 flex items-center gap-4 shadow-2xl min-w-[160px] border-x border-t border-white/5"
+              {/* Avatar Mini Preview */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                onClick={() => setActiveTab('avatar-customizer')}
+                className={`relative w-24 h-24 rounded-3xl border-4 border-white shadow-xl overflow-hidden ${currentSkins.background?.color || 'bg-slate-800'}`}
               >
-                <div className="w-12 h-12 bg-redhouse-primary/10 rounded-2xl flex items-center justify-center border border-redhouse-primary/20">
+                <div className="absolute inset-0 flex items-center justify-center scale-50">
+                   <div className={`w-32 h-32 rounded-full flex items-center justify-center relative ${currentSkins.body?.color || 'bg-red-600'}`}>
+                    <currentSkins.body.icon className="w-16 h-16 text-white/20" />
+                    <div className={`absolute -top-8 w-20 h-20 rounded-full border-4 border-white shadow-xl flex items-center justify-center ${currentSkins.head?.color || 'bg-slate-500'}`}>
+                      <currentSkins.head.icon className="w-10 h-10 text-white" />
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 bg-black/40 backdrop-blur-sm py-1 text-[8px] font-black text-white uppercase italic text-center">
+                  Meu Avatar
+                </div>
+              </motion.button>
+
+              <motion.div 
+                whileHover={{ y: -5 }}
+                className="bg-white dark:bg-slate-900 border-b-4 border-redhouse-primary rounded-3xl p-4 flex items-center gap-4 shadow-xl min-w-[140px]"
+              >
+                <div className="w-12 h-12 bg-redhouse-primary/10 rounded-2xl flex items-center justify-center">
                   <Zap className="w-7 h-7 text-redhouse-primary" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-redhouse-muted uppercase italic tracking-widest leading-none mb-1">XP_TOTAL</p>
-                  <p className="text-3xl font-black text-redhouse-text italic tracking-tighter">{state.xp}</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase italic">Experiência</p>
+                  <p className="text-2xl font-black text-slate-900 dark:text-white">{state.xp}</p>
                 </div>
               </motion.div>
 
               <motion.div 
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="bg-black/40 backdrop-blur-xl border-b-4 border-yellow-500 rounded-3xl p-5 flex items-center gap-4 shadow-2xl min-w-[160px] border-x border-t border-white/5"
+                whileHover={{ y: -5 }}
+                className="bg-white dark:bg-slate-900 border-b-4 border-yellow-500 rounded-3xl p-4 flex items-center gap-4 shadow-xl min-w-[140px]"
               >
-                <div className="w-12 h-12 bg-yellow-500/10 rounded-2xl flex items-center justify-center border border-yellow-500/20">
+                <div className="w-12 h-12 bg-yellow-500/10 rounded-2xl flex items-center justify-center">
                   <Coins className="w-7 h-7 text-yellow-500" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-redhouse-muted uppercase italic tracking-widest leading-none mb-1">CREDITS</p>
-                  <p className="text-3xl font-black text-yellow-500 italic tracking-tighter">{state.coins}</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase italic">Moedas</p>
+                  <p className="text-2xl font-black text-yellow-500">{state.coins}</p>
                 </div>
               </motion.div>
             </div>
@@ -405,10 +390,10 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
                 }`}
               >
                 <div className={`
-                  px-8 py-6 rounded-[1.8rem] border-b-8 transition-all flex flex-col items-center gap-2 min-w-[180px] backdrop-blur-md
+                  px-8 py-6 rounded-[1.8rem] border-b-8 transition-all flex flex-col items-center gap-2 min-w-[160px]
                   ${isSelected
                     ? 'bg-redhouse-primary border-redhouse-primary/50 text-white shadow-2xl shadow-redhouse-primary/40'
-                    : 'bg-redhouse-card border-redhouse-border text-redhouse-muted hover:border-redhouse-primary/30 hover:text-redhouse-text'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white hover:border-redhouse-primary/30'
                   }
                 `}>
                   <span className="text-4xl mb-1 group-hover:animate-bounce">{world.icon}</span>
@@ -432,19 +417,51 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
         </div>
       </div>
 
-      {/* Progression Map - Grid Layout */}
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredJourney.filter(l => l.world === selectedWorld).map((lesson, index) => {
-            const status = getLessonStatus(lesson.id);
-            
-            return (
+      {/* Unit Header */}
+      <div className="max-w-xl mx-auto mb-12">
+        <div className="bg-redhouse-primary p-8 rounded-[3rem] border-b-8 border-redhouse-primary/50 text-white shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl" />
+          <div className="relative z-10">
+            <div className="flex items-center gap-4 mb-4">
+              <span className="text-4xl">{WORLDS.find(w => w.id === selectedWorld)?.icon}</span>
+              <div>
+                <h2 className="text-3xl font-black uppercase italic tracking-tighter">Mundo {selectedWorld}</h2>
+                <p className="text-sm font-bold uppercase italic text-white/80">{WORLDS.find(w => w.id === selectedWorld)?.name}</p>
+              </div>
+            </div>
+            <div className="w-full h-4 bg-black/20 rounded-full overflow-hidden border border-white/10">
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: `${(filteredJourney.filter(l => l.world === selectedWorld && completedLessons.includes(l.id)).length / filteredJourney.filter(l => l.world === selectedWorld).length) * 100}%` }}
+                className="h-full bg-white shadow-lg shadow-white/20"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Progression Map - Vertical Path */}
+      <div className="max-w-xl mx-auto pb-40">
+        {filteredJourney.filter(l => l.world === selectedWorld).map((lesson, index) => {
+          const status = getLessonStatus(lesson.id);
+          const isLeft = index % 2 === 0;
+          const isCenter = index % 3 === 1;
+          
+          return (
+            <div key={lesson.id} className="flex flex-col items-center mb-12 relative">
+              {/* Connection Line */}
+              {index < filteredJourney.filter(l => l.world === selectedWorld).length - 1 && (
+                <div className="absolute top-20 w-1 h-20 bg-slate-200 dark:bg-slate-800 -z-10" />
+              )}
+
               <motion.div
-                key={lesson.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.05 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
                 className={`relative group ${status === 'locked' ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                style={{ 
+                  marginLeft: isLeft ? '-40px' : isCenter ? '0' : '40px' 
+                }}
                 onClick={() => {
                   if (status !== 'locked') {
                     audio.playClick();
@@ -454,86 +471,45 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
                   }
                 }}
               >
-                {/* Connection Line (Visual only) */}
-                {index < filteredJourney.filter(l => l.world === selectedWorld).length - 1 && (
-                  <div className="hidden lg:block absolute -right-4 top-1/2 w-8 h-1 bg-white/10 z-0" />
-                )}
-
+                {/* Node */}
                 <div className={`
-                  p-8 rounded-[3rem] border-b-8 transition-all relative overflow-hidden h-full flex flex-col gap-6 backdrop-blur-xl border-x border-t
+                  w-24 h-24 rounded-full border-b-8 transition-all relative flex items-center justify-center
                   ${status === 'completed' 
-                    ? 'bg-emerald-500/10 border-emerald-500/40 shadow-[0_0_30px_rgba(16,185,129,0.15)]' 
+                    ? 'bg-emerald-500 border-emerald-700 text-white shadow-lg' 
                     : status === 'available'
-                    ? 'bg-black/40 border-redhouse-primary shadow-2xl hover:shadow-[0_0_40px_rgba(239,68,68,0.2)] hover:-translate-y-2 border-white/5'
-                    : 'bg-slate-900/30 border-white/5 grayscale opacity-40'
+                    ? 'bg-redhouse-primary border-redhouse-primary/70 text-white shadow-xl hover:scale-110 active:scale-95'
+                    : 'bg-slate-200 dark:bg-slate-800 border-slate-300 dark:border-slate-900 text-slate-400 grayscale'
                   }
                 `}>
-                  {/* Status Icon Overlay */}
-                  <div className="absolute top-6 right-6">
+                  <lesson.icon className="w-10 h-10" />
+                  
+                  {/* Tooltip-like Label */}
+                  <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl shadow-xl border border-slate-100 dark:border-slate-800 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
+                    <p className="text-[10px] font-black uppercase italic text-redhouse-primary">{lesson.type === 'challenge' ? 'Desafio' : 'Lição'}</p>
+                    <p className="text-xs font-black text-slate-900 dark:text-white uppercase italic">{lesson.title}</p>
+                  </div>
+
+                  {/* Status Indicator */}
+                  <div className="absolute -bottom-2 -right-2">
                     {status === 'completed' ? (
-                      <div className="w-10 h-10 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg rotate-12">
-                        <CheckCircle2 className="w-6 h-6" />
+                      <div className="w-8 h-8 bg-emerald-500 rounded-full border-4 border-white dark:border-slate-950 flex items-center justify-center text-white">
+                        <CheckCircle2 className="w-4 h-4" />
                       </div>
                     ) : status === 'available' ? (
-                      <div className="w-10 h-10 bg-redhouse-primary rounded-2xl flex items-center justify-center text-white shadow-lg -rotate-12 animate-pulse">
-                        <Play className="w-6 h-6 fill-current ml-1" />
+                      <div className="w-8 h-8 bg-yellow-500 rounded-full border-4 border-white dark:border-slate-950 flex items-center justify-center text-white animate-bounce">
+                        <Star className="w-4 h-4 fill-current" />
                       </div>
                     ) : (
-                      <div className="w-10 h-10 bg-slate-400 rounded-2xl flex items-center justify-center text-white shadow-lg">
-                        <Lock className="w-6 h-6" />
+                      <div className="w-8 h-8 bg-slate-400 rounded-full border-4 border-white dark:border-slate-950 flex items-center justify-center text-white">
+                        <Lock className="w-4 h-4" />
                       </div>
-                    )}
-                  </div>
-
-                  <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center text-4xl shadow-inner shrink-0 transition-transform group-hover:rotate-12 ${
-                    status === 'completed' ? 'bg-emerald-500 text-white' : 
-                    status === 'available' ? 'bg-redhouse-primary/10 text-redhouse-primary' : 
-                    'bg-slate-200 text-slate-400'
-                  }`}>
-                    <lesson.icon className="w-10 h-10" />
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className={`text-[10px] font-black uppercase italic px-2 py-0.5 rounded-full ${
-                        status === 'completed' ? 'bg-emerald-500/20 text-emerald-600' :
-                        status === 'available' ? 'bg-redhouse-primary/20 text-redhouse-primary' :
-                        'bg-slate-200 text-slate-500'
-                      }`}>
-                        {lesson.type === 'challenge' ? 'Desafio' : 'Lição'} {lesson.id}
-                      </span>
-                    </div>
-                    <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter leading-tight drop-shadow-md">
-                      {lesson.title}
-                    </h3>
-                    <p className="text-sm font-bold text-slate-400 leading-snug italic">
-                      {lesson.description}
-                    </p>
-                  </div>
-
-                  <div className="mt-auto flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1.5 text-redhouse-primary">
-                        <Zap className="w-4 h-4" />
-                        <span className="text-xs font-black">+50</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-yellow-500">
-                        <Coins className="w-4 h-4" />
-                        <span className="text-xs font-black">+10</span>
-                      </div>
-                    </div>
-                    
-                    {status === 'available' && (
-                      <span className="text-[10px] font-black text-redhouse-primary uppercase italic flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                        Começar <ChevronRight className="w-3 h-3" />
-                      </span>
                     )}
                   </div>
                 </div>
               </motion.div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Global NPC for Journey Feedback */}

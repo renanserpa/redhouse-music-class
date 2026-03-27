@@ -109,28 +109,22 @@ export const FabricaDeAcordes: React.FC<FabricaDeAcordesProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[600px] p-8 rounded-[2rem] bg-slate-900/40 backdrop-blur-xl border border-white/10 overflow-hidden relative group">
-      {/* HUD Scanlines */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
-
+    <div className="flex flex-col items-center justify-center min-h-[600px] p-6 bg-white rounded-3xl shadow-xl border-4 border-slate-900 overflow-hidden relative">
       <AnimatePresence mode="wait">
         {gameState !== 'finished' ? (
           <motion.div
             key="game"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="w-full flex flex-col items-center relative z-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="w-full flex flex-col items-center"
           >
-            <div className="text-center mb-10">
-              <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter mb-2">Fábrica de Acordes</h2>
-              <div className="flex items-center justify-center gap-4">
-                <span className="text-sm font-black text-white/30 uppercase tracking-widest italic">Monte o Acorde:</span>
-                <span className="text-6xl font-black text-redhouse-primary italic tracking-tighter drop-shadow-[0_0_15px_rgba(239,68,68,0.4)]">{targetChord.name}</span>
-              </div>
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-black text-slate-900">Fábrica de Acordes</h2>
+              <p className="text-xl text-slate-600">Forme o acorde: <span className="text-redhouse-primary font-black text-4xl">{targetChord.name}</span></p>
             </div>
 
-            {/* Chord Diagram - HUD Style */}
-            <div className="relative bg-black/40 backdrop-blur-md p-10 rounded-[2.5rem] border border-white/10 mb-10 shadow-2xl">
+            {/* Chord Diagram */}
+            <div className="relative bg-slate-50 p-8 rounded-3xl border-4 border-slate-900 mb-8 shadow-inner">
               <svg width="240" height="300" viewBox="0 0 240 300">
                 {/* Frets */}
                 {[...Array(numFrets + 1)].map((_, i) => (
@@ -140,9 +134,8 @@ export const FabricaDeAcordes: React.FC<FabricaDeAcordesProps> = ({
                     y1={20 + i * 50}
                     x2={20 + (numStrings - 1) * 40}
                     y2={20 + i * 50}
-                    stroke={i === 0 ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.05)"}
-                    strokeWidth={i === 0 ? "8" : "3"}
-                    className={i === 0 ? "drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]" : ""}
+                    stroke={i === 0 ? "#334155" : "#94a3b8"}
+                    strokeWidth={i === 0 ? "8" : "4"}
                   />
                 ))}
 
@@ -154,8 +147,8 @@ export const FabricaDeAcordes: React.FC<FabricaDeAcordesProps> = ({
                     y1="20"
                     x2={20 + i * 40}
                     y2={20 + numFrets * 50}
-                    stroke="rgba(255,255,255,0.15)"
-                    strokeWidth="3"
+                    stroke="#334155"
+                    strokeWidth="4"
                   />
                 ))}
 
@@ -170,7 +163,7 @@ export const FabricaDeAcordes: React.FC<FabricaDeAcordesProps> = ({
                     const showWrong = gameState === 'feedback' && isSelected && !isTarget;
 
                     return (
-                      <g key={`dot-${s}-${f}`} onClick={() => handleDotClick(stringNum, fretNum)} className="cursor-pointer group/dot">
+                      <g key={`dot-${s}-${f}`} onClick={() => handleDotClick(stringNum, fretNum)} className="cursor-pointer">
                         <rect
                           x={20 + s * 40 - 20}
                           y={20 + f * 50}
@@ -180,26 +173,14 @@ export const FabricaDeAcordes: React.FC<FabricaDeAcordesProps> = ({
                         />
                         {(isSelected || showCorrect) && (
                           <motion.circle
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
                             cx={20 + s * 40}
                             cy={20 + f * 50 + 25}
-                            r="16"
-                            fill={showCorrect ? "rgba(16,185,129,0.2)" : showWrong ? "rgba(239,68,68,0.2)" : "rgba(59,130,246,0.2)"}
-                            stroke={showCorrect ? "#10b981" : showWrong ? "#ef4444" : "#3b82f6"}
+                            r="15"
+                            fill={showCorrect ? "#22c55e" : showWrong ? "#ef4444" : "#3b82f6"}
+                            stroke="white"
                             strokeWidth="3"
-                          />
-                        )}
-                        {/* Shadow for the dot */}
-                        {(isSelected || showCorrect) && (
-                          <circle
-                            cx={20 + s * 40}
-                            cy={20 + f * 50 + 25}
-                            r="16"
-                            fill="none"
-                            stroke={showCorrect ? "#10b981" : showWrong ? "#ef4444" : "#3b82f6"}
-                            strokeWidth="8"
-                            className="opacity-20 blur-md"
                           />
                         )}
                       </g>
@@ -212,62 +193,47 @@ export const FabricaDeAcordes: React.FC<FabricaDeAcordesProps> = ({
             <button
               onClick={validateChord}
               disabled={gameState !== 'playing' || selectedDots.length === 0}
-              className={`px-16 py-5 font-black text-2xl rounded-2xl shadow-xl transition-all border border-white/20 uppercase italic tracking-widest ${
+              className={`px-12 py-4 font-black text-2xl rounded-2xl shadow-xl transition-all border-4 border-slate-900 ${
                 selectedDots.length === 0 || gameState !== 'playing'
-                  ? 'bg-white/5 text-white/20 cursor-not-allowed'
-                  : 'bg-redhouse-primary text-white shadow-[0_10px_40px_rgba(239,68,68,0.4)] hover:scale-105 active:scale-95'
+                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                  : 'bg-redhouse-primary text-white hover:scale-105 active:scale-95'
               }`}
             >
-              VALIDAR ACORDE
+              PRONTO!
             </button>
 
-            <AnimatePresence>
-              {gameState === 'feedback' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className={`mt-8 flex items-center gap-3 font-black text-2xl italic uppercase tracking-tighter ${isCorrect ? 'text-emerald-400' : 'text-redhouse-primary'}`}
-                >
-                  {isCorrect ? (
-                    <><CheckCircle2 className="w-8 h-8" /> Sincronia Perfeita!</>
-                  ) : (
-                    <><XCircle className="w-8 h-8" /> Erro de Posicionamento</>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {gameState === 'feedback' && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`mt-6 flex items-center gap-2 font-black text-xl ${isCorrect ? 'text-green-600' : 'text-red-600'}`}
+              >
+                {isCorrect ? (
+                  <><CheckCircle2 className="w-6 h-6" /> Acertou em cheio!</>
+                ) : (
+                  <><XCircle className="w-6 h-6" /> Quase! Veja a posição correta.</>
+                )}
+              </motion.div>
+            )}
           </motion.div>
         ) : (
           <motion.div
             key="finished"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center relative z-10"
+            className="text-center"
           >
-            <div className="w-32 h-32 bg-yellow-500/20 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 border border-yellow-500/30 shadow-[0_0_50px_rgba(234,179,8,0.2)]">
-              <Trophy className="w-16 h-16 text-yellow-500" />
+            <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-slate-900 shadow-xl">
+              <Trophy className="w-12 h-12 text-white" />
             </div>
-            <h2 className="text-5xl font-black text-white mb-2 italic uppercase tracking-tighter">Mestre dos Acordes!</h2>
-            <p className="text-xl text-slate-400 mb-12 font-bold italic uppercase">
-              Você dominou as estruturas fundamentais!
+            <h2 className="text-4xl font-black text-slate-900 mb-2">Mestre dos Acordes!</h2>
+            <p className="text-xl text-slate-600 mb-8">
+              Você aprendeu os acordes fundamentais!
             </p>
-            <div className="bg-black/40 backdrop-blur-md p-10 rounded-[2.5rem] border border-white/10 inline-block mb-12 shadow-2xl">
-              <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] mb-2 italic">Experiência Adquirida</div>
-              <div className="text-6xl font-black text-redhouse-primary italic tracking-tighter">+40 XP</div>
+            <div className="bg-slate-100 p-6 rounded-2xl border-2 border-slate-900 inline-block mb-8">
+              <div className="text-sm font-bold text-slate-500 uppercase mb-1">XP Ganhos</div>
+              <div className="text-4xl font-black text-redhouse-primary">+40 XP</div>
             </div>
-            <br />
-            <button
-              onClick={() => {
-                setCurrentChordIndex(0);
-                setSelectedDots([]);
-                setGameState('playing');
-                setIsCorrect(null);
-              }}
-              className="px-12 py-4 bg-white/5 hover:bg-white/10 text-white font-black rounded-2xl transition-all border border-white/10 uppercase italic tracking-widest"
-            >
-              REINICIAR PRODUÇÃO
-            </button>
           </motion.div>
         )}
       </AnimatePresence>

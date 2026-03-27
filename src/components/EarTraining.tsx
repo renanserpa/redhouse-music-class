@@ -1,176 +1,310 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { audio } from '../lib/audio';
-import { Ear, Music, Play, CheckCircle2, XCircle, Volume2 } from 'lucide-react';
+import { haptics } from '../lib/haptics';
+import { generateChallenge, getTutorAdvice } from '../services/aiService';
+import { Ear, Play, CheckCircle2, XCircle, Volume2, Sparkles, Brain, Loader2, Music } from 'lucide-react';
+import { StaffDisplay } from './StaffDisplay';
 
 interface EarTrainingProps {
   addXP: (amount: number) => void;
+  addCoins: (amount: number) => void;
+  setNpcMessage?: (msg: string) => void;
+  setNpcContext?: (ctx: any) => void;
+  setNpcState?: (state: any) => void;
 }
 
-export default function EarTraining({ addXP }: EarTrainingProps) {
-  const [currentSoundType, setCurrentSoundType] = useState<'grave' | 'agudo' | null>(null);
-  const [feedback, setFeedback] = useState("Ouça o som e diga: é um elefante ou passarinho?");
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [status, setStatus] = useState<'idle' | 'correct' | 'wrong'>('idle');
+type ChallengeType = 'pitch' | 'interval' | 'chord';
 
-  const playTestSound = () => {
-    setIsPlaying(true);
-    setStatus('idle');
-    const isGrave = Math.random() > 0.5;
-    setCurrentSoundType(isGrave ? 'grave' : 'agudo');
-    
-    if (isGrave) {
-      audio.playTone(110, '4n'); // Low A
-    } else {
-      audio.playTone(880, '4n'); // High A
+interface AIChallenge {
+  type: ChallengeType;
+  notes: string[];
+  correctAnswer: string;
+  options: string[];
+  description: string;
+}
+
+export default function EarTraining({ 
+  addXP, 
+  addCoins,
+  setNpcMessage,
+  setNpcContext,
+  setNpcState
+}: EarTrainingProps) {
+  const [currentChallenge, setCurrentChallenge] = useState<AIChallenge | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'correct' | 'wrong' | 'loading'>('idle');
+  const [feedback, setFeedback] = useState("Pronto para treinar seu ouvido musical?");
+  const [tutorAdvice, setTutorAdvice] = useState<string | null>(null);
+  const [streak, setStreak] = useState(0);
+
+  const loadAIChallenge = async () => {
+    setStatus('loading');
+    setTutorAdvice(null);
+    try {
+      const challenge = await generateChallenge('iniciante', 'melody', 'piano');
+      // The AI returns a JSON string, we need to parse it if it's not already an object
+      const parsed = typeof challenge === 'string' ? JSON.parse(challenge) : challenge;
+      
+      // Map AI response to our local challenge format if needed
+      // For now, let's assume the AI returns something we can use or fallback to pitch
+      const newChallenge: AIChallenge = {
+        type: parsed.type || 'pitch',
+        notes: parsed.notes || (Math.random() > 0.5 ? ['C4'] : ['C5']),
+        correctAnswer: parsed.correctAnswer || (parsed.notes?.[0] === 'C4' ? 'grave' : 'agudo'),
+        options: parsed.options || ['grave', 'agudo'],
+        description: parsed.description || "Identifique se o som é Grave (Elefante) ou Agudo (Passarinho)"
+      };
+      
+      setCurrentChallenge(newChallenge);
+      setFeedback(newChallenge.description);
+      setStatus('idle');
+    } catch (error) {
+      console.error("AI Challenge Error:", error);
+      // Fallback to simple pitch challenge
+      const isGrave = Math.random() > 0.5;
+      setCurrentChallenge({
+        type: 'pitch',
+        notes: [isGrave ? 'C4' : 'C5'],
+        correctAnswer: isGrave ? 'grave' : 'agudo',
+        options: ['grave', 'agudo'],
+        description: "Identifique se o som é Grave (Elefante) ou Agudo (Passarinho)"
+      });
+      setStatus('idle');
     }
-    
-    setTimeout(() => setIsPlaying(false), 1000);
   };
 
-  const checkEar = (choice: 'grave' | 'agudo') => {
-    if (!currentSoundType) {
-      setFeedback("Primeiro, toque o som secreto! 🎵");
-      return;
-    }
+  useEffect(() => {
+    loadAIChallenge();
+  }, []);
 
-    if (choice === currentSoundType) {
-      setFeedback("BOOOA! Você tem ouvido de detetive! +10 XP");
+  const playChallengeSound = () => {
+    if (!currentChallenge || isPlaying) return;
+    
+    setIsPlaying(true);
+    haptics.light();
+    
+    // Play notes in sequence
+    currentChallenge.notes.forEach((note, index) => {
+      setTimeout(() => {
+        audio.playTone(note, '4n');
+        if (index === currentChallenge.notes.length - 1) {
+          setTimeout(() => setIsPlaying(false), 1000);
+        }
+      }, index * 600);
+    });
+  };
+
+  const handleChoice = async (choice: string) => {
+    if (!currentChallenge || status === 'loading') return;
+
+    if (choice === currentChallenge.correctAnswer) {
+      const xpGain = 15 + (streak * 5);
+      const coinGain = 5;
+      
+      setFeedback(`EXCELENTE! +${xpGain} XP`);
       setStatus('correct');
+      setStreak(prev => prev + 1);
       audio.playSuccess();
-      addXP(10);
-      setTimeout(() => setStatus('idle'), 2000);
+      haptics.medium();
+      addXP(xpGain);
+      addCoins(coinGain);
+      
+      setTimeout(() => {
+        loadAIChallenge();
+      }, 2000);
     } else {
-      setFeedback("Quase! Tente ouvir de novo...");
+      setFeedback("Não foi dessa vez. Ouça com atenção...");
       setStatus('wrong');
+      setStreak(0);
       audio.playError();
-      setTimeout(() => setStatus('idle'), 1500);
+      haptics.heavy();
+      
+      // Get AI advice
+      try {
+        const advice = await getTutorAdvice(
+          `O aluno errou um desafio de ${currentChallenge.type}. Ele escolheu "${choice}" mas o correto era "${currentChallenge.correctAnswer}".`,
+          'ear-training'
+        );
+        setTutorAdvice(advice);
+      } catch (e) {
+        setTutorAdvice("Tente fechar os olhos e imaginar o tamanho do animal: elefantes são grandes e pesados (grave), passarinhos são pequenos e leves (agudo).");
+      }
+      
+      setTimeout(() => setStatus('idle'), 3000);
     }
-    setCurrentSoundType(null);
   };
 
   return (
-    <section className="bg-redhouse-bg rounded-[40px] p-8 shadow-2xl border-4 border-redhouse-border relative overflow-hidden text-redhouse-text">
-      {/* HUD Scanline Effect */}
-      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-50 bg-[size:100%_2px,3px_100%] opacity-10"></div>
-
-      <div className="flex items-center gap-4 mb-8 relative z-10">
-        <div className="w-14 h-14 bg-redhouse-card rounded-2xl flex items-center justify-center shadow-lg -rotate-3 border-2 border-redhouse-border">
-          <Ear className="w-8 h-8 text-cyan-500" />
-        </div>
-        <div>
-          <h3 className="text-2xl font-black uppercase italic tracking-tighter">Missão: Detetive Sônico</h3>
-          <p className="text-cyan-500 text-[10px] font-black uppercase tracking-widest">Mapeamento de Frequência</p>
-        </div>
-      </div>
+    <section className="glass-card p-10 relative overflow-hidden">
+      {/* Background Decoration */}
+      <div className="absolute -top-20 -right-20 w-64 h-64 bg-pedagogy-blue/5 rounded-full blur-3xl" />
       
-      <div className="flex flex-col gap-10 items-center relative z-10">
-        <div className="relative">
-          <motion.div 
-            animate={{ 
-              scale: isPlaying ? [1, 1.1, 0.9, 1.05, 1] : 1,
-              backgroundColor: isPlaying ? 'var(--color-redhouse-bg)' : 'var(--color-redhouse-card)'
-            }}
-            className="w-36 h-36 rounded-full flex items-center justify-center text-6xl shadow-[0_0_50px_rgba(0,0,0,0.1)] border-4 border-redhouse-border relative z-10 overflow-hidden"
-          >
-            <span className="relative z-10">🎧</span>
-            {isPlaying && (
-              <motion.div 
-                initial={{ opacity: 0.6, scale: 0.8 }}
-                animate={{ opacity: 0, scale: 2.2 }}
-                transition={{ repeat: Infinity, duration: 0.6 }}
-                className="absolute inset-0 bg-cyan-500/30 rounded-full"
-              />
-            )}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(6,182,212,0.15),transparent_70%)]"></div>
-          </motion.div>
-          <motion.div 
-            animate={isPlaying ? { scale: [1, 1.2, 1] } : {}}
-            className="absolute -bottom-2 -right-2 bg-redhouse-card p-3 rounded-2xl shadow-2xl border-2 border-cyan-500/30 z-20"
-          >
-            <Volume2 className={`w-6 h-6 ${isPlaying ? 'text-cyan-400' : 'text-slate-600'}`} />
-          </motion.div>
+      <div className="relative z-10">
+        <div className="flex items-center justify-between mb-10">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-pedagogy-blue/10 rounded-2xl flex items-center justify-center text-pedagogy-blue border border-pedagogy-blue/20 shadow-[0_0_20px_rgba(59,130,246,0.1)]">
+              <Ear className="w-7 h-7" />
+            </div>
+            <div>
+              <h3 className="text-3xl font-black uppercase italic tracking-tighter text-redhouse-text">Detetive de Ouvido</h3>
+              <div className="flex items-center gap-2">
+                <Brain className="w-3 h-3 text-redhouse-muted" />
+                <span className="text-[10px] font-black text-redhouse-muted uppercase tracking-[0.2em]">AI-Powered Training</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex flex-col items-end">
+            <div className="text-[10px] font-black text-redhouse-muted uppercase tracking-widest mb-1">Streak</div>
+            <div className="flex gap-1">
+              {[...Array(5)].map((_, i) => (
+                <div 
+                  key={i} 
+                  className={`w-2 h-6 rounded-full transition-all duration-500 ${
+                    i < streak ? 'bg-pedagogy-blue shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'bg-white/5'
+                  }`} 
+                />
+              ))}
+            </div>
+          </div>
         </div>
 
-        <motion.button 
-          whileHover={{ scale: 1.02, y: -2 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => { audio.playClick(); playTestSound(); }}
-          disabled={isPlaying}
-          className={`w-full max-w-md py-7 rounded-[2.5rem] font-black uppercase tracking-[0.2em] transition-all shadow-2xl flex items-center justify-center gap-4 border-b-8 active:border-b-0 active:translate-y-2 ${
-            isPlaying 
-              ? 'bg-redhouse-muted/20 text-redhouse-muted border-redhouse-border opacity-50 cursor-wait' 
-              : 'bg-redhouse-card text-redhouse-text border-redhouse-border hover:bg-redhouse-muted/5 shadow-[0_0_30px_rgba(0,0,0,0.1)]'
-          }`}
-        >
-          <Play className={`w-7 h-7 ${isPlaying ? '' : 'fill-cyan-400 text-cyan-400'}`} />
-          {isPlaying ? 'ANALISANDO...' : 'REPRODUZIR SINAL'}
-        </motion.button>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-3xl">
-          <motion.button 
-            whileHover={{ scale: 1.03, y: -5 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => checkEar('grave')}
-            className={`group bg-redhouse-card border-4 p-10 rounded-[4rem] transition-all shadow-xl flex flex-col items-center gap-6 relative overflow-hidden ${
-              status === 'correct' && currentSoundType === 'grave' ? 'border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.2)]' : 
-              status === 'wrong' && currentSoundType === 'grave' ? 'border-rose-500 shadow-[0_0_30px_rgba(244,63,94,0.2)]' : 'border-redhouse-border hover:border-orange-500/50'
-            }`}
-          >
-            <div className="text-8xl group-hover:scale-110 transition-transform drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]">🐘</div>
-            <div className="text-center">
-              <span className="block font-black text-2xl uppercase tracking-tighter italic text-white group-hover:text-orange-500 transition-colors">Grave</span>
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1 block">Low Frequency</span>
-            </div>
-            {status === 'correct' && currentSoundType === 'grave' && (
-              <motion.div initial={{ scale: 0, rotate: -45 }} animate={{ scale: 1, rotate: 0 }} className="absolute top-6 right-6 text-emerald-400">
-                <CheckCircle2 className="w-10 h-10 fill-emerald-500/20" />
-              </motion.div>
-            )}
-          </motion.button>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-8">
+            <div className="glass-card p-8 bg-white/5 border-white/5 relative group">
+              <div className="absolute inset-0 bg-pedagogy-blue/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-[2rem]" />
+              
+              <div className="relative z-10 flex flex-col items-center gap-6">
+                <AnimatePresence mode="wait">
+                  {status === 'loading' ? (
+                    <motion.div 
+                      key="loading"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="flex flex-col items-center gap-4 py-10"
+                    >
+                      <Loader2 className="w-12 h-12 text-pedagogy-blue animate-spin" />
+                      <p className="text-[10px] font-black text-redhouse-muted uppercase tracking-widest animate-pulse">Gerando Desafio AI...</p>
+                    </motion.div>
+                  ) : (
+                    <motion.div 
+                      key="content"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="w-full space-y-8"
+                    >
+                      <div className="flex justify-center">
+                        <motion.button 
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={playChallengeSound}
+                          disabled={isPlaying}
+                          className={`w-32 h-32 rounded-full flex items-center justify-center text-white transition-all shadow-2xl relative ${
+                            isPlaying ? 'bg-pedagogy-blue' : 'bg-redhouse-primary'
+                          }`}
+                        >
+                          {isPlaying ? (
+                            <Volume2 className="w-12 h-12 animate-pulse" />
+                          ) : (
+                            <Play className="w-12 h-12 fill-current ml-2" />
+                          )}
+                          
+                          {isPlaying && (
+                            <motion.div 
+                              initial={{ scale: 1, opacity: 0.5 }}
+                              animate={{ scale: 1.5, opacity: 0 }}
+                              transition={{ repeat: Infinity, duration: 1 }}
+                              className="absolute inset-0 bg-pedagogy-blue rounded-full"
+                            />
+                          )}
+                        </motion.button>
+                      </div>
 
-          <motion.button 
-            whileHover={{ scale: 1.03, y: -5 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => checkEar('agudo')}
-            className={`group bg-redhouse-card border-4 p-10 rounded-[4rem] transition-all shadow-xl flex flex-col items-center gap-6 relative overflow-hidden ${
-              status === 'correct' && currentSoundType === 'agudo' ? 'border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.2)]' : 
-              status === 'wrong' && currentSoundType === 'agudo' ? 'border-rose-500 shadow-[0_0_30px_rgba(244,63,94,0.2)]' : 'border-redhouse-border hover:border-cyan-500/50'
-            }`}
-          >
-            <div className="text-8xl group-hover:scale-110 transition-transform drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]">🐦</div>
-            <div className="text-center">
-              <span className="block font-black text-2xl uppercase tracking-tighter italic text-white group-hover:text-cyan-400 transition-colors">Agudo</span>
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1 block">High Frequency</span>
+                      <div className="h-32 w-full bg-black/20 rounded-2xl border border-white/5 p-4 flex items-center justify-center">
+                        {currentChallenge && (
+                          <StaffDisplay 
+                            notes={status === 'correct' ? currentChallenge.notes : []} 
+                            activeNoteIndex={0}
+                            className="w-full h-full opacity-50"
+                          />
+                        )}
+                        {status !== 'correct' && (
+                          <div className="absolute flex flex-col items-center gap-2">
+                            <Music className="w-8 h-8 text-white/10" />
+                            <span className="text-[10px] font-black text-white/20 uppercase tracking-widest">Aguardando Resposta</span>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
-            {status === 'correct' && currentSoundType === 'agudo' && (
-              <motion.div initial={{ scale: 0, rotate: -45 }} animate={{ scale: 1, rotate: 0 }} className="absolute top-6 right-6 text-emerald-400">
-                <CheckCircle2 className="w-10 h-10 fill-emerald-500/20" />
-              </motion.div>
-            )}
-          </motion.button>
+
+            <div className={`p-6 rounded-2xl border-2 transition-all duration-500 ${
+              status === 'correct' ? 'bg-pedagogy-green/10 border-pedagogy-green/30 text-pedagogy-green' :
+              status === 'wrong' ? 'bg-pedagogy-red/10 border-pedagogy-red/30 text-pedagogy-red' :
+              'bg-white/5 border-white/10 text-redhouse-muted'
+            }`}>
+              <div className="flex items-center gap-3">
+                {status === 'correct' ? <CheckCircle2 className="w-5 h-5" /> : 
+                 status === 'wrong' ? <XCircle className="w-5 h-5" /> : 
+                 <Sparkles className="w-5 h-5" />}
+                <p className="text-sm font-black uppercase italic tracking-tight">{feedback}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 gap-4">
+              {currentChallenge?.options.map((option) => (
+                <motion.button
+                  key={option}
+                  whileHover={{ x: 10, backgroundColor: 'rgba(255,255,255,0.08)' }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleChoice(option)}
+                  disabled={status === 'loading' || isPlaying}
+                  className={`glass-card p-6 flex items-center justify-between group border-white/5 hover:border-pedagogy-blue/30 transition-all ${
+                    status === 'correct' && option === currentChallenge.correctAnswer ? 'border-pedagogy-green/50 bg-pedagogy-green/10' :
+                    status === 'wrong' && option !== currentChallenge.correctAnswer ? 'opacity-50' : ''
+                  }`}
+                >
+                  <div className="flex items-center gap-6">
+                    <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                      {option === 'grave' ? '🐘' : option === 'agudo' ? '🐦' : '🎵'}
+                    </div>
+                    <span className="text-xl font-black uppercase italic tracking-tighter text-redhouse-text">{option}</span>
+                  </div>
+                  <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center group-hover:border-pedagogy-blue/50 transition-colors">
+                    <div className="w-2 h-2 rounded-full bg-white/20 group-hover:bg-pedagogy-blue transition-colors" />
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+
+            <AnimatePresence>
+              {tutorAdvice && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="glass-card p-6 bg-pedagogy-purple/5 border-pedagogy-purple/20"
+                >
+                  <div className="flex gap-4">
+                    <div className="w-10 h-10 bg-pedagogy-purple/20 rounded-full flex items-center justify-center text-pedagogy-purple shrink-0">
+                      <Brain className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black text-pedagogy-purple uppercase tracking-widest mb-1">Dica do Tutor AI</p>
+                      <p className="text-sm font-bold text-redhouse-text leading-relaxed italic">"{tutorAdvice}"</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
-
-        <AnimatePresence mode="wait">
-          <motion.div 
-            key={feedback}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -20, opacity: 0 }}
-            className={`px-10 py-5 rounded-[2rem] font-black uppercase tracking-widest shadow-2xl text-center border-4 text-sm ${
-              status === 'correct' ? 'bg-emerald-600 text-white border-emerald-400 shadow-[0_0_40px_rgba(16,185,129,0.3)]' :
-              status === 'wrong' ? 'bg-rose-600 text-white border-rose-400 shadow-[0_0_40px_rgba(244,63,94,0.3)]' :
-              'bg-redhouse-card text-cyan-400 border-redhouse-border'
-            }`}
-          >
-            {feedback}
-          </motion.div>
-        </AnimatePresence>
       </div>
     </section>
   );

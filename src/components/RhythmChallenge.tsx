@@ -1,13 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Play, Square, Settings, Music, Zap, Volume2, Hand, Footprints, MousePointer2, Ghost } from 'lucide-react';
+import { Play, Square, Settings, Music, Zap, Volume2, Hand, Footprints, MousePointer2, Ghost, Sparkles } from 'lucide-react';
 import { audio } from '../lib/audio';
+import { haptics } from '../lib/haptics';
+import { generateChallenge, getTutorAdvice } from '../services/aiService';
 
 interface RhythmChallengeProps {
   addXP: (amount: number) => void;
+  addCoins: (amount: number) => void;
+  setNpcMessage?: (msg: string) => void;
+  setNpcContext?: (ctx: any) => void;
+  setNpcState?: (state: any) => void;
 }
 
-type ActionType = 'clap' | 'stomp' | 'snap' | 'silence';
+type GameState = 'idle' | 'counting' | 'listening' | 'playing' | 'success' | 'fail';
+
+type ActionType = 'clap' | 'stomp' | 'snap';
 
 interface Beat {
   id: string;
@@ -17,40 +25,71 @@ interface Beat {
 const ACTION_ICONS = {
   clap: <Hand className="w-12 h-12" />,
   stomp: <Footprints className="w-12 h-12" />,
-  snap: <MousePointer2 className="w-12 h-12" />,
-  silence: <Ghost className="w-12 h-12 opacity-20" />
-};
-
-const ACTION_LABELS = {
-  clap: 'PALMA',
-  stomp: 'PÉ',
-  snap: 'ESTALO',
-  silence: 'SILÊNCIO'
+  snap: <MousePointer2 className="w-12 h-12" />
 };
 
 const ACTION_COLORS = {
-  clap: 'var(--color-pedagogy-orange)',
-  stomp: 'var(--color-pedagogy-blue)',
-  snap: 'var(--color-pedagogy-purple)',
-  silence: 'var(--color-redhouse-muted)'
+  clap: '#FF9F1C',
+  stomp: '#2050FF',
+  snap: '#9D4EDD'
 };
 
-export default function RhythmChallenge({ addXP }: RhythmChallengeProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
+const ACTION_LABELS = {
+  clap: 'Palma',
+  stomp: 'Pisada',
+  snap: 'Estalo'
+};
+
+export default function RhythmChallenge({ 
+  addXP, 
+  addCoins,
+  setNpcMessage,
+  setNpcContext,
+  setNpcState
+}: RhythmChallengeProps) {
+  const [gameState, setGameState] = useState<GameState>('idle');
   const [bpm, setBpm] = useState(100);
   const [beats, setBeats] = useState<Beat[]>([]);
   const [currentBeat, setCurrentBeat] = useState(-1);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [isTecherMode, setIsTeacherMode] = useState(false);
+  const [userInputs, setUserInputs] = useState<(ActionType | null)[]>([]);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [tutorAdvice, setTutorAdvice] = useState<string | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const generatePattern = () => {
-    const types: ActionType[] = ['clap', 'stomp', 'snap', 'silence'];
-    const newBeats = Array.from({ length: 8 }, () => ({
+  const generatePattern = async (useAi = false) => {
+    if (useAi) {
+      setIsAiLoading(true);
+      try {
+        const challenge = await generateChallenge('iniciante', 'rhythm', 'percussao');
+        const newBeats = challenge.pattern.map(p => ({
+          id: Math.random().toString(36).substr(2, 9),
+          type: (p.toLowerCase().includes('kick') || p.toLowerCase().includes('stomp')) ? 'stomp' : 
+                (p.toLowerCase().includes('snare') || p.toLowerCase().includes('clap')) ? 'clap' : 'snap'
+        })) as Beat[];
+        setBeats(newBeats);
+        setUserInputs(new Array(newBeats.length).fill(null));
+        setNpcMessage?.(challenge.description);
+      } catch (error) {
+        console.error("AI Pattern generation failed:", error);
+        generateLocalPattern();
+      } finally {
+        setIsAiLoading(false);
+      }
+    } else {
+      generateLocalPattern();
+    }
+  };
+
+  const generateLocalPattern = () => {
+    const types: ActionType[] = ['clap', 'stomp', 'snap'];
+    const newBeats = Array.from({ length: 4 }, () => ({
       id: Math.random().toString(36).substr(2, 9),
       type: types[Math.floor(Math.random() * types.length)]
     }));
     setBeats(newBeats);
+    setUserInputs(new Array(4).fill(null));
   };
 
   useEffect(() => {
@@ -58,12 +97,13 @@ export default function RhythmChallenge({ addXP }: RhythmChallengeProps) {
   }, []);
 
   const startChallenge = () => {
+    setGameState('counting');
     setCountdown(3);
     const countInterval = setInterval(() => {
       setCountdown(prev => {
         if (prev === 1) {
           clearInterval(countInterval);
-          setIsPlaying(true);
+          setGameState('listening');
           return null;
         }
         return prev ? prev - 1 : null;
@@ -72,38 +112,97 @@ export default function RhythmChallenge({ addXP }: RhythmChallengeProps) {
   };
 
   const stopChallenge = () => {
-    setIsPlaying(false);
+    setGameState('idle');
     setCurrentBeat(-1);
     if (timerRef.current) clearInterval(timerRef.current);
-    addXP(50);
+  };
+
+  const handleUserInput = (type: ActionType) => {
+    if (gameState !== 'playing' || currentBeat === -1) return;
+
+    const newUserInputs = [...userInputs];
+    newUserInputs[currentBeat] = type;
+    setUserInputs(newUserInputs);
+
+    // Play the action sound
+    const sound = Object.entries(ACTION_ICONS).find(([key]) => key === type);
+    if (type === 'clap') audio.playTone(440, '16n');
+    else if (type === 'stomp') audio.playTone(220, '16n');
+    else if (type === 'snap') audio.playTone(880, '16n');
+
+    // Check if correct
+    if (type === beats[currentBeat].type) {
+      // Correct!
+      audio.playClick("G3", "32n"); // Subtle correct click
+      haptics.light();
+    } else {
+      // Wrong!
+      audio.playClick("C2", "32n"); // Subtle wrong click
+      haptics.medium();
+    }
   };
 
   useEffect(() => {
-    if (isPlaying) {
+    if (gameState === 'listening' || gameState === 'playing') {
       const beatDuration = (60 / bpm) * 1000;
+      setCurrentBeat(-1);
+      
+      let beatIndex = -1;
       timerRef.current = setInterval(() => {
-        setCurrentBeat(prev => {
-          const next = (prev + 1) % beats.length;
-          const beat = beats[next];
-          
-          if (beat.type === 'clap') audio.playTone(440, '8n');
-          else if (beat.type === 'stomp') audio.playTone(220, '4n');
-          else if (beat.type === 'snap') audio.playTone(880, '8n');
-          
-          return next;
-        });
+        beatIndex++;
+        if (beatIndex >= beats.length) {
+          clearInterval(timerRef.current!);
+          if (gameState === 'listening') {
+            setGameState('playing');
+          } else {
+            // End of playing phase, evaluate
+            const isCorrect = userInputs.every((input, i) => input === beats[i].type);
+            if (isCorrect) {
+              setGameState('success');
+              audio.playSuccess();
+              haptics.medium();
+              addXP(50);
+              setTimeout(() => {
+                generatePattern();
+                setGameState('idle');
+              }, 2000);
+            } else {
+              setGameState('fail');
+              audio.playError();
+              haptics.heavy();
+              
+              // Get AI Advice
+              getTutorAdvice("O aluno errou o desafio rítmico.", "Desafio Rítmico").then(advice => {
+                setTutorAdvice(advice);
+              });
+
+              setTimeout(() => {
+                setUserInputs(new Array(beats.length).fill(null));
+                setGameState('idle');
+                setTutorAdvice(null);
+              }, 4000);
+            }
+          }
+          return;
+        }
+
+        setCurrentBeat(beatIndex);
+        const beat = beats[beatIndex];
+        
+        if (gameState === 'listening') {
+          if (beat.type === 'clap') audio.playTone(440, '16n');
+          else if (beat.type === 'stomp') audio.playTone(220, '16n');
+          else if (beat.type === 'snap') audio.playTone(880, '16n');
+        }
       }, beatDuration);
     } else {
       if (timerRef.current) clearInterval(timerRef.current);
     }
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [isPlaying, bpm, beats]);
+  }, [gameState, bpm, beats]);
 
   return (
-    <section className="bg-slate-900/40 backdrop-blur-xl rounded-[3rem] p-8 border border-white/10 relative overflow-hidden text-white group">
-      {/* HUD Scanline Effect */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] z-50" />
-      <div className="space-y-12 relative z-10">
+    <div className="space-y-12">
       {/* HUD Header */}
       <header className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
         <div className="flex items-center gap-4">
@@ -147,8 +246,18 @@ export default function RhythmChallenge({ addXP }: RhythmChallengeProps) {
             </div>
           </div>
           <button 
-            onClick={generatePattern}
-            className="p-4 rounded-xl hover:bg-white/5 text-redhouse-muted hover:text-redhouse-text transition-all border border-transparent hover:border-white/10"
+            onClick={() => generatePattern(true)}
+            disabled={gameState !== 'idle' || isAiLoading}
+            className="p-4 rounded-xl hover:bg-white/5 text-redhouse-muted hover:text-pedagogy-blue transition-all border border-transparent hover:border-white/10 disabled:opacity-30 flex items-center gap-2"
+            title="Gerar Desafio com IA"
+          >
+            <Sparkles className={`w-6 h-6 ${isAiLoading ? 'animate-spin' : ''}`} />
+            <span className="text-[10px] font-black uppercase hidden md:inline">IA</span>
+          </button>
+          <button 
+            onClick={() => generatePattern(false)}
+            disabled={gameState !== 'idle'}
+            className="p-4 rounded-xl hover:bg-white/5 text-redhouse-muted hover:text-redhouse-text transition-all border border-transparent hover:border-white/10 disabled:opacity-30"
           >
             <Settings className="w-6 h-6" />
           </button>
@@ -156,7 +265,7 @@ export default function RhythmChallenge({ addXP }: RhythmChallengeProps) {
       </header>
 
       {/* Main Console Area */}
-      <main className={`glass-card p-12 relative overflow-hidden min-h-[500px] flex flex-col items-center justify-center border-white/5 backdrop-blur-xl transition-all ${isPlaying ? 'ring-4 ring-pedagogy-orange/20 shadow-[0_0_50px_rgba(255,159,28,0.1)]' : 'shadow-2xl'}`}>
+      <main className={`glass-card p-12 relative overflow-hidden min-h-[500px] flex flex-col items-center justify-center border-white/5 backdrop-blur-xl transition-all ${gameState !== 'idle' ? 'ring-4 ring-pedagogy-orange/20 shadow-[0_0_50px_rgba(255,159,28,0.1)]' : 'shadow-2xl'}`}>
         <div className="absolute top-0 right-0 w-96 h-96 bg-pedagogy-orange/5 blur-[120px] -z-10" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-pedagogy-blue/5 blur-[120px] -z-10" />
 
@@ -188,7 +297,7 @@ export default function RhythmChallenge({ addXP }: RhythmChallengeProps) {
         </AnimatePresence>
 
         {/* Global Flash Effect */}
-        {isPlaying && (
+        {(gameState === 'listening' || gameState === 'playing') && (
           <motion.div 
             key={currentBeat}
             initial={{ opacity: 0.15 }}
@@ -197,7 +306,7 @@ export default function RhythmChallenge({ addXP }: RhythmChallengeProps) {
           />
         )}
 
-        {!isPlaying && countdown === null ? (
+        {gameState === 'idle' ? (
           <motion.button 
             whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255,159,28,0.4)' }}
             whileTap={{ scale: 0.95 }}
@@ -209,6 +318,29 @@ export default function RhythmChallenge({ addXP }: RhythmChallengeProps) {
           </motion.button>
         ) : (
           <div className="w-full space-y-16">
+            <div className="flex flex-col items-center gap-4 mb-8">
+              <div className={`px-8 py-3 rounded-full font-black uppercase italic tracking-widest text-xl shadow-lg border-2 ${
+                gameState === 'listening' ? 'bg-blue-500 border-blue-400 text-white animate-pulse' : 
+                gameState === 'playing' ? 'bg-orange-500 border-orange-400 text-white' :
+                gameState === 'success' ? 'bg-emerald-500 border-emerald-400 text-white' :
+                gameState === 'fail' ? 'bg-red-500 border-red-400 text-white' : 'bg-white/10 text-white/50'
+              }`}>
+                {gameState === 'listening' ? 'OUÇA O LUCCA...' : 
+                 gameState === 'playing' ? 'SUA VEZ! REPITA!' :
+                 gameState === 'success' ? 'PERFEITO!' :
+                 gameState === 'fail' ? 'TENTE DE NOVO!' : ''}
+              </div>
+              {tutorAdvice && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-redhouse-accent text-white px-6 py-2 rounded-2xl font-bold text-sm italic shadow-lg"
+                >
+                  Mestre Corda: "{tutorAdvice}"
+                </motion.div>
+              )}
+            </div>
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {beats.map((beat, i) => (
                 <motion.div 
@@ -221,14 +353,14 @@ export default function RhythmChallenge({ addXP }: RhythmChallengeProps) {
                     currentBeat === i 
                       ? 'border-white bg-white/10 shadow-[0_0_40px_rgba(255,255,255,0.2)]' 
                       : 'border-white/5 bg-white/2 hover:border-white/10'
-                  }`}
+                  } ${userInputs[i] ? (userInputs[i] === beat.type ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-red-500/50 bg-red-500/5') : ''}`}
                 >
                   <div className={`transition-all duration-300 ${currentBeat === i ? 'scale-125 text-white' : 'text-white/40 opacity-40 group-hover:opacity-60'}`} style={{ color: currentBeat === i ? ACTION_COLORS[beat.type] : undefined }}>
-                    {ACTION_ICONS[beat.type]}
+                    {userInputs[i] ? ACTION_ICONS[userInputs[i]!] : ACTION_ICONS[beat.type]}
                   </div>
                   <div className="flex flex-col items-center">
                     <span className={`text-2xl font-black uppercase italic tracking-tighter transition-all ${currentBeat === i ? 'text-white' : 'text-redhouse-muted'}`}>
-                      {ACTION_LABELS[beat.type]}
+                      {userInputs[i] ? ACTION_LABELS[userInputs[i]!] : ACTION_LABELS[beat.type]}
                     </span>
                     <div className={`mt-3 w-12 h-1 rounded-full transition-all ${currentBeat === i ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'}`} style={{ backgroundColor: ACTION_COLORS[beat.type], boxShadow: `0 0 10px ${ACTION_COLORS[beat.type]}` }} />
                   </div>
@@ -238,6 +370,27 @@ export default function RhythmChallenge({ addXP }: RhythmChallengeProps) {
                 </motion.div>
               ))}
             </div>
+
+            {gameState === 'playing' && (
+              <div className="flex justify-center gap-8 mt-12">
+                {(['clap', 'stomp', 'snap'] as ActionType[]).map((type) => (
+                  <motion.button
+                    key={type}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => handleUserInput(type)}
+                    className={`w-24 h-24 rounded-3xl border-4 flex flex-col items-center justify-center gap-2 transition-all shadow-xl bg-white/5 hover:bg-white/10 ${
+                      type === 'clap' ? 'border-pedagogy-orange text-pedagogy-orange' :
+                      type === 'stomp' ? 'border-pedagogy-blue text-pedagogy-blue' :
+                      'border-pedagogy-purple text-pedagogy-purple'
+                    }`}
+                  >
+                    {ACTION_ICONS[type]}
+                    <span className="text-[10px] font-black uppercase">{ACTION_LABELS[type]}</span>
+                  </motion.button>
+                ))}
+              </div>
+            )}
 
             <div className="flex flex-col md:flex-row items-center justify-center gap-10">
               <button 
@@ -309,6 +462,5 @@ export default function RhythmChallenge({ addXP }: RhythmChallengeProps) {
         </div>
       </footer>
     </div>
-</section>
   );
 }
