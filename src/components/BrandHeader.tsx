@@ -4,6 +4,7 @@ import { Music, Zap, Coins } from 'lucide-react';
 interface BrandHeaderProps {
   variant?: 'default' | 'compact' | 'institutional';
   showCampus?: boolean;
+  userRole?: 'dev' | 'teacher' | 'director' | 'student' | 'parent' | 'admin';
   xp?: number;
   coins?: number;
 }
@@ -11,6 +12,7 @@ interface BrandHeaderProps {
 export default function BrandHeader({ 
   variant = 'default', 
   showCampus = true,
+  userRole = 'student',
   xp = 0,
   coins = 0
 }: BrandHeaderProps) {
@@ -55,17 +57,18 @@ export default function BrandHeader({
         </div>
       </div>
 
-      {/* Compact XP/Coins Chips */}
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-pedagogy-blue/10 dark:bg-pedagogy-blue/20 rounded-full border border-pedagogy-blue/20">
-          <Zap className="w-3 h-3 text-pedagogy-blue" />
-          <span className="text-[10px] font-black text-pedagogy-blue uppercase leading-none">{xp} XP</span>
+      {userRole === 'student' && (
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-pedagogy-blue/10 dark:bg-pedagogy-blue/20 rounded-full border border-pedagogy-blue/20">
+            <Zap className="w-3 h-3 text-pedagogy-blue" />
+            <span className="text-[10px] font-black text-pedagogy-blue uppercase leading-none">{xp} XP</span>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-pedagogy-yellow/10 dark:bg-pedagogy-yellow/20 rounded-full border border-pedagogy-yellow/20">
+            <Coins className="w-3 h-3 text-pedagogy-yellow-dark dark:text-pedagogy-yellow" />
+            <span className="text-[10px] font-black text-pedagogy-yellow-dark dark:text-pedagogy-yellow uppercase leading-none">{coins}</span>
+          </div>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-pedagogy-yellow/10 dark:bg-pedagogy-yellow/20 rounded-full border border-pedagogy-yellow/20">
-          <Coins className="w-3 h-3 text-pedagogy-yellow-dark dark:text-pedagogy-yellow" />
-          <span className="text-[10px] font-black text-pedagogy-yellow-dark dark:text-pedagogy-yellow uppercase leading-none">{coins}</span>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -78,7 +78,7 @@ export interface Teacher {
   id: string;
   name: string;
   email: string;
-  role: 'teacher' | 'admin';
+  role: 'dev' | 'teacher' | 'director' | 'student' | 'parent' | 'admin';
   schoolId: string;
   photoURL?: string;
 }
@@ -118,7 +118,7 @@ export interface User {
   uid: string;
   name: string | null;
   email: string | null;
-  role: 'teacher' | 'admin';
+  role: 'dev' | 'teacher' | 'director' | 'student' | 'parent' | 'admin';
   photoURL?: string | null;
 }
 

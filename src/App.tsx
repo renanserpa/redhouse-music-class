@@ -134,9 +134,9 @@ function AppV2() {
   const [state, setState] = useState<AppState>({
     user: {
       uid: 'dev-user-id',
-      name: 'Professor RedHouse',
+      name: 'Dev Admin',
       email: 'serparenan@gmail.com',
-      role: 'admin',
+      role: 'dev',
       photoURL: null
     },
     authStatus: 'authenticated',
@@ -412,52 +412,73 @@ function AppV2() {
       </div>
 
       <nav className="flex-1 p-4 space-y-8 overflow-y-auto no-scrollbar py-8">
-        {navGroups.map((group) => (
-          <div key={group.label} className="space-y-4">
-            {!isSidebarCollapsed && (
-              <h5 className="px-4 text-[8px] font-black text-white/20 uppercase tracking-[0.4em] italic mb-2">{group.label}</h5>
-            )}
-            <div className="space-y-1">
-              {group.items.map((item) => {
-                const isActive = activeTab === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      if (item.id === 'change-version') {
-                        sessionStorage.removeItem('rh_version');
-                        window.location.reload();
-                        return;
-                      }
-                      handleTabChange(item.id as Tab)
-                    }}
-                    title={isSidebarCollapsed ? item.label : undefined}
-                    className={`w-full flex items-center gap-3 p-3 rounded-2xl font-black transition-all relative group/item ${
-                      isActive 
-                        ? 'bg-white/10 text-white shadow-xl shadow-black/20 ring-1 ring-white/10' 
-                        : 'hover:bg-white/4 text-redhouse-muted'
-                    }`}
-                  >
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isActive ? 'bg-white text-slate-900 shadow-[0_0_15px_white]' : 'bg-white/5 group-hover/item:bg-white/10'}`}>
-                      <item.icon className="w-5 h-5" />
-                    </div>
-                    {!isSidebarCollapsed && (
-                      <span className={`text-[11px] uppercase italic tracking-tight transition-all ${isActive ? 'translate-x-1' : 'group-hover/item:translate-x-1'}`}>
-                        {item.label}
-                      </span>
-                    )}
-                    {isActive && (
-                      <motion.div 
-                        layoutId="nav-active" 
-                        className="absolute right-3 w-1.5 h-1.5 bg-redhouse-primary rounded-full shadow-[0_0_10px_var(--color-redhouse-primary)]" 
-                      />
-                    )}
-                  </button>
-                );
-              })}
+        {navGroups.map((group) => {
+          // Filter items within the group based on the user's role
+          const filteredItems = group.items.filter(item => {
+            if (state.user?.role === 'dev') return true;
+            
+            // Basic role-based access rules
+            if (state.user?.role === 'student') {
+              return !['director-dashboard', 'lesson-console', 'classrooms', 'students', 'lesson-report', 'monthly-report'].includes(item.id);
+            }
+            if (state.user?.role === 'teacher') {
+              return !['director-dashboard'].includes(item.id);
+            }
+            if (state.user?.role === 'director') {
+              return !['lesson-console', 'rockstar-journey'].includes(item.id);
+            }
+            return true;
+          });
+
+          if (filteredItems.length === 0) return null;
+
+          return (
+            <div key={group.label} className="space-y-4">
+              {!isSidebarCollapsed && (
+                <h5 className="px-4 text-[8px] font-black text-white/20 uppercase tracking-[0.4em] italic mb-2">{group.label}</h5>
+              )}
+              <div className="space-y-1">
+                {filteredItems.map((item) => {
+                  const isActive = activeTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        if (item.id === 'change-version') {
+                          sessionStorage.removeItem('rh_version');
+                          window.location.reload();
+                          return;
+                        }
+                        handleTabChange(item.id as Tab)
+                      }}
+                      title={isSidebarCollapsed ? item.label : undefined}
+                      className={`w-full flex items-center gap-3 p-3 rounded-2xl font-black transition-all relative group/item ${
+                        isActive 
+                          ? 'bg-white/10 text-white shadow-xl shadow-black/20 ring-1 ring-white/10' 
+                          : 'hover:bg-white/4 text-redhouse-muted'
+                      }`}
+                    >
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isActive ? 'bg-white text-slate-900 shadow-[0_0_15px_white]' : 'bg-white/5 group-hover/item:bg-white/10'}`}>
+                        <item.icon className="w-5 h-5" />
+                      </div>
+                      {!isSidebarCollapsed && (
+                        <span className={`text-[11px] uppercase italic tracking-tight transition-all ${isActive ? 'translate-x-1' : 'group-hover/item:translate-x-1'}`}>
+                          {item.label}
+                        </span>
+                      )}
+                      {isActive && (
+                        <motion.div 
+                          layoutId="nav-active" 
+                          className="absolute right-3 w-1.5 h-1.5 bg-redhouse-primary rounded-full shadow-[0_0_10px_var(--color-redhouse-primary)]" 
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </nav>
 
       <div className="p-6 border-t border-white/5 bg-black/20 backdrop-blur-md">
@@ -489,7 +510,10 @@ function AppV2() {
               <div className="flex-1 overflow-hidden">
                 <h4 className="font-black text-[11px] text-redhouse-text uppercase italic truncate">{state.user?.name || 'Professor RedHouse'}</h4>
                 <p className="text-[8px] font-black text-redhouse-muted uppercase tracking-[0.2em] mt-0.5 truncate">
-                  {state.user?.role === 'admin' ? 'Administrador do Sistema' : 'Professor Regente'}
+                  {state.user?.role === 'dev' ? 'System Developer / Admin' : 
+                   state.user?.role === 'director' ? 'Diretoria Executiva' : 
+                   state.user?.role === 'teacher' ? 'Professor Regente' : 
+                   state.user?.role === 'parent' ? 'Responsável' : 'Estudante Rockstar'}
                 </p>
               </div>
 
@@ -532,7 +556,7 @@ function AppV2() {
 
       {/* Mobile Header */}
       <header className="lg:hidden bg-redhouse-bg/80 backdrop-blur-lg border-b border-white/5 p-6 flex justify-between items-center sticky top-0 z-50">
-        <BrandHeader variant="compact" />
+        <BrandHeader variant="compact" userRole={state.user?.role} xp={state.xp} coins={state.coins} />
         <button onClick={() => setIsSidebarOpen(true)} className="p-2 text-redhouse-muted active:scale-90 transition-transform">
           <Menu className="w-8 h-8" />
         </button>
@@ -568,26 +592,28 @@ function AppV2() {
         ${isSidebarCollapsed ? 'lg:ml-24' : 'lg:ml-80'}
       `}>
         <header className="max-w-7xl mx-auto mb-16 flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-6">
-            <div className="glass-card px-8 py-5 flex items-center gap-6 border-white/5 bg-white/2 hover:border-pedagogy-green/30 transition-all group">
-              <div className="w-14 h-14 bg-pedagogy-green/10 rounded-[20px] flex items-center justify-center text-pedagogy-green border border-pedagogy-green/20 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all">
-                <Trophy className="w-7 h-7" />
+          {state.user?.role === 'student' && (
+            <div className="flex items-center gap-6">
+              <div className="glass-card px-8 py-5 flex items-center gap-6 border-white/5 bg-white/2 hover:border-pedagogy-green/30 transition-all group">
+                <div className="w-14 h-14 bg-pedagogy-green/10 rounded-[20px] flex items-center justify-center text-pedagogy-green border border-pedagogy-green/20 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all">
+                  <Trophy className="w-7 h-7" />
+                </div>
+                <div>
+                  <p className="text-[9px] font-black text-redhouse-muted uppercase tracking-[0.3em] leading-none mb-1.5 italic">Score de Experiência</p>
+                  <p className="text-3xl font-black text-redhouse-text leading-none italic tracking-tighter">{state.xp}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-[9px] font-black text-redhouse-muted uppercase tracking-[0.3em] leading-none mb-1.5 italic">Score de Experiência</p>
-                <p className="text-3xl font-black text-redhouse-text leading-none italic tracking-tighter">{state.xp}</p>
+              <div className="glass-card px-8 py-5 flex items-center gap-6 border-white/5 bg-white/2 hover:border-pedagogy-yellow/30 transition-all group">
+                <div className="w-14 h-14 bg-pedagogy-yellow/10 rounded-[20px] flex items-center justify-center text-pedagogy-yellow border border-pedagogy-yellow/20 group-hover:shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all">
+                  <Coins className="w-7 h-7" />
+                </div>
+                <div>
+                  <p className="text-[9px] font-black text-redhouse-muted uppercase tracking-[0.3em] leading-none mb-1.5 italic">Créditos GMC</p>
+                  <p className="text-3xl font-black text-redhouse-text leading-none italic tracking-tighter">{state.coins}</p>
+                </div>
               </div>
             </div>
-            <div className="glass-card px-8 py-5 flex items-center gap-6 border-white/5 bg-white/2 hover:border-pedagogy-yellow/30 transition-all group">
-              <div className="w-14 h-14 bg-pedagogy-yellow/10 rounded-[20px] flex items-center justify-center text-pedagogy-yellow border border-pedagogy-yellow/20 group-hover:shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all">
-                <Coins className="w-7 h-7" />
-              </div>
-              <div>
-                <p className="text-[9px] font-black text-redhouse-muted uppercase tracking-[0.3em] leading-none mb-1.5 italic">Créditos GMC</p>
-                <p className="text-3xl font-black text-redhouse-text leading-none italic tracking-tighter">{state.coins}</p>
-              </div>
-            </div>
-          </div>
+          )}
 
           <div className="text-center md:text-right flex flex-col items-center md:items-end gap-4">
              <div className="flex items-center md:justify-end gap-3 mb-1">
