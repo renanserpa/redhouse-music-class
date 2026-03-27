@@ -1,8 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -44,21 +39,21 @@ import {
   Moon,
   Sun,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Sparkles
 } from 'lucide-react';
 import { Tab, AppState, User, AuthStatus, LessonReport, MonthlyReport } from './types';
-import { Sparkles } from 'lucide-react';
 import { audio } from './lib/audio';
 import { auth, signInWithGoogle, logout } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { listAllLessonReports, listAllMonthlyReports } from './services/dataService';
 import { useAppContext } from './contexts/AppContext';
 
+// Componentes da V2
 import RockstarJourney from './components/RockstarJourney';
 import TunerModule from './components/TunerModule';
 import Dashboard from './components/Dashboard';
 import AnatomyGame from "./components/games/AnatomyGame";
-import PresentationPage from "./components/PresentationPage";
 import EarTraining from './components/EarTraining';
 import RhythmInvaders from './components/RhythmInvaders';
 import KonnakkolBuilder from './components/KonnakkolBuilder';
@@ -84,6 +79,7 @@ import LessonConsole from './components/LessonConsole';
 import DirectorDashboard from './components/DirectorDashboard';
 import AppSettings from './components/AppSettings';
 import FloatingToolbar from './components/FloatingToolbar';
+import PresentationPage from "./components/PresentationPage";
 
 // Import New Dynamics
 import { ElefantePassarinho } from './components/games/ElefantePassarinho';
@@ -97,7 +93,32 @@ import SussurroOuTrovao from './components/games/SussurroOuTrovao';
 import SpiderWalk from './components/games/SpiderWalk';
 import SongwriterStudio from './components/games/SongwriterStudio';
 
+// Versão Legada e Seletor
+import { AppSelector } from './components/AppSelector';
+import AppV1 from './v1-legacy/App';
+
 export default function App() {
+  const [version, setVersion] = useState<'v1' | 'v2' | null>(() => {
+    return sessionStorage.getItem('rh_version') as 'v1' | 'v2' | null;
+  });
+
+  const handleSelectVersion = (v: 'v1' | 'v2') => {
+    setVersion(v);
+    sessionStorage.setItem('rh_version', v);
+  };
+
+  if (!version) {
+    return <AppSelector onSelect={handleSelectVersion} />;
+  }
+
+  if (version === 'v1') {
+    return <AppV1 />;
+  }
+
+  return <AppV2 />;
+}
+
+function AppV2() {
   const { 
     theme, 
     setTheme, 
@@ -302,6 +323,13 @@ export default function App() {
       label: 'Jogos & Dinâmicas',
       items: [
         { id: 'anatomy', label: 'Anatomia', icon: Guitar, color: 'text-pedagogy-orange' },
+        { id: 'ear-training', label: 'Detetive Sonoro', icon: Ear, color: 'text-pedagogy-blue' },
+        { id: 'echo-game', label: 'Jogo do Eco', icon: Volume2, color: 'text-pedagogy-purple' },
+        { id: 'rhythm-invaders', label: 'Rhythm Invaders', icon: Zap, color: 'text-pedagogy-yellow' },
+        { id: 'rhythm-challenge', label: 'Desafio Rítmico', icon: Activity, color: 'text-pedagogy-red' },
+        { id: 'rhythmic-dictation', label: 'Ditado Rítmico', icon: Printer, color: 'text-pedagogy-blue' },
+        { id: 'musical-wheel', label: 'Roda Musical', icon: RotateCw, color: 'text-pedagogy-orange' },
+        { id: 'konnakkol', label: 'Konnakkol', icon: Mic2, color: 'text-pedagogy-green' },
         { id: 'string-maze', label: 'Labirinto das Cordas', icon: Music, color: 'text-pedagogy-blue' },
         { id: 'elefante-passarinho', label: 'Elefante vs Passarinho', icon: Gamepad2, color: 'text-pedagogy-orange' },
         { id: 'escada-das-cores', label: 'Escada das Cores', icon: Music, color: 'text-pedagogy-green' },
@@ -311,22 +339,8 @@ export default function App() {
         { id: 'danca-mao-direita', label: 'Dança Mão Direita', icon: Gamepad2, color: 'text-pedagogy-purple' },
         { id: 'sussurro-ou-trovao', label: 'Sussurro ou Trovão', icon: Zap, color: 'text-pedagogy-orange' },
         { id: 'spider-walk', label: 'Caminhada da Aranha', icon: Activity, color: 'text-pedagogy-red' },
-        { id: 'ear-training', label: 'Detetive Sonoro', icon: Ear, color: 'text-pedagogy-blue' },
-        { id: 'echo-game', label: 'Jogo do Eco', icon: Volume2, color: 'text-pedagogy-purple' },
-        { id: 'rhythm-invaders', label: 'Rhythm Invaders', icon: Zap, color: 'text-pedagogy-yellow' },
-        { id: 'rhythm-challenge', label: 'Desafio Rítmico', icon: Activity, color: 'text-pedagogy-red' },
-        { id: 'rhythmic-dictation', label: 'Ditado Rítmico', icon: Printer, color: 'text-pedagogy-blue' },
-        { id: 'musical-wheel', label: 'Roda Musical', icon: RotateCw, color: 'text-pedagogy-orange' },
-        { id: 'konnakkol', label: 'Konnakkol', icon: Mic2, color: 'text-pedagogy-green' },
       ]
     },
-      // New Presentation Section
-      {
-        label: 'Apresentação',
-        items: [
-          { id: 'presentation', label: 'Apresentação', icon: BookOpen, color: 'text-emerald-600' }
-        ]
-      },
     {
       label: 'Conteúdo & IA',
       items: [
@@ -336,8 +350,14 @@ export default function App() {
         { id: 'fretboard-follower', label: 'Fretboard Follower', icon: Guitar, color: 'text-pedagogy-blue' },
         { id: 'fretboard-master', label: 'Fretboard Master', icon: Library, color: 'text-pedagogy-red' },
         { id: 'tablature', label: 'Tablaturas Console', icon: FileText, color: 'text-pedagogy-yellow' },
-        { id: 'songwriter-studio', label: 'Songwriter Studio', icon: Sparkles, color: 'text-pedagogy-purple' },
         { id: 'activity-studio', label: 'Estúdio de Atividades', icon: Gamepad2, color: 'text-pedagogy-purple' },
+        { id: 'songwriter-studio', label: 'Songwriter Studio', icon: Sparkles, color: 'text-pedagogy-purple' },
+      ]
+    },
+    {
+      label: 'Apresentação',
+      items: [
+        { id: 'presentation', label: 'Apresentação', icon: BookOpen, color: 'text-emerald-600' }
       ]
     },
     {
@@ -346,6 +366,12 @@ export default function App() {
         { id: 'classrooms', label: 'Turmas', icon: School, color: 'text-pedagogy-red' },
         { id: 'students', label: 'Alunos', icon: Users, color: 'text-pedagogy-blue' },
         { id: 'settings', label: 'Preferências', icon: Settings, color: 'text-pedagogy-purple' },
+      ]
+    },
+    {
+      label: 'Sistema',
+      items: [
+        { id: 'change-version', label: 'Trocar Versão', icon: RotateCw, color: 'text-redhouse-primary' },
       ]
     }
   ];
@@ -397,7 +423,14 @@ export default function App() {
                 return (
                   <button
                     key={item.id}
-                    onClick={() => handleTabChange(item.id as Tab)}
+                    onClick={() => {
+                      if (item.id === 'change-version') {
+                        sessionStorage.removeItem('rh_version');
+                        window.location.reload();
+                        return;
+                      }
+                      handleTabChange(item.id as Tab)
+                    }}
                     title={isSidebarCollapsed ? item.label : undefined}
                     className={`w-full flex items-center gap-3 p-3 rounded-2xl font-black transition-all relative group/item ${
                       isActive 
@@ -596,9 +629,6 @@ export default function App() {
                   setActiveTab={setActiveTab}
                 />
               )}
-              {activeTab === 'presentation' && (
-                <PresentationPage />
-              )}
               {activeTab === 'tuner' && <TunerModule />}
               {activeTab === 'dashboard' && (
                 <Dashboard 
@@ -612,24 +642,17 @@ export default function App() {
                   }}
                 />
               )}
+              {activeTab === 'presentation' && (
+                <PresentationPage />
+              )}
               {activeTab === 'pedagogy-library' && <PedagogyLibrary />}
               {activeTab === 'anatomy' && <AnatomyGame addXP={addXP} />}
-              {activeTab === 'string-maze' && <StringMazeGame addXP={addXP} onComplete={() => addXP(50)} />}
-              {activeTab === 'elefante-passarinho' && <ElefantePassarinho addXP={addXP} onComplete={() => addXP(50)} instrument={state.instrument} />}
-              {activeTab === 'escada-das-cores' && <EscadaDasCores addXP={addXP} onComplete={() => addXP(50)} />}
-              {activeTab === 'grande-relogio' && <GrandeRelogio addXP={addXP} onComplete={() => addXP(50)} instrument={state.instrument} />}
-              {activeTab === 'rhythm-domino' && <RhythmDominoGame addXP={addXP} onComplete={() => addXP(50)} />}
-              {activeTab === 'fabrica-de-acordes' && <FabricaDeAcordes addXP={addXP} onComplete={() => addXP(50)} instrument={state.instrument} />}
-              {activeTab === 'danca-mao-direita' && <DancaMaoDireita addXP={addXP} onComplete={() => addXP(50)} />}
-              {activeTab === 'sussurro-ou-trovao' && <SussurroOuTrovao addXP={addXP} onComplete={() => addXP(50)} />}
-              {activeTab === 'spider-walk' && <SpiderWalk addXP={addXP} onComplete={() => addXP(50)} />}
               {activeTab === 'ear-training' && <EarTraining addXP={addXP} />}
               {activeTab === 'echo-game' && <EchoGame addXP={addXP} />}
               {activeTab === 'chord-lab' && <ChordLab addXP={addXP} />}
               {activeTab === 'rhythm-invaders' && <RhythmInvaders addXP={addXP} />}
               {activeTab === 'konnakkol' && <KonnakkolBuilder addXP={addXP} />}
               {activeTab === 'musical-wheel' && <MusicalWheel addXP={addXP} />}
-              {activeTab === 'songwriter-studio' && <SongwriterStudio addXP={addXP} onComplete={() => addXP(100)} />}
               {activeTab === 'fretboard-follower' && <FretboardFollower addXP={addXP} />}
               {activeTab === 'fretboard-master' && <FretboardMaster addXP={addXP} />}
               {activeTab === 'tablature' && <TablatureModule />}
@@ -665,6 +688,16 @@ export default function App() {
               {activeTab === 'reports-history' && <ReportsHistory state={state} />}
               {activeTab === 'metronome' && <Metronome />}
               {activeTab === 'settings' && <AppSettings />}
+              {activeTab === 'string-maze' && <StringMazeGame addXP={addXP} onComplete={() => addXP(50)} />}
+              {activeTab === 'elefante-passarinho' && <ElefantePassarinho addXP={addXP} onComplete={() => addXP(50)} instrument={state.instrument} />}
+              {activeTab === 'escada-das-cores' && <EscadaDasCores addXP={addXP} onComplete={() => addXP(50)} />}
+              {activeTab === 'grande-relogio' && <GrandeRelogio addXP={addXP} onComplete={() => addXP(50)} instrument={state.instrument} />}
+              {activeTab === 'rhythm-domino' && <RhythmDominoGame addXP={addXP} onComplete={() => addXP(50)} />}
+              {activeTab === 'fabrica-de-acordes' && <FabricaDeAcordes addXP={addXP} onComplete={() => addXP(50)} instrument={state.instrument} />}
+              {activeTab === 'danca-mao-direita' && <DancaMaoDireita addXP={addXP} onComplete={() => addXP(50)} />}
+              {activeTab === 'sussurro-ou-trovao' && <SussurroOuTrovao addXP={addXP} onComplete={() => addXP(50)} />}
+              {activeTab === 'spider-walk' && <SpiderWalk addXP={addXP} onComplete={() => addXP(50)} />}
+              {activeTab === 'songwriter-studio' && <SongwriterStudio addXP={addXP} onComplete={() => addXP(100)} />}
             </motion.div>
           </AnimatePresence>
         </div>

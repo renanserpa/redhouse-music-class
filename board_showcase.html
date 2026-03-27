@@ -18,7 +18,7 @@
             --bg-secondary: #F3F4F6;
             --accent-emerald: #10B981;
             --accent-amber: #F59E0B;
-            --accent-red: #D32F2F;
+            --accent-red: #C21233;
             --accent-blue: #3B82F6;
             --text-main: #1F2937;
             --text-muted: #6B7280;
@@ -108,8 +108,8 @@
             align-items: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
-        .logo { font-size: 1.25rem; font-weight: 800; color: var(--text-main); }
-        .logo span { color: var(--accent-red); }
+        .logo { display: flex; align-items: center; gap: 0.5rem; }
+        .logo img { height: 32px; }
         .nav-links { display: flex; gap: 2rem; }
         .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 600; font-size: 0.9rem; transition: color 0.3s; }
         .nav-links a:hover { color: var(--accent-red); }
@@ -222,7 +222,10 @@
     <div class="scanlines"></div>
 
     <nav>
-        <div class="logo">RedHouse <span>x</span> GCM Maestro</div>
+        <div class="logo">
+            <img src="https://redhouse.com.br/data/files/E3/23/0A/18/E1D589105CDF6589F81849A8/logo_red_house_196x72.webp" alt="RedHouse Logo">
+            <span style="font-size: 0.8rem; opacity: 0.5; font-weight: 400; margin-left: 0.5rem; border-left: 1px solid #ddd; padding-left: 0.5rem;">x Red House Music Lab</span>
+        </div>
         <div class="nav-links">
             <a href="#pitch">A Proposta</a>
             <a href="#showcase">Showcase Completo</a>
@@ -398,9 +401,11 @@
     </main>
 
     <footer>
-        <div class="logo">RedHouse <span>x</span> GCM Maestro</div>
+        <div class="logo" style="justify-content: center; margin-bottom: 2rem;">
+            <img src="https://redhouse.com.br/data/files/E3/23/0A/18/E1D589105CDF6589F81849A8/logo_red_house_196x72.webp" alt="RedHouse Logo" style="height: 40px; opacity: 0.6;">
+        </div>
         <p style="color: var(--text-muted); margin: 2rem 0;">"O objetivo final não é formar instrumentistas, mas sim seres humanos cultos."</p>
-        <div style="font-size: 0.8rem; color: #9CA3AF;">© 2026 GCM Maestro | White Label Solutions para Escolas de Elite</div>
+        <div style="font-size: 0.8rem; color: #9CA3AF;">© 2026 RedHouse International School | White Label Solutions by GCM Maestro</div>
     </footer>
 
     <script>
