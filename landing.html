@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RedHouse Music Class | Music Support & Ensemble Program</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Anton&family=Cormorant+Garamond:ital,wght@1,300;1,600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --redhouse-primary: #FF0000;
+            --redhouse-dark: #050505;
+            --redhouse-accent: #F27D26;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--redhouse-dark);
+            color: white;
+            overflow-x: hidden;
+        }
+        .font-display { font-family: 'Anton', sans-serif; }
+        .font-serif { font-family: 'Cormorant Garamond', serif; }
+        .text-redhouse { color: var(--redhouse-primary); }
+        .bg-redhouse { background-color: var(--redhouse-primary); }
+        
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 30%, #3a1510 0%, transparent 70%),
+                        radial-gradient(circle at 10% 80%, rgba(255, 0, 0, 0.1) 0%, transparent 50%);
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .card-brutal {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .card-brutal:hover {
+            border-color: var(--redhouse-primary);
+            background: rgba(255, 0, 0, 0.05);
+            transform: translateY(-5px);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .animate-float { animation: float 5s ease-in-out infinite; }
+        
+        .marquee {
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+            animation: marquee 30s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 200px);
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .bento-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 px-6 py-4 flex justify-between items-center glass mt-4 mx-auto max-w-7xl rounded-full left-0 right-0">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 bg-redhouse rounded-xl flex items-center justify-center rotate-3">
+                <i data-lucide="music" class="text-white w-6 h-6"></i>
+            </div>
+            <div class="flex flex-col -space-y-1">
+                <span class="font-display text-2xl tracking-tighter uppercase italic">RedHouse <span class="text-redhouse">Music</span></span>
+                <span class="text-[8px] font-bold uppercase tracking-[0.3em] opacity-50">Class & Ensemble Program</span>
+            </div>
+        </div>
+        <div class="hidden lg:flex gap-8 font-semibold text-[10px] uppercase tracking-widest opacity-70">
+            <a href="#proposta" class="hover:text-redhouse transition-colors">Proposta</a>
+            <a href="#ecossistema" class="hover:text-redhouse transition-colors">Ecossistema</a>
+            <a href="#metodo" class="hover:text-redhouse transition-colors">Método</a>
+            <a href="#instrumentos" class="hover:text-redhouse transition-colors">Instrumentos</a>
+        </div>
+        <a href="/" class="bg-redhouse px-6 py-2 rounded-full font-bold text-[10px] uppercase tracking-widest hover:scale-105 transition-transform shadow-lg shadow-redhouse/20">
+            Acessar Plataforma
+        </a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex flex-col items-center justify-center pt-32 hero-gradient overflow-hidden">
+        <div class="container mx-auto px-6 text-center z-10">
+            <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full border border-white/10 bg-white/5 text-white/60 text-[9px] font-bold uppercase tracking-[0.3em] mb-8">
+                <span class="w-2 h-2 bg-redhouse rounded-full animate-ping"></span> Music Support & Ensemble Development
+            </div>
+            
+            <h1 class="font-display text-[10vw] md:text-[8rem] leading-[0.8] uppercase italic tracking-tighter mb-6">
+                A NOVA ERA DA <br> <span class="text-redhouse">EDUCAÇÃO MUSICAL</span>
+            </h1>
+            
+            <p class="max-w-3xl mx-auto text-lg md:text-2xl text-gray-400 font-serif italic mb-12 leading-relaxed">
+                "Não é possível sustentar uma prática performática consistente sem uma base acessível e bem construída."
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-6 justify-center items-center">
+                <a href="/" class="group relative px-12 py-6 bg-redhouse rounded-2xl font-black text-xl uppercase italic tracking-tighter overflow-hidden transition-all hover:scale-105 shadow-2xl shadow-redhouse/30">
+                    <span class="relative z-10 flex items-center gap-3">
+                        Explorar Ecossistema <i data-lucide="arrow-right" class="w-6 h-6"></i>
+                    </span>
+                </a>
+                <div class="text-left border-l border-white/10 pl-6">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Idealizado por</p>
+                    <p class="text-sm font-bold text-white uppercase tracking-tighter italic">Prof. Matheus & RedHouse School</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Instruments -->
+        <div class="absolute top-1/4 left-10 animate-float opacity-10 hidden lg:block">
+            <i data-lucide="guitar" class="w-32 h-32 text-redhouse"></i>
+        </div>
+        <div class="absolute bottom-1/4 right-10 animate-float opacity-10 hidden lg:block" style="animation-delay: -2s;">
+            <i data-lucide="mic-2" class="w-24 h-24 text-redhouse"></i>
+        </div>
+    </section>
+
+    <!-- Marquee -->
+    <div class="bg-redhouse py-3 overflow-hidden border-y-2 border-black rotate-[-0.5deg] z-20 relative">
+        <div class="marquee flex gap-12 items-center">
+            <span class="font-display text-2xl uppercase italic text-black">Violão</span>
+            <span class="font-display text-2xl uppercase italic text-black">Ukulele</span>
+            <span class="font-display text-2xl uppercase italic text-black">Piano</span>
+            <span class="font-display text-2xl uppercase italic text-black">Bateria</span>
+            <span class="font-display text-2xl uppercase italic text-black">Voz</span>
+            <span class="font-display text-2xl uppercase italic text-black">Musicalização</span>
+            <span class="font-display text-2xl uppercase italic text-black">Ensemble</span>
+            <!-- Repeat -->
+            <span class="font-display text-2xl uppercase italic text-black">Violão</span>
+            <span class="font-display text-2xl uppercase italic text-black">Ukulele</span>
+            <span class="font-display text-2xl uppercase italic text-black">Piano</span>
+            <span class="font-display text-2xl uppercase italic text-black">Bateria</span>
+            <span class="font-display text-2xl uppercase italic text-black">Voz</span>
+            <span class="font-display text-2xl uppercase italic text-black">Musicalização</span>
+            <span class="font-display text-2xl uppercase italic text-black">Ensemble</span>
+        </div>
+    </div>
+
+    <!-- Proposta Pedagógica Section -->
+    <section id="proposta" class="py-32 bg-black">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                <div>
+                    <h2 class="font-display text-6xl md:text-8xl uppercase italic tracking-tighter leading-none mb-8">
+                        A PROPOSTA <br> <span class="text-redhouse">PEDAGÓGICA</span>
+                    </h2>
+                    <p class="text-gray-400 text-xl font-medium mb-12 leading-relaxed">
+                        Integramos a construção de base sólida (Music Support) com a prática coletiva vibrante (Ensemble), tornando o aprendizado acessível, progressivo e significativo.
+                    </p>
+                    
+                    <div class="space-y-8">
+                        <div class="flex gap-6">
+                            <div class="w-12 h-12 shrink-0 bg-redhouse/10 rounded-xl flex items-center justify-center text-redhouse">
+                                <i data-lucide="layers" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg uppercase tracking-widest mb-2">Acessibilidade</h4>
+                                <p class="text-gray-500 text-sm">Garantimos que todos os alunos participem, independentemente do nível inicial de conhecimento.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div class="w-12 h-12 shrink-0 bg-redhouse/10 rounded-xl flex items-center justify-center text-redhouse">
+                                <i data-lucide="trending-up" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg uppercase tracking-widest mb-2">Progressividade</h4>
+                                <p class="text-gray-500 text-sm">Organização em etapas claras, respeitando o ritmo individual de cada estudante.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div class="w-12 h-12 shrink-0 bg-redhouse/10 rounded-xl flex items-center justify-center text-redhouse">
+                                <i data-lucide="zap" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg uppercase tracking-widest mb-2">Aprendizagem pela Prática</h4>
+                                <p class="text-gray-500 text-sm">Conexão constante entre teoria e vivência musical, evitando conteúdos abstratos desconectados.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="glass p-10 rounded-[3rem] border-l-4 border-redhouse">
+                        <h3 class="font-display text-4xl uppercase italic mb-4">3.1 Music Support</h3>
+                        <p class="text-gray-400 mb-6">Desenvolvimento da Base Musical. Foco em percepção sonora, ritmo, melodia e conceitos fundamentais.</p>
+                        <ul class="grid grid-cols-2 gap-3 text-[10px] font-bold uppercase tracking-widest text-white/60">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-3 h-3 text-redhouse"></i> Grave x Agudo</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-3 h-3 text-redhouse"></i> Pulsação</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-3 h-3 text-redhouse"></i> Leitura Rítmica</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-3 h-3 text-redhouse"></i> Timbre</li>
+                        </ul>
+                    </div>
+                    <div class="glass p-10 rounded-[3rem] border-l-4 border-white">
+                        <h3 class="font-display text-4xl uppercase italic mb-4">3.2 Ensemble</h3>
+                        <p class="text-gray-400 mb-6">Prática Musical e Performance. Aplicação dos conhecimentos em grupos rítmicos, melódicos e vocais.</p>
+                        <ul class="grid grid-cols-2 gap-3 text-[10px] font-bold uppercase tracking-widest text-white/60">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-3 h-3 text-white"></i> Escuta Coletiva</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-3 h-3 text-white"></i> Coordenação</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-3 h-3 text-white"></i> Repertório Adaptado</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-3 h-3 text-white"></i> Apresentações</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ecossistema Section -->
+    <section id="ecossistema" class="py-32 bg-zinc-950">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-20">
+                <h2 class="font-display text-6xl md:text-8xl uppercase italic tracking-tighter mb-4">INTEGRAÇÃO <span class="text-redhouse">TOTAL</span></h2>
+                <p class="text-gray-400 max-w-2xl mx-auto font-medium">O RedHouse Music Class conecta todos os pilares da escola em uma única experiência de dados e arte.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Professor -->
+                <div class="glass p-12 rounded-[4rem] card-brutal">
+                    <div class="w-16 h-16 bg-redhouse/20 rounded-2xl flex items-center justify-center mb-8">
+                        <i data-lucide="users" class="text-redhouse w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-display text-3xl uppercase italic mb-6">Para o Professor</h3>
+                    <ul class="space-y-4 text-gray-400 text-sm font-medium">
+                        <li class="flex items-start gap-3"><i data-lucide="arrow-right" class="w-4 h-4 text-redhouse mt-1"></i> Padronização de base para turmas heterogêneas.</li>
+                        <li class="flex items-start gap-3"><i data-lucide="arrow-right" class="w-4 h-4 text-redhouse mt-1"></i> Acompanhamento de progresso individual em tempo real.</li>
+                        <li class="flex items-start gap-3"><i data-lucide="arrow-right" class="w-4 h-4 text-redhouse mt-1"></i> Ferramentas de apoio para aulas bilíngues.</li>
+                    </ul>
+                </div>
+
+                <!-- Aluno -->
+                <div class="glass p-12 rounded-[4rem] card-brutal border-redhouse/30">
+                    <div class="w-16 h-16 bg-redhouse rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-redhouse/20">
+                        <i data-lucide="star" class="text-white w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-display text-3xl uppercase italic mb-6">Para o Aluno</h3>
+                    <ul class="space-y-4 text-gray-400 text-sm font-medium">
+                        <li class="flex items-start gap-3"><i data-lucide="arrow-right" class="w-4 h-4 text-redhouse mt-1"></i> Jornada gamificada com XP, moedas e conquistas.</li>
+                        <li class="flex items-start gap-3"><i data-lucide="arrow-right" class="w-4 h-4 text-redhouse mt-1"></i> Feedback imediato do Mestre Corda.</li>
+                        <li class="flex items-start gap-3"><i data-lucide="arrow-right" class="w-4 h-4 text-redhouse mt-1"></i> Maior confiança e engajamento nas práticas coletivas.</li>
+                    </ul>
+                </div>
+
+                <!-- Diretoria -->
+                <div class="glass p-12 rounded-[4rem] card-brutal">
+                    <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8">
+                        <i data-lucide="bar-chart-3" class="text-white w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-display text-3xl uppercase italic mb-6">Para a Diretoria</h3>
+                    <ul class="space-y-4 text-gray-400 text-sm font-medium">
+                        <li class="flex items-start gap-3"><i data-lucide="arrow-right" class="w-4 h-4 text-redhouse mt-1"></i> Fortalecimento do programa de música da escola.</li>
+                        <li class="flex items-start gap-3"><i data-lucide="arrow-right" class="w-4 h-4 text-redhouse mt-1"></i> Apresentações e eventos mais consistentes.</li>
+                        <li class="flex items-start gap-3"><i data-lucide="arrow-right" class="w-4 h-4 text-redhouse mt-1"></i> Integração clara entre currículo e prática performática.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Multinstrumental Section -->
+    <section id="instrumentos" class="py-32 bg-black overflow-hidden">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-20 gap-8">
+                <div class="max-w-xl">
+                    <h2 class="font-display text-6xl md:text-8xl uppercase italic tracking-tighter leading-none mb-6">UM HUB <br> <span class="text-redhouse">UNIVERSAL</span></h2>
+                    <p class="text-gray-400 text-xl font-medium">O RedHouse Music Class foi desenhado para suportar todos os instrumentos oferecidos pela escola.</p>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4 max-w-md">
+                    <div class="px-6 py-3 glass rounded-full font-bold text-[10px] uppercase tracking-widest border-redhouse/20">Violão</div>
+                    <div class="px-6 py-3 glass rounded-full font-bold text-[10px] uppercase tracking-widest border-redhouse/20">Ukulele</div>
+                    <div class="px-6 py-3 glass rounded-full font-bold text-[10px] uppercase tracking-widest border-redhouse/20">Piano</div>
+                    <div class="px-6 py-3 glass rounded-full font-bold text-[10px] uppercase tracking-widest border-redhouse/20">Bateria</div>
+                    <div class="px-6 py-3 glass rounded-full font-bold text-[10px] uppercase tracking-widest border-redhouse/20">Voz</div>
+                    <div class="px-6 py-3 glass rounded-full font-bold text-[10px] uppercase tracking-widest border-redhouse/20">Musicalização</div>
+                </div>
+            </div>
+
+            <div class="bento-grid">
+                <div class="glass rounded-[3rem] col-span-2 row-span-2 p-12 flex flex-col justify-end relative overflow-hidden group">
+                    <img src="https://picsum.photos/seed/piano/800/600" class="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-700" alt="Piano">
+                    <div class="relative z-10">
+                        <h4 class="font-display text-5xl uppercase italic mb-4">Teclas & Harmonia</h4>
+                        <p class="text-gray-400 max-w-sm">Visualização de escalas e acordes aplicada ao Piano e Teclado.</p>
+                    </div>
+                </div>
+                <div class="glass rounded-[3rem] col-span-2 p-10 flex items-center gap-8 group">
+                    <div class="w-24 h-24 bg-redhouse/10 rounded-full flex items-center justify-center shrink-0 group-hover:rotate-12 transition-transform">
+                        <i data-lucide="drum" class="text-redhouse w-12 h-12"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-display text-3xl uppercase italic mb-2">Ritmo & Bateria</h4>
+                        <p class="text-gray-500 text-sm">Treinamento de subdivisão e coordenação motora para percussionistas.</p>
+                    </div>
+                </div>
+                <div class="glass rounded-[3rem] p-10 flex flex-col justify-center items-center text-center group">
+                    <i data-lucide="mic-2" class="text-redhouse w-12 h-12 mb-4 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-display text-2xl uppercase italic">Voz</h4>
+                </div>
+                <div class="glass rounded-[3rem] p-10 flex flex-col justify-center items-center text-center group">
+                    <i data-lucide="baby" class="text-redhouse w-12 h-12 mb-4 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-display text-2xl uppercase italic">Infantil</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resultados Section -->
+    <section class="py-32 bg-zinc-950">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto glass p-16 rounded-[4rem] text-center border-redhouse/20">
+                <h2 class="font-display text-5xl md:text-7xl uppercase italic tracking-tighter mb-12">RESULTADOS <span class="text-redhouse">ESPERADOS</span></h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div>
+                        <div class="text-4xl font-display text-redhouse mb-2">Confiança</div>
+                        <p class="text-[10px] font-bold uppercase tracking-widest opacity-50">Maior segurança musical</p>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-display text-redhouse mb-2">Retenção</div>
+                        <p class="text-[10px] font-bold uppercase tracking-widest opacity-50">Melhor compreensão</p>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-display text-redhouse mb-2">Engajamento</div>
+                        <p class="text-[10px] font-bold uppercase tracking-widest opacity-50">Participação ativa</p>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-display text-redhouse mb-2">Performance</div>
+                        <p class="text-[10px] font-bold uppercase tracking-widest opacity-50">Excelência artística</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-32 relative overflow-hidden">
+        <div class="absolute inset-0 bg-redhouse opacity-5"></div>
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <h2 class="font-display text-7xl md:text-[10rem] uppercase italic tracking-tighter mb-12 leading-none">VAMOS <br> <span class="text-redhouse">TOCAR?</span></h2>
+            <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-16 font-serif italic">
+                "O foco é o processo — não apenas o produto final."
+            </p>
+            <a href="/" class="inline-block bg-white text-black px-16 py-8 rounded-3xl font-black text-3xl uppercase italic tracking-tighter hover:bg-redhouse hover:text-white transition-all hover:scale-105 shadow-2xl">
+                Acessar Plataforma RedHouse
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 border-t border-white/10 glass">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-12">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-redhouse rounded-lg flex items-center justify-center rotate-3">
+                        <i data-lucide="music" class="text-white w-4 h-4"></i>
+                    </div>
+                    <span class="font-display text-xl tracking-tighter uppercase italic">RedHouse <span class="text-redhouse">Music</span></span>
+                </div>
+                <p class="text-[10px] font-bold uppercase tracking-[0.3em] opacity-30">
+                    © 2026 RedHouse School. Music Support & Ensemble Program.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

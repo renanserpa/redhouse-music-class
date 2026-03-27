@@ -1,0 +1,315 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RedHouse School & GCM Maestro | Apresentação Executiva</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-red: #D32F2F;
+            --dark-red: #9A0007;
+            --primary-blue: #1976D2;
+            --dark-bg: #121212;
+            --card-bg: #1E1E1E;
+            --text-light: #F5F5F5;
+            --text-muted: #B0B0B0;
+            --accent-gold: #FFC107;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Typography */
+        h1, h2, h3 { font-weight: 800; }
+        h1 { font-size: 3.5rem; margin-bottom: 1rem; line-height: 1.2; }
+        h2 { font-size: 2.5rem; margin-bottom: 2rem; color: var(--text-light); text-align: center; }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary-red); }
+        p { margin-bottom: 1rem; color: var(--text-muted); font-size: 1.1rem; }
+        .highlight { color: var(--primary-red); }
+        .citation { font-size: 0.8rem; color: var(--accent-gold); vertical-align: super; }
+
+        /* Navbar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background-color: rgba(18, 18, 18, 0.95);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #333;
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 1px; }
+        .logo span { color: var(--primary-red); }
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--primary-red); }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 10%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(211,47,47,0.2) 100%);
+            margin-top: 60px;
+        }
+        .hero-subtitle {
+            font-size: 1.5rem;
+            max-width: 800px;
+            margin-bottom: 2rem;
+        }
+        .btn {
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+            background-color: var(--primary-red);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(211, 47, 47, 0.4);
+        }
+
+        /* Sections */
+        section { padding: 6rem 10%; }
+        .bg-alt { background-color: #181818; }
+
+        /* Grid Layouts */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 15px;
+            border-top: 4px solid var(--primary-red);
+            transition: transform 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .card:hover { transform: translateY(-10px); }
+        .card i { font-size: 3rem; color: var(--primary-red); margin-bottom: 1.5rem; }
+
+        /* Dashboard Preview */
+        .dashboard-preview {
+            background-color: #222;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            border: 1px solid #333;
+        }
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #333;
+        }
+        .metric { text-align: center; }
+        .metric-value { font-size: 2.5rem; font-weight: 800; color: var(--primary-red); }
+        .metric-label { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem;
+            background-color: #0A0A0A;
+            border-top: 1px solid #222;
+        }
+
+        /* Responsive */
+        @media(max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">RedHouse <span>x</span> GCM Maestro</div>
+        <div class="nav-links">
+            <a href="#proposta">A Proposta</a>
+            <a href="#gestao">Gestão Escolar</a>
+            <a href="#pedagogia">Music Support & Ensemble</a>
+            <a href="#diferencial">O Diferencial</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>Ecossistema de <span class="highlight">Inteligência Musical</span></h1>
+        <p class="hero-subtitle">
+            Não contrate apenas aulas extracurriculares. Transforme a RedHouse School com uma plataforma "Phygital" que traduz o aprendizado musical em dados pedagógicos concretos <span class="citation"></span>.
+        </p>
+        <a href="#gestao" class="btn">Explorar o Painel da Diretoria</a>
+    </header>
+
+    <section id="proposta" class="bg-alt">
+        <h2>Por que o GCM Maestro na RedHouse?</h2>
+        <p style="text-align: center; max-width: 800px; margin: 0 auto 3rem;">
+            O ensino musical em contexto bilíngue pode interferir na assimilação de conceitos abstratos <span class="citation"></span>. O GCM Maestro resolve essa lacuna conectando teoria e prática por meio de gamificação e da Metodologia Serpa-Híbrida.
+        </p>
+        
+        <div class="grid-3">
+            <div class="card">
+                <i class="fa-solid fa-chart-pie"></i>
+                <h3>School Connect</h3>
+                <p>Módulo exclusivo para escolas bilíngues/internacionais. Traduz dados musicais complexos em dados pedagógicos compreensíveis para a coordenação (Foco, Disciplina, Motricidade) <span class="citation"></span>.</p>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-users-viewfinder"></i>
+                <h3>Alinhamento Curricular</h3>
+                <p>O Dashboard demonstra claramente como a aula atende às exigências da BNCC e IB/PYP: Repertório Cultural (Comp. 3), Comunicação (Comp. 4) e Autoconhecimento (Comp. 8) <span class="citation"></span>.</p>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-shield-halved"></i>
+                <h3>Retenção de Alunos</h3>
+                <p>A arquitetura gamificada reduz a taxa de desistência nos primeiros 3 meses (o 'Vale da Morte' do ensino musical). O algoritmo alerta a diretoria antes do cancelamento (Churn Prevention) <span class="citation"></span>.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="gestao">
+        <div class="grid-2">
+            <div>
+                <h2>Módulo de Gestão Escolar <br><span class="highlight">(Control Tower)</span></h2>
+                <p>O GCM Maestro oferece uma visão gerencial completa para o "School Manager" e o "Coordinator". A diretoria gerencia métricas, professores e alunos da sua unidade com total segurança <span class="citation"></span>.</p>
+                <ul style="list-style: none; margin-top: 2rem;">
+                    <li style="margin-bottom: 1.5rem;">
+                        <i class="fa-solid fa-envelope-circle-check highlight" style="margin-right: 10px;"></i>
+                        <strong>Weekly Digest:</strong> Relatório automatizado semanal para a coordenação com resumos de presença e temas trabalhados <span class="citation"></span>.
+                    </li>
+                    <li style="margin-bottom: 1.5rem;">
+                        <i class="fa-solid fa-folder-open highlight" style="margin-right: 10px;"></i>
+                        <strong>Evidence Locker:</strong> Galeria automática com as melhores gravações da turma, prontas para o marketing da escola <span class="citation"></span>.
+                    </li>
+                    <li style="margin-bottom: 1.5rem;">
+                        <i class="fa-solid fa-palette highlight" style="margin-right: 10px;"></i>
+                        <strong>White Label RedHouse:</strong> O aplicativo é customizado com o logotipo da escola, cores institucionais e mensagem de boas-vindas para os pais <span class="citation"></span>.
+                    </li>
+                </ul>
+            </div>
+            <div class="dashboard-preview">
+                <h3 style="color: #fff; border-bottom: 1px solid #444; padding-bottom: 1rem; margin-bottom: 2rem;">
+                    <i class="fa-solid fa-desktop" style="color: var(--primary-red);"></i> Visão da Diretoria
+                </h3>
+                <div class="metric-row">
+                    <div class="metric">
+                        <div class="metric-value">98%</div>
+                        <div class="metric-label">Assiduidade</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" style="color: #4CAF50;">Alto</div>
+                        <div class="metric-label">Engajamento</div>
+                    </div>
+                </div>
+                <div style="background: rgba(211, 47, 47, 0.1); padding: 1rem; border-left: 4px solid var(--primary-red); border-radius: 4px;">
+                    <strong><i class="fa-solid fa-triangle-exclamation"></i> Alerta de Churn:</strong> 
+                    <span style="color: #ccc; font-size: 0.9rem;">Aluno Lucca S. com 2 faltas consecutivas e baixo XP na semana. Sugestão: Contatar família <span class="citation"></span>.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pedagogia" class="bg-alt">
+        <h2>Music Support & <span class="highlight">Ensemble Development</span></h2>
+        <p style="text-align: center; max-width: 800px; margin: 0 auto 3rem;">
+            Nossa solução atende diretamente ao programa da RedHouse, dividindo o ensino em construção de base sólida e prática musical performática inclusiva <span class="citation"></span>.
+        </p>
+
+        <div class="grid-2">
+            <div class="card">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <h3>1. Music Support (A Base)</h3>
+                <p>Utilizamos a <strong>Metodologia Serpa-Híbrida</strong>, fundindo Suzuki (Audiation: "ouvir antes de ler"), Dalcroze (o corpo como metrônomo), Orff e Kodály <span class="citation"></span>.</p>
+                <p>O sistema "Maestro Colors" associa notas a cores, permitindo que crianças em fase de pré-alfabetização participem ativamente sem depender de partituras complexas <span class="citation"></span>.</p>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-music"></i>
+                <h3>2. Ensemble Inclusivo (A Prática)</h3>
+                <p>Viabilizamos a orquestra escolar dividida por funções (rítmico, melódico, vocal) usando o <strong>Modo TV</strong> do GCM Maestro <span class="citation"></span>.</p>
+                <p>A TV projeta a "Tablatura Gigante" e o "Groove Circle", transformando-se em um membro da banda e eliminando a dispersão em aulas coletivas <span class="citation"></span>.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="diferencial">
+        <div class="grid-2" style="grid-template-columns: 1fr 1.5fr;">
+            <div>
+                <h2>Tecnologia <br><span class="highlight">Phygital</span></h2>
+                <p>A união do mundo físico (instrumentos, corpo) com o digital (IA, Gamificação) cria uma "Sala de Aula Aumentada" <span class="citation"></span>.</p>
+                <a href="mailto:diretoria@redhouse.com" class="btn" style="display: inline-block; margin-top: 1rem;">Agendar Demonstração</a>
+            </div>
+            <div class="grid-2" style="gap: 2rem;">
+                <div class="card" style="padding: 1.5rem;">
+                    <i class="fa-solid fa-gamepad" style="font-size: 2rem;"></i>
+                    <h3 style="font-size: 1.2rem;">Gamificação Flow</h3>
+                    <p style="font-size: 0.95rem;">Detector de frustração via IA que reduz o andamento (BPM) automaticamente se o aluno errar repetidamente <span class="citation"></span>.</p>
+                </div>
+                <div class="card" style="padding: 1.5rem;">
+                    <i class="fa-solid fa-hands-asl-interpreting" style="font-size: 2rem;"></i>
+                    <h3 style="font-size: 1.2rem;">Inclusão (PECS)</h3>
+                    <p style="font-size: 0.95rem;">Pranchas de comunicação visual para neurodiversidade, permitindo expressão sem barreiras verbais <span class="citation"></span>.</p>
+                </div>
+                <div class="card" style="padding: 1.5rem;">
+                    <i class="fa-solid fa-book-open-reader" style="font-size: 2rem;"></i>
+                    <h3 style="font-size: 1.2rem;">Parent University</h3>
+                    <p style="font-size: 0.95rem;">Pais recebem insights no App: "Seu filho treinou coordenação. O Método Suzuki chama isso de 'Educação do Talento'" <span class="citation"></span>.</p>
+                </div>
+                <div class="card" style="padding: 1.5rem;">
+                    <i class="fa-solid fa-bullhorn" style="font-size: 2rem;"></i>
+                    <h3 style="font-size: 1.2rem;">Posicionamento B2B</h3>
+                    <p style="font-size: 0.95rem;">A RedHouse justifica suas mensalidades oferecendo inovação tecnológica educacional de ponta <span class="citation"></span>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="logo" style="margin-bottom: 1rem;">RedHouse <span>x</span> GCM Maestro</div>
+        <p>"O objetivo final não é formar instrumentistas, mas sim seres humanos cultos." <span class="citation"></span></p>
+        <p style="font-size: 0.8rem; margin-top: 2rem; color: #666;">© 2026 GCM Maestro White Label Solutions. Desenvolvido para Diretoria RedHouse School.</p>
+    </footer>
+
+</body>
+</html>
+```

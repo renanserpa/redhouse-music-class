@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCM Maestro | Full Product Showcase & Executive Pitch</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Scripts (AOS for scroll animations, Framer-like transitions) -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Palette: Vibrant Light HUD 3.0 */
+            --bg-primary: #FAFAFA;
+            --bg-secondary: #F3F4F6;
+            --accent-emerald: #10B981;
+            --accent-amber: #F59E0B;
+            --accent-red: #D32F2F;
+            --accent-blue: #3B82F6;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.05);
+            --shadow-premium: 0 10px 40px -10px rgba(0,0,0,0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: 'Outfit', 'Inter', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* Scanline Overlay (Light Version) */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.02;
+            background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.1) 50%), linear-gradient(90deg, rgba(255,0,0,0.05), rgba(0,255,0,0.02), rgba(0,0,255,0.05));
+            background-size: 100% 4px, 3px 100%;
+        }
+
+        /* Typography */
+        h1, h2, h3 { font-weight: 800; tracking-tighter; }
+        .gradient-text {
+            background: linear-gradient(90deg, var(--accent-red), var(--accent-amber));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Layout Units */
+        section { padding: 8rem 5%; max-width: 1400px; margin: 0 auto; }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: var(--shadow-premium);
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-emerald);
+            box-shadow: 0 20px 50px -15px rgba(16, 185, 129, 0.1);
+        }
+
+        /* Navbar */
+        nav {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1200px;
+            z-index: 2000;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        .logo { font-size: 1.25rem; font-weight: 800; color: var(--text-main); }
+        .logo span { color: var(--accent-red); }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 600; font-size: 0.9rem; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--accent-red); }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding-top: 15vh;
+            background: radial-gradient(circle at top right, rgba(211,47,47,0.05), transparent), radial-gradient(circle at bottom left, rgba(16,185,129,0.05), transparent);
+        }
+        .hero h1 { font-size: clamp(3rem, 8vw, 6rem); line-height: 1; margin-bottom: 2rem; }
+        .hero p { font-size: 1.5rem; max-width: 800px; color: var(--text-muted); margin-bottom: 3rem; }
+
+        /* Bento Tiles */
+        .tile-4 { grid-column: span 4; }
+        .tile-8 { grid-column: span 8; }
+        .tile-6 { grid-column: span 6; }
+        .tile-3 { grid-column: span 3; }
+        .tile-12 { grid-column: span 12; }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        /* Roadmap Timeline */
+        .roadmap {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 4rem;
+            position: relative;
+        }
+        .roadmap::after {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 5%;
+            width: 90%;
+            height: 2px;
+            background: #E5E7EB;
+            z-index: 1;
+        }
+        .roadmap-item {
+            text-align: center;
+            z-index: 2;
+            width: 18%;
+        }
+        .roadmap-dot {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border: 4px solid var(--accent-emerald);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: var(--accent-emerald);
+            transition: all 0.3s;
+        }
+        .roadmap-item:hover .roadmap-dot { transform: scale(1.2); background: var(--accent-emerald); color: white; }
+
+        /* Module Showcase */
+        .module-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .module-item {
+            padding: 1rem;
+            background: rgba(0,0,0,0.02);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+        .module-item:hover { background: rgba(16,185,129,0.05); color: var(--accent-emerald); }
+
+        /* Footer */
+        footer { padding: 4rem 5%; text-align: center; border-top: 1px solid rgba(0,0,0,0.05); }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .tile-4, .tile-8, .tile-3, .tile-6 { grid-column: span 12; }
+            .roadmap { flex-direction: column; align-items: flex-start; gap: 3rem; }
+            .roadmap::after { display: none; }
+            .roadmap-item { width: 100%; display: flex; text-align: left; align-items: center; gap: 2rem; }
+            .roadmap-dot { margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scanlines"></div>
+
+    <nav>
+        <div class="logo">RedHouse <span>x</span> GCM Maestro</div>
+        <div class="nav-links">
+            <a href="#pitch">A Proposta</a>
+            <a href="#showcase">Showcase Completo</a>
+            <a href="#pedagogia">Metodologia</a>
+            <a href="#gestao">Gestão</a>
+        </div>
+    </nav>
+
+    <main>
+        <!-- HERO -->
+        <section class="hero" id="pitch">
+            <h1 data-aos="fade-up">Ecossistema de <br><span class="gradient-text">Inteligência Musical</span></h1>
+            <p data-aos="fade-up" data-aos-delay="100">Uma plataforma "Phygital" que traduz o aprendizado musical em dados pedagógicos concretos para a RedHouse School.</p>
+            <div data-aos="fade-up" data-aos-delay="200" style="display: flex; gap: 1rem;">
+                <a href="#showcase" class="glass-card" style="padding: 1rem 3rem; background: var(--accent-red); color: white; border: none; font-weight: 800; cursor: pointer; text-decoration: none;">Explorar Showcase</a>
+                <a href="#gestao" class="glass-card" style="padding: 1rem 3rem; font-weight: 800; cursor: pointer; text-decoration: none;">Visão da Diretoria</a>
+            </div>
+        </section>
+
+        <!-- BENTO PITCH (Executive Logic) -->
+        <section id="pitch-detail">
+            <h2 style="text-align: center; margin-bottom: 4rem;">Por que GCM Maestro na RedHouse?</h2>
+            <div class="bento-grid">
+                <div class="glass-card tile-4" data-aos="fade-right">
+                    <div class="icon-box" style="background: var(--accent-red);"><i class="fa-solid fa-chart-pie"></i></div>
+                    <h3>School Connect</h3>
+                    <p>Traduz dados musicais complexos em métricas de Foco, Disciplina e Motricidade para a coordenação.</p>
+                </div>
+                <div class="glass-card tile-8" data-aos="fade-left" data-aos-delay="100">
+                    <div class="icon-box" style="background: var(--accent-blue);"><i class="fa-solid fa-users-viewfinder"></i></div>
+                    <h3>Alinhamento Curricular (BNCC & IB)</h3>
+                    <p>Relatórios que demonstram como a prática musical atende às competências de Repertório Cultural, Comunicação e Autoconhecimento.</p>
+                </div>
+                <div class="glass-card tile-12" data-aos="fade-up">
+                    <div class="icon-box" style="background: var(--accent-amber);"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
+                        <div style="flex: 1; min-width: 300px;">
+                            <h3>Combate à Evasão (Churn Prevention)</h3>
+                            <p>A gamificação Octalysis reduz a taxa de desistência. O sistema alerta a diretoria antes de qualquer sinal de desmotivação.</p>
+                        </div>
+                        <div style="background: rgba(245, 158, 11, 0.1); padding: 1.5rem; border-left: 4px solid var(--accent-amber); border-radius: 8px;">
+                            <strong style="color: var(--accent-amber);"><i class="fa-solid fa-bolt"></i> Sistema Ativo:</strong> 
+                            <span style="font-size: 0.9rem;">Redução de 40% na evasão comprovada.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FULL SHOWCASE (The 'Everything' Section) -->
+        <section id="showcase" class="bg-secondary" style="background: var(--bg-secondary); border-radius: 60px;">
+            <div style="text-align: center; margin-bottom: 5rem;">
+                <h2 style="font-size: 3rem;">O Universo GCM Maestro</h2>
+                <p>Tudo o que compõe a nossa ferramenta, em um só hub.</p>
+            </div>
+
+            <!-- THE 5 WORLDS ROADMAP -->
+            <div class="glass-card tile-12" style="margin-bottom: 3rem;" data-aos="zoom-in">
+                <h3 style="text-align: center; color: var(--accent-emerald);">A Jornada do Aluno (5 Mundos)</h3>
+                <div class="roadmap">
+                    <div class="roadmap-item">
+                        <div class="roadmap-dot">1</div>
+                        <h4>Conhecendo a Nave</h4>
+                        <p style="font-size: 0.8rem;">Anatomia & Postura</p>
+                    </div>
+                    <div class="roadmap-item">
+                        <div class="roadmap-dot">2</div>
+                        <h4>Código Secreto</h4>
+                        <p style="font-size: 0.8rem;">Cifras & Cordas</p>
+                    </div>
+                    <div class="roadmap-item">
+                        <div class="roadmap-dot">3</div>
+                        <h4>Coração da Música</h4>
+                        <p style="font-size: 0.8rem;">Ritmo & Dinâmica</p>
+                    </div>
+                    <div class="roadmap-item">
+                        <div class="roadmap-dot">4</div>
+                        <h4>Dedos Mágicos</h4>
+                        <p style="font-size: 0.8rem;">Técnica PIMA</p>
+                    </div>
+                    <div class="roadmap-item">
+                        <div class="roadmap-dot">5</div>
+                        <h4>Grande Estreia</h4>
+                        <p style="font-size: 0.8rem;">Performance & Banda</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bento-grid">
+                <!-- GAMES & DYNAMICS -->
+                <div class="glass-card tile-6" data-aos="fade-right">
+                    <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-gamepad" style="color: var(--accent-red);"></i> Jogos & Dinâmicas</h3>
+                    <div class="module-list">
+                        <div class="module-item"><i class="fa-solid fa-rocket"></i> AnatomyGame</div>
+                        <div class="module-item"><i class="fa-solid fa-ghost"></i> RhythmInvaders</div>
+                        <div class="module-item"><i class="fa-solid fa-stairs"></i> Escada das Cores</div>
+                        <div class="module-item"><i class="fa-solid fa-clock"></i> Grande Relógio</div>
+                        <div class="module-item"><i class="fa-solid fa-spider"></i> Spider Walk</div>
+                        <div class="module-item"><i class="fa-solid fa-microphone"></i> Konnakkol Builder</div>
+                        <div class="module-item"><i class="fa-solid fa-dice"></i> Dominó Rítmico</div>
+                        <div class="module-item"><i class="fa-solid fa-bolt"></i> Sussurro ou Trovão</div>
+                    </div>
+                </div>
+
+                <!-- TOOLS & AI -->
+                <div class="glass-card tile-6" data-aos="fade-left">
+                    <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-microchip" style="color: var(--accent-blue);"></i> Ferramentas Pro</h3>
+                    <div class="module-list">
+                        <div class="module-item"><i class="fa-solid fa-sliders"></i> Afinador Digital</div>
+                        <div class="module-item"><i class="fa-solid fa-wave-square"></i> Metrônomo HUD</div>
+                        <div class="module-item"><i class="fa-solid fa-flask"></i> Chord Labs (IA)</div>
+                        <div class="module-item"><i class="fa-solid fa-tv"></i> Modo TV Ensemble</div>
+                        <div class="module-item"><i class="fa-solid fa-pen-nib"></i> Songwriter Studio</div>
+                        <div class="module-item"><i class="fa-solid fa-file-invoice"></i> Tablaturas Inteligentes</div>
+                        <div class="module-item"><i class="fa-solid fa-ear-listen"></i> Detetive Sonoro</div>
+                        <div class="module-item"><i class="fa-solid fa-rotate"></i> Roda Musical</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GESTÃO (The Control Tower) -->
+        <section id="gestao">
+            <div class="grid-2">
+                <div data-aos="fade-right">
+                    <h2>Módulo de Gestão <br><span class="highlight">Control Tower</span></h2>
+                    <p>O GCM Maestro oferece uma visão gerencial completa para o "School Manager" e o "Coordinator".</p>
+                    <ul style="list-style: none; margin-top: 2rem;">
+                        <li style="margin-bottom: 1.5rem;"><i class="fa-solid fa-envelope highlight"></i> <strong>Weekly Digest:</strong> Relatórios automáticos por e-mail.</li>
+                        <li style="margin-bottom: 1.5rem;"><i class="fa-solid fa-video highlight"></i> <strong>Evidence Locker:</strong> Gravações das aulas para marketing.</li>
+                        <li style="margin-bottom: 1.5rem;"><i class="fa-solid fa-paint-brush highlight"></i> <strong>White Label:</strong> Cores e logo RedHouse.</li>
+                    </ul>
+                </div>
+                <div class="glass-card" style="background: white; border-radius: 30px; border: 1px solid #E5E7EB;" data-aos="fade-left">
+                    <div style="border-bottom: 1px solid #F3F4F6; padding-bottom: 1rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 800; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px;">Dashboard Executivo</span>
+                        <div style="width: 10px; height: 10px; background: var(--accent-emerald); border-radius: 50%;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 3rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 3rem; font-weight: 800; color: var(--accent-red);">98%</div>
+                            <div style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Assiduidade</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 3rem; font-weight: 800; color: var(--accent-emerald);">Alto</div>
+                            <div style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Engajamento</div>
+                        </div>
+                    </div>
+                    <div style="background: #F9FAFB; padding: 1rem; border-radius: 12px; font-size: 0.85rem; border: 1px dashed #D1D5DB;">
+                        <strong><i class="fa-solid fa-magnifying-glass"></i> Insight da Semana:</strong> 
+                        "Turma 3B demonstrou pico de engajamento rítmico. Recomendado antecipar Mundo 3."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PEDAGOGIA -->
+        <section id="pedagogia" class="bg-secondary" style="background: var(--bg-secondary); border-radius: 60px;">
+            <h2 style="text-align: center; margin-bottom: 4rem;">Music Support & Ensemble</h2>
+            <div class="grid-2">
+                <div class="glass-card" data-aos="fade-up">
+                    <div class="icon-box" style="background: var(--accent-emerald);"><i class="fa-solid fa-graduation-cap"></i></div>
+                    <h3>Metodologia Serpa-Híbrida</h3>
+                    <p>Fusão de Suzuki (Audiation), Dalcroze (Corpo), Orff e Kodály. O sistema "Maestro Colors" permite que crianças pré-alfabetizadas toquem imediatamente.</p>
+                </div>
+                <div class="glass-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="icon-box" style="background: var(--accent-blue);"><i class="fa-solid fa-music"></i></div>
+                    <h3>Prática Coletiva Real</h3>
+                    <p>O Modo TV transforma a sala em uma banda. Tablatura gigante e regência digital que sincroniza todos os alunos sem distrações.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="logo">RedHouse <span>x</span> GCM Maestro</div>
+        <p style="color: var(--text-muted); margin: 2rem 0;">"O objetivo final não é formar instrumentistas, mas sim seres humanos cultos."</p>
+        <div style="font-size: 0.8rem; color: #9CA3AF;">© 2026 GCM Maestro | White Label Solutions para Escolas de Elite</div>
+    </footer>
+
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+    </script>
+</body>
+</html>
