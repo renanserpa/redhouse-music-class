@@ -55,12 +55,12 @@ export default function EarTraining({ addXP }: EarTrainingProps) {
   };
 
   return (
-    <section className="bg-slate-950 rounded-[40px] p-8 shadow-2xl border-4 border-slate-900 relative overflow-hidden text-white">
+    <section className="bg-redhouse-bg rounded-[40px] p-8 shadow-2xl border-4 border-redhouse-border relative overflow-hidden text-redhouse-text">
       {/* HUD Scanline Effect */}
       <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-50 bg-[size:100%_2px,3px_100%] opacity-10"></div>
 
       <div className="flex items-center gap-4 mb-8 relative z-10">
-        <div className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg -rotate-3 border-2 border-slate-700">
+        <div className="w-14 h-14 bg-redhouse-card rounded-2xl flex items-center justify-center shadow-lg -rotate-3 border-2 border-redhouse-border">
           <Ear className="w-8 h-8 text-cyan-500" />
         </div>
         <div>
@@ -74,9 +74,9 @@ export default function EarTraining({ addXP }: EarTrainingProps) {
           <motion.div 
             animate={{ 
               scale: isPlaying ? [1, 1.1, 0.9, 1.05, 1] : 1,
-              backgroundColor: isPlaying ? '#0f172a' : '#1e293b'
+              backgroundColor: isPlaying ? 'var(--color-redhouse-bg)' : 'var(--color-redhouse-card)'
             }}
-            className="w-36 h-36 rounded-full flex items-center justify-center text-6xl shadow-[0_0_50px_rgba(0,0,0,0.5)] border-4 border-slate-800 relative z-10 overflow-hidden"
+            className="w-36 h-36 rounded-full flex items-center justify-center text-6xl shadow-[0_0_50px_rgba(0,0,0,0.1)] border-4 border-redhouse-border relative z-10 overflow-hidden"
           >
             <span className="relative z-10">🎧</span>
             {isPlaying && (
@@ -91,7 +91,7 @@ export default function EarTraining({ addXP }: EarTrainingProps) {
           </motion.div>
           <motion.div 
             animate={isPlaying ? { scale: [1, 1.2, 1] } : {}}
-            className="absolute -bottom-2 -right-2 bg-slate-900 p-3 rounded-2xl shadow-2xl border-2 border-cyan-500/30 z-20"
+            className="absolute -bottom-2 -right-2 bg-redhouse-card p-3 rounded-2xl shadow-2xl border-2 border-cyan-500/30 z-20"
           >
             <Volume2 className={`w-6 h-6 ${isPlaying ? 'text-cyan-400' : 'text-slate-600'}`} />
           </motion.div>
@@ -104,8 +104,8 @@ export default function EarTraining({ addXP }: EarTrainingProps) {
           disabled={isPlaying}
           className={`w-full max-w-md py-7 rounded-[2.5rem] font-black uppercase tracking-[0.2em] transition-all shadow-2xl flex items-center justify-center gap-4 border-b-8 active:border-b-0 active:translate-y-2 ${
             isPlaying 
-              ? 'bg-slate-800 text-slate-500 border-slate-950 opacity-50 cursor-wait' 
-              : 'bg-slate-900 text-white border-slate-950 hover:bg-slate-800 shadow-[0_0_30px_rgba(0,0,0,0.3)]'
+              ? 'bg-redhouse-muted/20 text-redhouse-muted border-redhouse-border opacity-50 cursor-wait' 
+              : 'bg-redhouse-card text-redhouse-text border-redhouse-border hover:bg-redhouse-muted/5 shadow-[0_0_30px_rgba(0,0,0,0.1)]'
           }`}
         >
           <Play className={`w-7 h-7 ${isPlaying ? '' : 'fill-cyan-400 text-cyan-400'}`} />
@@ -117,9 +117,9 @@ export default function EarTraining({ addXP }: EarTrainingProps) {
             whileHover={{ scale: 1.03, y: -5 }}
             whileTap={{ scale: 0.97 }}
             onClick={() => checkEar('grave')}
-            className={`group bg-slate-900 border-4 p-10 rounded-[4rem] transition-all shadow-xl flex flex-col items-center gap-6 relative overflow-hidden ${
+            className={`group bg-redhouse-card border-4 p-10 rounded-[4rem] transition-all shadow-xl flex flex-col items-center gap-6 relative overflow-hidden ${
               status === 'correct' && currentSoundType === 'grave' ? 'border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.2)]' : 
-              status === 'wrong' && currentSoundType === 'grave' ? 'border-rose-500 shadow-[0_0_30px_rgba(244,63,94,0.2)]' : 'border-slate-800 hover:border-orange-500/50'
+              status === 'wrong' && currentSoundType === 'grave' ? 'border-rose-500 shadow-[0_0_30px_rgba(244,63,94,0.2)]' : 'border-redhouse-border hover:border-orange-500/50'
             }`}
           >
             <div className="text-8xl group-hover:scale-110 transition-transform drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]">🐘</div>
@@ -138,9 +138,9 @@ export default function EarTraining({ addXP }: EarTrainingProps) {
             whileHover={{ scale: 1.03, y: -5 }}
             whileTap={{ scale: 0.97 }}
             onClick={() => checkEar('agudo')}
-            className={`group bg-slate-900 border-4 p-10 rounded-[4rem] transition-all shadow-xl flex flex-col items-center gap-6 relative overflow-hidden ${
+            className={`group bg-redhouse-card border-4 p-10 rounded-[4rem] transition-all shadow-xl flex flex-col items-center gap-6 relative overflow-hidden ${
               status === 'correct' && currentSoundType === 'agudo' ? 'border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.2)]' : 
-              status === 'wrong' && currentSoundType === 'agudo' ? 'border-rose-500 shadow-[0_0_30px_rgba(244,63,94,0.2)]' : 'border-slate-800 hover:border-cyan-500/50'
+              status === 'wrong' && currentSoundType === 'agudo' ? 'border-rose-500 shadow-[0_0_30px_rgba(244,63,94,0.2)]' : 'border-redhouse-border hover:border-cyan-500/50'
             }`}
           >
             <div className="text-8xl group-hover:scale-110 transition-transform drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]">🐦</div>
@@ -165,7 +165,7 @@ export default function EarTraining({ addXP }: EarTrainingProps) {
             className={`px-10 py-5 rounded-[2rem] font-black uppercase tracking-widest shadow-2xl text-center border-4 text-sm ${
               status === 'correct' ? 'bg-emerald-600 text-white border-emerald-400 shadow-[0_0_40px_rgba(16,185,129,0.3)]' :
               status === 'wrong' ? 'bg-rose-600 text-white border-rose-400 shadow-[0_0_40px_rgba(244,63,94,0.3)]' :
-              'bg-slate-900 text-cyan-400 border-slate-800'
+              'bg-redhouse-card text-cyan-400 border-redhouse-border'
             }`}
           >
             {feedback}

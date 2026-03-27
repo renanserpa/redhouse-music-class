@@ -138,11 +138,11 @@ export default function Dashboard({
                 <select 
                   value={selectedClassroom}
                   onChange={(e) => setSelectedClassroom(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl font-bold text-redhouse-text outline-none focus:ring-2 focus:ring-redhouse-primary/50 transition-all appearance-none"
+                  className="w-full bg-redhouse-card border border-redhouse-border p-4 rounded-2xl font-bold text-redhouse-text outline-none focus:ring-2 focus:ring-redhouse-primary/50 transition-all appearance-none"
                 >
-                  <option value="all" className="bg-slate-900">Todas as Turmas</option>
+                  <option value="all">Todas as Turmas</option>
                   {classrooms.map(cls => (
-                    <option key={cls.id} value={cls.id} className="bg-slate-900">{cls.name}</option>
+                    <option key={cls.id} value={cls.id}>{cls.name}</option>
                   ))}
                 </select>
               </div>
@@ -152,19 +152,19 @@ export default function Dashboard({
                 <select 
                   disabled={selectedClassroom === 'all'}
                   onChange={(e) => onSelectContext(selectedClassroom, e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl font-bold text-redhouse-text outline-none focus:ring-2 focus:ring-redhouse-primary/50 transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-redhouse-card border border-redhouse-border p-4 rounded-2xl font-bold text-redhouse-text outline-none focus:ring-2 focus:ring-redhouse-primary/50 transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <option value="" className="bg-slate-900">Selecione um Aluno</option>
+                  <option value="">Selecione um Aluno</option>
                   {students.map(std => (
-                    <option key={std.id} value={std.id} className="bg-slate-900">{std.name}</option>
+                    <option key={std.id} value={std.id}>{std.name}</option>
                   ))}
                 </select>
               </div>
             </div>
 
-            <div className="pt-6 border-t border-white/5">
+            <div className="pt-6 border-t border-redhouse-border">
               <div className="flex items-center gap-4 text-redhouse-muted">
-                <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-redhouse-muted/10 rounded-xl flex items-center justify-center">
                   <Star className="w-5 h-5" />
                 </div>
                 <p className="text-xs font-bold leading-relaxed">
@@ -196,7 +196,7 @@ export default function Dashboard({
                     <span className="text-[10px] font-black text-redhouse-muted uppercase tracking-widest">{stat.label}</span>
                     <span className="text-xs font-black text-redhouse-text">{stat.value}%</span>
                   </div>
-                  <div className="h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                  <div className="h-2 bg-redhouse-muted/10 rounded-full overflow-hidden border border-redhouse-border">
                     <motion.div 
                       initial={{ width: 0 }}
                       animate={{ width: `${stat.value}%` }}
@@ -207,7 +207,7 @@ export default function Dashboard({
               ))}
             </div>
 
-            <div className="pt-6 border-t border-white/5 flex items-center justify-between">
+            <div className="pt-6 border-t border-redhouse-border flex items-center justify-between">
               <div className="flex flex-col">
                 <span className="text-[10px] font-black text-redhouse-muted uppercase tracking-widest">Nível Atual</span>
                 <span className="text-xl font-black text-redhouse-text italic">Intermediário</span>
@@ -254,7 +254,7 @@ export default function Dashboard({
                 {report.studentId ? 'Relatório Individual' : 'Relatório de Turma'}
               </h4>
               <p className="text-[10px] font-bold text-redhouse-muted uppercase tracking-widest mb-4">Relatório de Aula</p>
-              <div className="flex items-center justify-between pt-4 border-t border-white/5">
+              <div className="flex items-center justify-between pt-4 border-t border-redhouse-border">
                 <span className="text-[9px] font-black text-pedagogy-green uppercase tracking-widest">Status: Enviado</span>
                 <ChevronRight className="w-4 h-4 text-redhouse-muted" />
               </div>

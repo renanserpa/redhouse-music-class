@@ -298,7 +298,7 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 p-4 md:p-8 pb-32 relative overflow-hidden">
+    <div className="min-h-screen bg-redhouse-bg p-4 md:p-8 pb-32 relative overflow-hidden">
       {/* HUD Scanline Effect */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] z-50" />
       
@@ -314,17 +314,17 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
               </div>
               <span className="text-xs font-black text-redhouse-primary uppercase italic tracking-widest">Caminho da Glória</span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-black text-white uppercase italic tracking-tighter leading-none drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]">
-              Jornada do <span className="text-redhouse-primary drop-shadow-[0_0_20px_rgba(239,68,68,0.4)]">Rockstar</span>
+            <h1 className="text-5xl md:text-7xl font-black text-redhouse-text uppercase italic tracking-tighter leading-none">
+              Jornada do <span className="text-redhouse-primary">Rockstar</span>
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 font-bold uppercase italic text-sm max-w-md leading-tight">
+            <p className="text-redhouse-muted font-bold uppercase italic text-sm max-w-md leading-tight">
               Domine o violão passo a passo e conquiste os palcos do mundo! 🎸✨
             </p>
           </div>
 
           <div className="flex flex-col items-end gap-4">
             {/* Instrument Toggle */}
-            <div className="bg-black/40 backdrop-blur-xl p-1.5 rounded-2xl border border-white/10 flex gap-1 shadow-2xl">
+            <div className="bg-redhouse-card backdrop-blur-xl p-1.5 rounded-2xl border border-redhouse-border flex gap-1 shadow-2xl">
               <button
                 onClick={() => {
                   audio.playClick();
@@ -358,12 +358,12 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
                 whileHover={{ y: -5, scale: 1.02 }}
                 className="bg-black/40 backdrop-blur-xl border-b-4 border-redhouse-primary rounded-3xl p-5 flex items-center gap-4 shadow-2xl min-w-[160px] border-x border-t border-white/5"
               >
-                <div className="w-12 h-12 bg-redhouse-primary/20 rounded-2xl flex items-center justify-center border border-redhouse-primary/30">
-                  <Zap className="w-7 h-7 text-redhouse-primary drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+                <div className="w-12 h-12 bg-redhouse-primary/10 rounded-2xl flex items-center justify-center border border-redhouse-primary/20">
+                  <Zap className="w-7 h-7 text-redhouse-primary" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-white/30 uppercase italic tracking-widest leading-none mb-1">XP_TOTAL</p>
-                  <p className="text-3xl font-black text-white italic tracking-tighter">{state.xp}</p>
+                  <p className="text-[10px] font-black text-redhouse-muted uppercase italic tracking-widest leading-none mb-1">XP_TOTAL</p>
+                  <p className="text-3xl font-black text-redhouse-text italic tracking-tighter">{state.xp}</p>
                 </div>
               </motion.div>
 
@@ -371,11 +371,11 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
                 whileHover={{ y: -5, scale: 1.02 }}
                 className="bg-black/40 backdrop-blur-xl border-b-4 border-yellow-500 rounded-3xl p-5 flex items-center gap-4 shadow-2xl min-w-[160px] border-x border-t border-white/5"
               >
-                <div className="w-12 h-12 bg-yellow-500/20 rounded-2xl flex items-center justify-center border border-yellow-500/30">
-                  <Coins className="w-7 h-7 text-yellow-500 drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
+                <div className="w-12 h-12 bg-yellow-500/10 rounded-2xl flex items-center justify-center border border-yellow-500/20">
+                  <Coins className="w-7 h-7 text-yellow-500" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-white/30 uppercase italic tracking-widest leading-none mb-1">CREDITS</p>
+                  <p className="text-[10px] font-black text-redhouse-muted uppercase italic tracking-widest leading-none mb-1">CREDITS</p>
                   <p className="text-3xl font-black text-yellow-500 italic tracking-tighter">{state.coins}</p>
                 </div>
               </motion.div>
@@ -408,7 +408,7 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
                   px-8 py-6 rounded-[1.8rem] border-b-8 transition-all flex flex-col items-center gap-2 min-w-[180px] backdrop-blur-md
                   ${isSelected
                     ? 'bg-redhouse-primary border-redhouse-primary/50 text-white shadow-2xl shadow-redhouse-primary/40'
-                    : 'bg-black/40 border-white/10 text-white/40 hover:border-white/20 hover:text-white'
+                    : 'bg-redhouse-card border-redhouse-border text-redhouse-muted hover:border-redhouse-primary/30 hover:text-redhouse-text'
                   }
                 `}>
                   <span className="text-4xl mb-1 group-hover:animate-bounce">{world.icon}</span>

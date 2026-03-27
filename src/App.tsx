@@ -98,18 +98,14 @@ import { AppSelector } from './components/AppSelector';
 import AppV1 from './v1-legacy/App';
 
 export default function App() {
-  const [version, setVersion] = useState<'v1' | 'v2' | null>(() => {
-    return sessionStorage.getItem('rh_version') as 'v1' | 'v2' | null;
+  const [version, setVersion] = useState<'v1' | 'v2'>(() => {
+    return (sessionStorage.getItem('rh_version') as 'v1' | 'v2') || 'v2';
   });
 
   const handleSelectVersion = (v: 'v1' | 'v2') => {
     setVersion(v);
     sessionStorage.setItem('rh_version', v);
   };
-
-  if (!version) {
-    return <AppSelector onSelect={handleSelectVersion} />;
-  }
 
   if (version === 'v1') {
     return <AppV1 />;
@@ -165,6 +161,10 @@ function AppV2() {
       document.documentElement.classList.remove('tv-mode');
     }
   }, [tvMode]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -397,7 +397,7 @@ function AppV2() {
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-32 bg-redhouse-primary/5 blur-3xl -z-10" />
       
-      <div className="p-6 border-b border-white/5 relative flex items-center justify-between">
+      <div className="p-6 border-b border-redhouse-border relative flex items-center justify-between">
         {!isSidebarCollapsed && (
           <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
             <BrandHeader showCampus={true} variant="compact" />
@@ -405,7 +405,7 @@ function AppV2() {
         )}
         <button 
           onClick={toggleSidebar} 
-          className="p-2 hover:bg-white/5 rounded-xl transition-all text-redhouse-muted hover:text-redhouse-text active:scale-95 group"
+          className="p-2 hover:bg-redhouse-muted/10 rounded-xl transition-all text-redhouse-muted hover:text-redhouse-text active:scale-95 group"
         >
           {isSidebarCollapsed ? <Menu className="w-5 h-5 group-hover:rotate-180 transition-transform" /> : <X className="w-5 h-5" />}
         </button>
@@ -435,7 +435,7 @@ function AppV2() {
           return (
             <div key={group.label} className="space-y-4">
               {!isSidebarCollapsed && (
-                <h5 className="px-4 text-[8px] font-black text-white/20 uppercase tracking-[0.4em] italic mb-2">{group.label}</h5>
+                <h5 className="px-4 text-[8px] font-black text-redhouse-muted uppercase tracking-[0.4em] italic mb-2">{group.label}</h5>
               )}
               <div className="space-y-1">
                 {filteredItems.map((item) => {
@@ -454,11 +454,11 @@ function AppV2() {
                       title={isSidebarCollapsed ? item.label : undefined}
                       className={`w-full flex items-center gap-3 p-3 rounded-2xl font-black transition-all relative group/item ${
                         isActive 
-                          ? 'bg-white/10 text-white shadow-xl shadow-black/20 ring-1 ring-white/10' 
-                          : 'hover:bg-white/4 text-redhouse-muted'
+                          ? 'bg-redhouse-muted/10 text-redhouse-text shadow-sm' 
+                          : 'hover:bg-redhouse-muted/5 text-redhouse-muted'
                       }`}
                     >
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isActive ? 'bg-white text-slate-900 shadow-[0_0_15px_white]' : 'bg-white/5 group-hover/item:bg-white/10'}`}>
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isActive ? 'bg-redhouse-primary text-white shadow-xl shadow-redhouse-primary/20' : 'bg-redhouse-muted/10 group-hover/item:bg-redhouse-muted/20'}`}>
                         <item.icon className="w-5 h-5" />
                       </div>
                       {!isSidebarCollapsed && (
@@ -481,11 +481,11 @@ function AppV2() {
         })}
       </nav>
 
-      <div className="p-6 border-t border-white/5 bg-black/20 backdrop-blur-md">
+      <div className="p-6 border-t border-redhouse-border bg-redhouse-card backdrop-blur-md">
         <div className={`flex items-center gap-4 ${isSidebarCollapsed ? 'flex-col' : ''}`}>
           <div className="relative group/avatar">
             <div className="absolute inset-0 bg-redhouse-primary/20 blur-xl group-hover/avatar:bg-redhouse-primary/40 transition-all rounded-full" />
-            <div className="w-12 h-12 bg-white rounded-2xl border border-white/10 flex items-center justify-center text-xl shadow-2xl relative z-10 overflow-hidden ring-1 ring-white/20 group-hover/avatar:scale-110 transition-transform">
+            <div className="w-12 h-12 bg-white rounded-2xl border border-redhouse-border flex items-center justify-center text-xl shadow-2xl relative z-10 overflow-hidden ring-1 ring-redhouse-border group-hover/avatar:scale-110 transition-transform">
               {state.user?.photoURL ? (
                 <img src={state.user.photoURL} alt={state.user.name || ''} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               ) : (
@@ -549,7 +549,7 @@ function AppV2() {
   );
 
   return (
-    <div className={`min-h-screen bg-slate-950 text-white font-sans selection:bg-redhouse-primary selection:text-white transition-colors duration-500 overflow-x-hidden relative ${tvMode ? 'tv-mode' : ''}`}>
+    <div className={`min-h-screen bg-redhouse-bg text-redhouse-text font-sans selection:bg-redhouse-primary selection:text-white transition-colors duration-500 overflow-x-hidden relative ${tvMode ? 'tv-mode' : ''}`}>
       {/* Global scanline/grid effect - Reduced opacity and theme aware */}
       <div className="fixed inset-0 pointer-events-none z-[100] opacity-[0.015] dark:opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
       <div className="fixed inset-0 pointer-events-none z-[100] bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0.15)_100%)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0.4)_100%)]" />
@@ -577,7 +577,7 @@ function AppV2() {
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 bg-[#0D1219]/80 backdrop-blur-3xl border-r border-white/5 flex flex-col z-[70] shadow-[10px_0_50px_rgba(0,0,0,0.5)]
+        fixed inset-y-0 left-0 bg-redhouse-bg/80 backdrop-blur-3xl border-r border-redhouse-border flex flex-col z-[70] shadow-[10px_0_50px_rgba(0,0,0,0.1)] dark:shadow-[10px_0_50px_rgba(0,0,0,0.5)]
         transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1)
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0 lg:z-40
@@ -594,7 +594,7 @@ function AppV2() {
         <header className="max-w-7xl mx-auto mb-16 flex flex-col md:flex-row justify-between items-center gap-8">
           {state.user?.role === 'student' && (
             <div className="flex items-center gap-6">
-              <div className="glass-card px-8 py-5 flex items-center gap-6 border-white/5 bg-white/2 hover:border-pedagogy-green/30 transition-all group">
+              <div className="glass-card px-8 py-5 flex items-center gap-6 group hover:border-pedagogy-green/30 transition-all">
                 <div className="w-14 h-14 bg-pedagogy-green/10 rounded-[20px] flex items-center justify-center text-pedagogy-green border border-pedagogy-green/20 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all">
                   <Trophy className="w-7 h-7" />
                 </div>

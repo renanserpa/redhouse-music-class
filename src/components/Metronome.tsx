@@ -93,13 +93,13 @@ export default function Metronome() {
   const bpmPresets = [60, 80, 100, 120, 140, 160];
 
   return (
-    <section className="bg-slate-950 rounded-[40px] p-8 shadow-2xl border-4 border-slate-900 overflow-hidden relative text-white">
+    <section className="bg-redhouse-bg rounded-[40px] p-8 shadow-2xl border-4 border-redhouse-border overflow-hidden relative text-redhouse-text">
       {/* HUD Scanline Effect */}
       <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-50 bg-[size:100%_2px,3px_100%] opacity-10"></div>
       
       <header className="flex items-center justify-between mb-10 relative z-10">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-lg -rotate-3 border-2 border-slate-700">
+          <div className="w-14 h-14 bg-redhouse-card rounded-2xl flex items-center justify-center text-redhouse-text shadow-lg -rotate-3 border-2 border-redhouse-border">
             <Activity className="w-8 h-8 text-cyan-500" />
           </div>
           <div>
@@ -115,8 +115,8 @@ export default function Metronome() {
             onClick={() => { audio.playClick(); setIsVisualOnly(!isVisualOnly); }}
             className={`p-4 rounded-2xl border-2 transition-all shadow-xl ${
               isVisualOnly 
-                ? 'bg-slate-800 text-slate-500 border-slate-700' 
-                : 'bg-slate-900 text-cyan-400 border-cyan-500/30'
+                ? 'bg-redhouse-muted/10 text-redhouse-muted border-redhouse-border' 
+                : 'bg-redhouse-card text-cyan-400 border-cyan-500/30'
             }`}
             title={isVisualOnly ? "Modo Visual Ativo" : "Ativar Modo Visual (Mudo)"}
           >
@@ -129,7 +129,7 @@ export default function Metronome() {
             className={`p-4 rounded-2xl border-2 transition-all shadow-xl ${
               isAccentOn 
                 ? 'bg-orange-600 text-white border-orange-400' 
-                : 'bg-slate-900 text-slate-500 border-slate-800'
+                : 'bg-redhouse-card text-redhouse-muted border-redhouse-border'
             }`}
             title={isAccentOn ? "Acento Ativo" : "Acento Desativado"}
           >
@@ -145,20 +145,20 @@ export default function Metronome() {
             <motion.div 
               animate={isPlaying ? { scale: [1, 1.05, 1] } : {}}
               transition={{ duration: 60/bpm, repeat: Infinity, ease: "easeInOut" }}
-              className="w-72 h-72 bg-slate-900 rounded-full border-[10px] border-slate-800 flex flex-col items-center justify-center shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden"
+              className="w-72 h-72 bg-redhouse-card rounded-full border-[10px] border-redhouse-border flex flex-col items-center justify-center shadow-[0_0_50px_rgba(0,0,0,0.1)] relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(6,182,212,0.1),transparent_70%)]"></div>
-              <span className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 relative z-10">Sync Velocity</span>
+              <span className="text-xs font-black text-redhouse-muted uppercase tracking-widest mb-2 relative z-10">Sync Velocity</span>
               <motion.span 
                 animate={isPlaying ? { 
                   color: currentBeat === 0 ? '#f97316' : '#22d3ee',
-                  textShadow: currentBeat === 0 ? '0 0 20px rgba(249,115,22,0.5)' : '0 0 20px rgba(34,211,238,0.5)'
-                } : { color: '#ffffff' }}
+                  textShadow: currentBeat === 0 ? '0 0 20px rgba(249,115,22,0.3)' : '0 0 20px rgba(34,211,238,0.3)'
+                } : { color: 'var(--color-redhouse-text)' }}
                 className="text-8xl font-black font-mono italic tracking-tighter leading-none relative z-10"
               >
                 {bpm}
               </motion.span>
-              <div className="mt-4 px-6 py-1.5 bg-slate-800 text-cyan-400 text-[10px] font-black rounded-full uppercase tracking-widest border border-cyan-500/20 relative z-10">
+              <div className="mt-4 px-6 py-1.5 bg-redhouse-muted/5 text-cyan-400 text-[10px] font-black rounded-full uppercase tracking-widest border border-cyan-500/20 relative z-10">
                 {bpm < 60 ? 'Lento' : bpm < 90 ? 'Andante' : bpm < 120 ? 'Moderato' : bpm < 160 ? 'Allegro' : 'Presto'}
               </div>
               
@@ -182,7 +182,7 @@ export default function Metronome() {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => { audio.playClick(); changeBpm(-5); }}
-              className="w-16 h-16 bg-slate-900 border-4 border-slate-800 rounded-2xl flex items-center justify-center text-white hover:border-cyan-500/50 transition-all shadow-xl"
+              className="w-16 h-16 bg-redhouse-card border-4 border-redhouse-border rounded-2xl flex items-center justify-center text-redhouse-text hover:border-cyan-500/50 transition-all shadow-xl"
             >
               <Minus className="w-8 h-8" />
             </motion.button>
@@ -202,7 +202,7 @@ export default function Metronome() {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => { audio.playClick(); changeBpm(5); }}
-              className="w-16 h-16 bg-slate-900 border-4 border-slate-800 rounded-2xl flex items-center justify-center text-white hover:border-cyan-500/50 transition-all shadow-xl"
+              className="w-16 h-16 bg-redhouse-card border-4 border-redhouse-border rounded-2xl flex items-center justify-center text-redhouse-text hover:border-cyan-500/50 transition-all shadow-xl"
             >
               <Plus className="w-8 h-8" />
             </motion.button>
@@ -229,14 +229,14 @@ export default function Metronome() {
 
         {/* Settings & Visualizer */}
         <div className="lg:col-span-5 space-y-8">
-          <div className="bg-slate-900 p-8 rounded-[40px] border-4 border-slate-800 shadow-inner">
-            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+          <div className="bg-redhouse-card p-8 rounded-[40px] border-4 border-redhouse-border shadow-inner">
+            <h4 className="text-xs font-black text-redhouse-muted uppercase tracking-widest mb-6 flex items-center gap-2">
               <Settings2 className="w-4 h-4" /> System Configuration
             </h4>
             
             <div className="space-y-8">
               <div>
-                <label className="block text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest">Compasse Formula</label>
+                <label className="block text-[10px] font-black text-redhouse-muted uppercase mb-4 tracking-widest">Compasse Formula</label>
                 <div className="grid grid-cols-4 gap-3">
                   {[2, 3, 4, 6].map(b => (
                     <button
@@ -245,7 +245,7 @@ export default function Metronome() {
                       className={`py-4 rounded-xl font-black transition-all border-2 ${
                         beatsPerMeasure === b 
                           ? 'bg-cyan-600 border-cyan-400 text-white shadow-[0_0_15px_rgba(8,145,178,0.3)]' 
-                          : 'bg-slate-800 border-slate-700 text-slate-500 hover:border-slate-600'
+                          : 'bg-redhouse-muted/5 border-redhouse-border text-redhouse-muted hover:border-redhouse-muted/20'
                       }`}
                     >
                       {b}/4
@@ -256,7 +256,7 @@ export default function Metronome() {
 
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Audio Output</label>
+                  <label className="text-[10px] font-black text-redhouse-muted uppercase tracking-widest">Audio Output</label>
                   <button 
                     onClick={() => { audio.playClick(); setIsVisualOnly(!isVisualOnly); }}
                     className={`relative w-14 h-7 rounded-full transition-colors ${isVisualOnly ? 'bg-slate-700' : 'bg-emerald-600'}`}
