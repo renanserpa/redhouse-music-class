@@ -270,7 +270,32 @@ function AppV2() {
   }, [state.authStatus]);
 
   useEffect(() => {
-    // Authentication temporarily disabled for development
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        // Super-admin logic: serparenan@gmail.com always gets 'dev' role
+        const isSuperAdmin = firebaseUser.email === 'serparenan@gmail.com';
+        
+        const user: User = {
+          uid: firebaseUser.uid,
+          name: firebaseUser.displayName,
+          email: firebaseUser.email,
+          role: isSuperAdmin ? 'dev' : 'student', // Fallback role
+          photoURL: firebaseUser.photoURL
+        };
+
+        // If not super-admin, we could fetch the real role from Firestore here
+        // For now, we prioritize the email check for your access
+        
+        setState(prev => ({ 
+          ...prev, 
+          user, 
+          authStatus: 'authenticated' 
+        }));
+      } else {
+        setState(prev => ({ ...prev, user: null, authStatus: 'unauthenticated' }));
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   const handleLogin = async () => {
