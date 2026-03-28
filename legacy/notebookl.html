@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RedHouse School & GCM Maestro | Apresentação Executiva V2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-red: #D32F2F;
+            --dark-red: #9A0007;
+            --primary-blue: #1976D2;
+            --dark-bg: #0A0A0A;
+            --section-bg: #121212;
+            --card-bg: #1E1E1E;
+            --text-light: #F5F5F5;
+            --text-muted: #B0B0B0;
+            --accent-gold: #FFC107;
+            --accent-green: #4CAF50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 { font-weight: 800; }
+        h1 { font-size: 3.5rem; margin-bottom: 1rem; line-height: 1.2; }
+        h2 { font-size: 2.5rem; margin-bottom: 1rem; color: var(--text-light); text-align: center; }
+        h3 { font-size: 1.4rem; margin-bottom: 1rem; color: var(--primary-red); }
+        h4 { font-size: 1.1rem; color: var(--text-light); margin-bottom: 0.5rem; }
+        p { margin-bottom: 1rem; color: var(--text-muted); font-size: 1.05rem; }
+        .highlight { color: var(--primary-red); }
+        .subtitle { text-align: center; color: var(--text-muted); max-width: 800px; margin: 0 auto 3rem; font-size: 1.2rem; }
+
+        /* Navbar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 5%;
+            background-color: rgba(10, 10, 10, 0.95);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #222;
+            backdrop-filter: blur(10px);
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 1px; }
+        .logo span { color: var(--primary-red); }
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: color 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .nav-links a:hover { color: var(--primary-red); }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 10%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(211,47,47,0.15) 100%);
+            margin-top: 60px;
+        }
+        .hero-subtitle { font-size: 1.3rem; max-width: 800px; margin-bottom: 2.5rem; color: #ccc; }
+        .btn {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            background-color: var(--primary-red);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(211, 47, 47, 0.4); }
+        .btn-outline { background-color: transparent; border: 2px solid var(--text-light); margin-left: 1rem; }
+        .btn-outline:hover { background-color: var(--text-light); color: var(--dark-bg); box-shadow: 0 10px 20px rgba(255, 255, 255, 0.2); }
+
+        /* Sections */
+        section { padding: 6rem 10%; border-bottom: 1px solid #1A1A1A; }
+        .bg-alt { background-color: var(--section-bg); }
+
+        /* Grids */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+
+        /* Cards */
+        .card {
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            border-top: 4px solid var(--primary-red);
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .card:hover { transform: translateY(-8px); }
+        .card i { font-size: 2.5rem; color: var(--primary-red); margin-bottom: 1.5rem; }
+        .card-tech { border-top: 4px solid var(--primary-blue); }
+        .card-tech i { color: var(--primary-blue); }
+
+        /* Dashboard UI Fake */
+        .dashboard-ui {
+            background-color: #151515;
+            border-radius: 12px;
+            border: 1px solid #333;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+        }
+        .dash-header { background-color: #222; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
+        .dash-body { padding: 2rem; }
+        .alert-box { background: rgba(211, 47, 47, 0.1); border-left: 4px solid var(--primary-red); padding: 1rem; border-radius: 4px; margin-top: 1rem; }
+        .code-block { background-color: #000; padding: 1rem; border-radius: 6px; font-family: monospace; color: #4CAF50; font-size: 0.9rem; margin-top: 1rem; }
+
+        /* Tags */
+        .tag { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-right: 0.5rem; margin-bottom: 0.5rem; }
+        .tag-red { background-color: rgba(211, 47, 47, 0.2); color: #ff6b6b; }
+        .tag-blue { background-color: rgba(25, 118, 210, 0.2); color: #64b5f6; }
+        .tag-gold { background-color: rgba(255, 193, 7, 0.2); color: #ffd54f; }
+
+        /* Footer */
+        footer { text-align: center; padding: 4rem 10%; background-color: #050505; }
+
+        @media(max-width: 900px) {
+            h1 { font-size: 2.8rem; }
+            .grid-2 { grid-template-columns: 1fr; gap: 2rem; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">RedHouse <span>x</span> GCM Maestro</div>
+        <div class="nav-links">
+            <a href="#gestao">Control Tower</a>
+            <a href="#arsenal">Arsenal Técnico</a>
+            <a href="#ia">Invisible Tech</a>
+            <a href="#pedagogia">Metodologia</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>A Sala de Aula <span class="highlight">Aumentada</span></h1>
+        <p class="hero-subtitle">
+            O GCM Maestro transcende softwares ERP ou apps autodidatas. Apresentamos uma Plataforma Phygital White-Label que traduz prática musical em dados pedagógicos para a coordenação da RedHouse School.
+        </p>
+        <div>
+            <a href="#gestao" class="btn">Módulos de Gestão</a>
+            <a href="#arsenal" class="btn btn-outline">Tecnologia & IA</a>
+        </div>
+    </header>
+
+    <!-- Módulo de Gestão (Control Tower) -->
+    <section id="gestao" class="bg-alt">
+        <h2>Módulo <span class="highlight">Control Tower</span> & School Connect</h2>
+        <p class="subtitle">Gestão hierárquica B2B projetada para diretores e coordenadores pedagógicos avaliarem retenção, engajamento e métricas curriculares [1].</p>
+        
+        <div class="grid-2">
+            <div>
+                <ul style="list-style: none;">
+                    <li style="margin-bottom: 2rem;">
+                        <h4><i class="fa-solid fa-building-shield highlight"></i> White Label & Segurança RLS</h4>
+                        <p>O sistema roda em um "Tenant" exclusivo para a RedHouse. Configurações de <code style="color:var(--primary-blue)">primary_color</code> e <code style="color:var(--primary-blue)">logo_url</code> garantem a identidade visual da escola [2]. O banco de dados (Supabase) usa Row Level Security (RLS) para isolar rigorosamente os dados dos alunos [3].</p>
+                    </li>
+                    <li style="margin-bottom: 2rem;">
+                        <h4><i class="fa-solid fa-chart-line highlight"></i> Churn Prevention (IA Preditiva)</h4>
+                        <p>O algoritmo cruza dados de engajamento para alertar a diretoria <em>antes</em> do cancelamento. Regra ativa: <strong>Se (Faltas > 2 E XP ganho na semana < 50) = Alerta Vermelho</strong> [1].</p>
+                    </li>
+                    <li style="margin-bottom: 2rem;">
+                        <h4><i class="fa-solid fa-file-signature highlight"></i> BNCC & School Connect</h4>
+                        <p>A "Coordenadora Juliana" recebe um <strong>Weekly Digest</strong> automatizado, detalhando como a aula atende às competências da BNCC (ex: Repertório Cultural, Autoconhecimento) [4]. O <strong>Evidence Locker</strong> salva os melhores áudios da turma para uso no marketing da escola [4].</p>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="dashboard-ui">
+                <div class="dash-header">
+                    <div><strong>Dashboard do Diretor</strong></div>
+                    <div style="font-size: 0.8rem; color: var(--accent-green);"><i class="fa-solid fa-circle-check"></i> Tenant: REDHOUSE</div>
+                </div>
+                <div class="dash-body">
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="flex: 1; background: #222; padding: 1rem; border-radius: 8px;">
+                            <div style="font-size: 2rem; color: #fff; font-weight: 800;">98%</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">ASSIDUIDADE (Turma 2)</div>
+                        </div>
+                        <div style="flex: 1; background: #222; padding: 1rem; border-radius: 8px;">
+                            <div style="font-size: 2rem; color: var(--primary-blue); font-weight: 800;">4.5k</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">XP GERADO (Prof. Renan)</div>
+                        </div>
+                    </div>
+                    <div class="alert-box">
+                        <i class="fa-solid fa-triangle-exclamation"></i> <strong>Risco de Evasão Detectado</strong><br>
+                        <span style="font-size: 0.9rem; color: #ccc;">Aluno Lucca S. faltou a 2 aulas e gerou apenas 10 XP. Sugestão: Contatar família via app [5].</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Arsenal Técnico (Audio & Rendering) -->
+    <section id="arsenal">
+        <h2>Arsenal Técnico: <span style="color: var(--primary-blue);">Ferramentas de Elite</span></h2>
+        <p class="subtitle">O coração do GCM Maestro une a Web Audio API nativa com engenharia reversa musical para entregar feedback em tempo real.</p>
+
+        <div class="grid-3">
+            <div class="card card-tech">
+                <i class="fa-solid fa-microchip"></i>
+                <h3>Motor de Harmonia</h3>
+                <span class="tag tag-blue">Reverse Chord Finder</span>
+                <p>Muito além de um dicionário. O sistema "ouve" as notas ou lê cliques no Fretboard em tempo real. Se o aluno toca {C, E, G, B, D}, ele nomeia <strong>Cmaj9</strong>. Adicionando F#, muda para <strong>Cmaj9(#11)</strong> e sugere automaticamente a escala Lídia [6].</p>
+            </div>
+            
+            <div class="card card-tech">
+                <i class="fa-solid fa-dumbbell"></i>
+                <h3>AI Practice Coach (SRS)</h3>
+                <span class="tag tag-blue">Algoritmo Spaced Repetition</span>
+                <p>O estudo em casa é guiado por uma fórmula de prioridade: <strong>P = (Importância × Urgência) / Proficiência</strong> [7]. O app cria uma playlist de 15 minutos (Ativação > Desafio > Recompensa/Free Play) priorizando o que a criança está prestes a esquecer [8].</p>
+            </div>
+
+            <div class="card card-tech">
+                <i class="fa-solid fa-guitar"></i>
+                <h3>Visual Fretboard & CAGED</h3>
+                <span class="tag tag-blue">Geometria Musical</span>
+                <p>Aplica a metodologia de visualização geométrica. Ao trocar de C para G, o sistema desenha <em>Bounding Boxes</em> (Caixas do Sistema CAGED) que "deslizam" para a forma mais próxima no braço, ensinando *Voice Leading* visualmente na TV da sala [9].</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Invisible Tech & AI Psych -->
+    <section id="ia" class="bg-alt">
+        <div class="grid-2">
+            <div>
+                <h2><span class="highlight">Invisible Tech</span> & AI Psych</h2>
+                <p>A tecnologia do GCM foi desenhada para remover a fricção entre o aluno, o professor e o instrumento, mantendo o estado de fluxo contínuo (A Zona de Fluxo) [10], [11].</p>
+                
+                <div class="code-block">
+                    // Lógica do AI Psych (Frustration Detector)<br>
+                    if (error_count >= 3 && velocity_peak > threshold) {<br>
+                    &nbsp;&nbsp;triggerZenMode();<br>
+                    &nbsp;&nbsp;reduceBPM(0.20); // Reduz andamento em 20%<br>
+                    &nbsp;&nbsp;npcLucca.speak("Vamos em Câmera Lenta, estilo Matrix!");<br>
+                    }
+                </div>
+            </div>
+            <div class="grid-2" style="gap: 2rem;">
+                <div class="card" style="padding: 2rem;">
+                    <i class="fa-solid fa-brain highlight" style="font-size: 2rem;"></i>
+                    <h4 style="color: #fff;">Detector de Frustração</h4>
+                    <p style="font-size: 0.9rem;">Analisa erros repetidos e força nas cordas. Se detecta estresse, reduz o BPM automaticamente para manter o aluno na "Zona de Fluxo" (Princípio Csikszentmihalyi) [11], [12].</p>
+                </div>
+                <div class="card" style="padding: 2rem;">
+                    <i class="fa-solid fa-microphone-lines highlight" style="font-size: 2rem;"></i>
+                    <h4 style="color: #fff;">Maestro Voice & Haptics</h4>
+                    <p style="font-size: 0.9rem;">Usa Web Speech API para comandos de voz do professor ("Lucca, próximo slide"). O Haptic Metronome vibra no celular (Navigator Vibrate API) para internalizar o pulso (Dalcroze) [10].</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filosofia Omnibus & Criação -->
+    <section id="omnibus">
+        <h2>Módulo de Criação & <span class="highlight">Filosofia Omnibus</span></h2>
+        <p class="subtitle">O objetivo final não é formar apenas instrumentistas, mas sim seres humanos cultos [13]. O GCM integra prática musical à história, biomusicologia e composição [14].</p>
+        
+        <div class="grid-3">
+            <div class="card">
+                <i class="fa-solid fa-book-journal-whills"></i>
+                <h3>Módulo Chronos</h3>
+                <p>Uma enciclopédia interativa. Ao tocar Beethoven, um hiperlink abre a história de suas sinfonias e influência no Rock. Inclui provocações filosóficas ("O silêncio faz parte da música?" - John Cage) e jogos de escuta ativa [13], [14].</p>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <h3>Songwriter Studio</h3>
+                <p>Composição assistida por IA. Ensina emoção harmônica através de "Blocos" (Acordes Maiores = Dia de Sol, Menores = Dia de Chuva). O <em>AI Co-Pilot</em> sugere acordes compatíveis de forma lúdica se o aluno errar a cadência [15].</p>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-ranking-star"></i>
+                <h3>RPG de Carreira</h3>
+                <p>O aluno não estuda apenas; ele vive o conceito "From Garage to Stadium". Completando módulos, ele evolui seu avatar, desbloqueando palhetas virtuais e conquistando novos palcos [15].</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Metodologia Unificada (Pedagogia) -->
+    <section id="pedagogia" class="bg-alt">
+        <h2>Metodologia Serpa-Híbrida <br><span style="font-size: 1.5rem; font-weight: 400; color: var(--text-muted);">A Base do Music Support & Ensemble [16]</span></h2>
+        
+        <div class="grid-4" style="margin-top: 3rem;">
+            <div>
+                <h4 style="color: var(--primary-blue);"><i class="fa-solid fa-ear-listen"></i> Suzuki & Gordon</h4>
+                <p style="font-size: 0.95rem;">"Ouvir antes de Ler". Prática de <em>Audiation</em> ("Ouvido de Detetive"). A interface obriga o aluno a vivenciar a música auditivamente antes de abrir tablaturas [16], [12].</p>
+            </div>
+            <div>
+                <h4 style="color: var(--primary-blue);"><i class="fa-solid fa-person-running"></i> Dalcroze (Rítmica)</h4>
+                <p style="font-size: 0.95rem;">"O corpo é o metrônomo". Diante de falhas rítmicas, o sistema pausa a leitura gráfica e ativa o "Groove Circle" com percussão corporal [16].</p>
+            </div>
+            <div>
+                <h4 style="color: var(--primary-blue);"><i class="fa-solid fa-palette"></i> Maestro Colors (Kodály)</h4>
+                <p style="font-size: 0.95rem;">Sistema de cores universal (Dó=Vermelho, etc). Permite que crianças não-alfabetizadas toquem em grupo (Ensemble Inclusivo) visualizando partituras coloridas na TV [17].</p>
+            </div>
+            <div>
+                <h4 style="color: var(--primary-blue);"><i class="fa-solid fa-universal-access"></i> Inclusão (PECS)</h4>
+                <p style="font-size: 0.95rem;">Communication Board digital. Alunos neurodivergentes ou com dificuldades de fala usam ícones de arrastar e soltar para comunicar necessidades (ex: "Estou cansado") [16], [11].</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 4rem;">
+            <div style="display: inline-block; background: #1A1A1A; padding: 1.5rem 3rem; border-radius: 50px; border: 1px solid #333;">
+                <h4 style="margin: 0; color: #fff;">O Ritmo Universal</h4>
+                <p style="margin: 0; font-size: 0.9rem;">Uso de sílabas percussivas <strong>(Tá, Ta-Ka, Ta-Ki-Ta)</strong> integradas ao Groove Circle da TV [18].</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="logo" style="margin-bottom: 1rem;">RedHouse <span>x</span> GCM Maestro</div>
+        <p style="max-width: 600px; margin: 0 auto;">"A música não é apenas técnica, mas a formação integral do ser humano. Nossa plataforma entrega a infraestrutura para que a escola cumpra este propósito."</p>
+        <p style="font-size: 0.8rem; margin-top: 3rem; color: #444;">© 2026 RedHouse School | Desenvolvido por <a href="https://www.oliemusic.com.br" style="color: #c21233; text-decoration: none;">OlieMusic</a></p>
+    </footer>
+
+</body>
+</html>

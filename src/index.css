@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+@theme {
+  --color-redhouse-primary: #C41230;
+  --color-redhouse-secondary: #002D56;
+  --color-redhouse-accent: #FFC107;
+  --color-redhouse-bg: #0A0F14;
+  --color-redhouse-card: rgba(20, 27, 34, 0.8);
+  --color-redhouse-border: rgba(255, 255, 255, 0.1);
+  --color-redhouse-text: #E2E8F0;
+  --color-redhouse-muted: #94A3B8;
+  
+  /* Pedagogy Colors (Neon) */
+  --color-pedagogy-red: #FF3B30;
+  --color-pedagogy-orange: #FF9500;
+  --color-pedagogy-yellow: #FFCC00;
+  --color-pedagogy-green: #34C759;
+  --color-pedagogy-blue: #007AFF;
+  --color-pedagogy-purple: #AF52DE;
+  
+  --font-sans: "Outfit", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ═══════════════════════════════════════════
+   LIGHT MODE OVERRIDES
+   ═══════════════════════════════════════════ */
+[data-theme="light"] {
+  --color-redhouse-bg: #F8FAFC;
+  --color-redhouse-card: rgba(255, 255, 255, 0.9);
+  --color-redhouse-border: rgba(0, 0, 0, 0.08);
+  --color-redhouse-text: #1E293B;
+  --color-redhouse-muted: #64748B;
+}
+
+@layer base {
+  body {
+    @apply bg-redhouse-bg text-redhouse-text antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-redhouse-card backdrop-blur-md border border-redhouse-border rounded-3xl shadow-2xl;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .glass-card:hover {
+    @apply shadow-emerald-500/10;
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+  }
+
+  [data-theme="light"] .glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  [data-theme="light"] .glass-card:hover {
+    background: rgba(255, 255, 255, 1);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .hud-gradient {
+    background: radial-gradient(circle at top right, rgba(196, 18, 48, 0.1), transparent);
+  }
+
+  [data-theme="light"] .hud-gradient {
+    background: radial-gradient(circle at top right, rgba(196, 18, 48, 0.06), transparent);
+  }
+
+  /* Sidebar collapse transition */
+  .sidebar-collapsed .sidebar-label {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: opacity 0.2s ease, width 0.2s ease;
+  }
+
+  .sidebar-expanded .sidebar-label {
+    opacity: 1;
+    width: auto;
+    transition: opacity 0.2s ease 0.1s;
+  }
+}
+
+@layer base {
+  @media print {
+    .lg\:ml-72, .lg\:ml-20 {
+      margin-left: 0 !important;
+    }
+    aside, header, nav, button:not(.print-only) {
+      display: none !important;
+    }
+    main {
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    body {
+      background-color: white !important;
+      color: black !important;
+    }
+    .glass-card {
+      border: 1px solid #ddd !important;
+      box-shadow: none !important;
+      background: none !important;
+      border-radius: 8px !important;
+    }
+  }
+
+  /* ═══════════════════════════════════════════
+     TV MODE (MIRRORING)
+     ═══════════════════════════════════════════ */
+  .tv-mode {
+    font-size: 1.2rem;
+    cursor: none !important;
+  }
+
+  .tv-mode main {
+    margin-left: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .tv-mode aside,
+  .tv-mode header:not(.pedagogical-header),
+  .tv-mode .lg\:hidden,
+  .tv-mode .fixed.bottom-6.right-6:not(.npc-container) {
+    display: none !important;
+  }
+
+  .tv-mode .glass-card {
+    border-width: 4px !important;
+    border-color: var(--color-redhouse-primary) !important;
+    background: white !important;
+    color: black !important;
+  }
+
+  [data-theme="dark"].tv-mode .glass-card {
+    background: #0D1219 !important;
+    color: white !important;
+  }
+
+  .tv-mode * {
+    filter: saturate(1.2) contrast(1.1);
+  }
+}

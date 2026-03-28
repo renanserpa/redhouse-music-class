@@ -1,0 +1,106 @@
+{
+  "entities": {
+    "School": {
+      "title": "School",
+      "description": "A school campus in the RedHouse network.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "campusName": { "type": "string" },
+        "address": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "campusName"]
+    },
+    "Teacher": {
+      "title": "Teacher",
+      "description": "A teacher or administrator in a school.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["teacher", "admin"] },
+        "schoolId": { "type": "string" },
+        "photoURL": { "type": "string" }
+      },
+      "required": ["id", "name", "email", "role", "schoolId"]
+    },
+    "Classroom": {
+      "title": "Classroom",
+      "description": "A group of students assigned to a teacher and schedule.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "schoolId": { "type": "string" },
+        "teacherId": { "type": "string" },
+        "schedule": { "type": "string" },
+        "ageRange": { "type": "string" },
+        "active": { "type": "boolean" }
+      },
+      "required": ["id", "name", "schoolId", "teacherId"]
+    },
+    "Student": {
+      "title": "Student",
+      "description": "A child enrolled in music classes.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "age": { "type": "integer" },
+        "instrument": { "type": "string", "enum": ["guitar", "ukulele"] },
+        "classroomId": { "type": "string" },
+        "schoolId": { "type": "string" },
+        "xp": { "type": "integer" },
+        "coins": { "type": "integer" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "name", "instrument", "classroomId", "schoolId"]
+    },
+    "Lesson": {
+      "title": "Lesson Report",
+      "description": "A report generated after each music lesson.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "classroomId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "workedContent": { "type": "string" },
+        "observations": { "type": "string" },
+        "nextSteps": { "type": "string" },
+        "createdByTeacherId": { "type": "string" },
+        "schoolId": { "type": "string" }
+      },
+      "required": ["id", "classroomId", "date", "workedContent", "createdByTeacherId", "schoolId"]
+    },
+    "ActivityAttempt": {
+      "title": "Activity Attempt",
+      "description": "A record of a student's participation or score in an activity.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentId": { "type": "string" },
+        "activityId": { "type": "string" },
+        "classroomId": { "type": "string" },
+        "schoolId": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "result": { "type": "string" },
+        "score": { "type": "integer" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "studentId", "activityId", "classroomId", "schoolId", "date"]
+    }
+  },
+  "firestore": {
+    "/schools": { "schema": "School", "description": "List of school campuses." },
+    "/teachers": { "schema": "Teacher", "description": "Teachers and admins." },
+    "/classrooms": { "schema": "Classroom", "description": "Classroom groups." },
+    "/students": { "schema": "Student", "description": "Enrolled students." },
+    "/lessons": { "schema": "Lesson", "description": "Lesson reports." },
+    "/monthlyReports": { "schema": "MonthlyReport", "description": "Monthly student reports." },
+    "/activityAttempts": { "schema": "ActivityAttempt", "description": "Student activity records." },
+    "/activities": { "schema": "Activity", "description": "Pedagogical activities library." }
+  }
+}
