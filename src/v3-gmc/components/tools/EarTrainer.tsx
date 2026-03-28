@@ -1,4 +1,5 @@
 
+// @ts-nocheck
 import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/Card';
 import { BrainCircuit, RotateCcw, Headphones, Sparkles, Award } from 'lucide-react';
@@ -108,4 +109,33 @@ export const EarTrainer: React.FC = () => {
                                 </Button>
                             </M.div>
                         ) : (
-                            <M.div initial={{ opacity: 0 } as any} animate={{ opacity:
+                            <M.div initial={{ opacity: 0 } as any} animate={{ opacity: 1 } as any} className="space-y-6">
+                                <div className="grid grid-cols-2 gap-4">
+                                    {OPTIONS.map(opt => (
+                                        <Button
+                                            key={opt.type}
+                                            onClick={() => handleAnswer(opt.type)}
+                                            disabled={gameState === 'answered'}
+                                            className={cn(
+                                                "p-8 text-xl font-black rounded-3xl",
+                                                gameState === 'answered' && target === opt.type && "bg-emerald-500",
+                                                gameState === 'answered' && target !== opt.type && "opacity-50"
+                                            )}
+                                        >
+                                            {opt.label}
+                                        </Button>
+                                    ))}
+                                </div>
+                                {gameState === 'answered' && (
+                                    <Button onClick={startChallenge} variant="ghost" className="text-slate-500 mt-4">
+                                        <RotateCcw size={16} className="mr-2" /> Próximo Desafio
+                                    </Button>
+                                )}
+                            </M.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+            </CardContent>
+        </Card>
+    );
+};

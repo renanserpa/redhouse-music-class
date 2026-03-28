@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Compras Atualizada</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 15px;
+            padding-bottom: 100px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #e53935;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        .categoria {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .categoria h2 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #d32f2f;
+            text-transform: uppercase;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        .item {
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+        .item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+        .item-nome {
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .item-obs {
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+            margin-top: 3px;
+            margin-bottom: 8px;
+        }
+        .alerta { color: #d32f2f; font-weight: bold; }
+        
+        .item-calculo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fafafa;
+            padding: 8px;
+            border-radius: 6px;
+        }
+        .qtd-badge {
+            background: #333;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: white;
+            font-size: 12px;
+        }
+        .price-input {
+            width: 70px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .subtotal {
+            font-weight: bold;
+            color: #2e7d32;
+            min-width: 85px;
+            text-align: right;
+        }
+        .total-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #d32f2f;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🛒 Lista de Compras - Assaí</h1>
+
+    <div id="lista-container"></div>
+
+    <div class="total-bar">
+        <span>TOTAL:</span>
+        <span id="total-geral">R$ 0,00</span>
+    </div>
+
+    <script>
+        const listaCompras = [
+            {
+                sessao: "Hortifruti",
+                itens: [
+                    { nome: "Batata", obs: "", qtd: 1 },
+                    { nome: "Cebola", obs: "", qtd: 1 },
+                    { nome: "Tomate", obs: "Se tiver bonito", qtd: 1 },
+                    { nome: "Banana Prata ou Maçã", obs: "Se tiver bonita", qtd: 1 },
+                    { nome: "Uva sem semente", obs: "Se tiver bonita", qtd: 1 }
+                ]
+            },
+            {
+                sessao: "Açougue e Padaria",
+                itens: [
+                    { nome: "Filé de Peito de Frango", obs: "Descongelado", qtd: 1 },
+                    { nome: "Pão Francês", obs: "", qtd: 1 },
+                    { nome: "Bisnaga (marca Pullman)", obs: "", qtd: 1 },
+                    { nome: "Presunto Sadia", obs: "", qtd: 1 },
+                    { nome: "Queijo Minas (marca Skala)", obs: "<span class='alerta'>Se não tiver - não traz outro</span>", qtd: 1 },
+                    { nome: "Leite Integral", obs: "", qtd: 1 },
+                    { nome: "Ovo", obs: "", qtd: 1 },
+                    { nome: "Ovo de Codorna", obs: "", qtd: 1 }
+                ]
+            },
+            {
+                sessao: "Mercearia",
+                itens: [
+                    { nome: "Óleo de Girassol", obs: "6 unidades", qtd: 6 },
+                    { nome: "Bolacha Bono Morango", obs: "", qtd: 1 },
+                    { nome: "Bolacha Waffle Chocolate", obs: "", qtd: 3 },
+                    { nome: "Bolacha Waffle Morango", obs: "", qtd: 3 },
+                    { nome: "Cheetos Laranja", obs: "", qtd: 2 },
+                    { nome: "Cheetos Azul", obs: "", qtd: 2 },
+                    { nome: "Cheetos Bola", obs: "", qtd: 2 }
+                ]
+            },
+            {
+                sessao: "Higiene e Papelaria",
+                itens: [
+                    { nome: "Papel Higiênico Neve", obs: "Uso: Casa", qtd: 1 },
+                    { nome: "Papel Higiênico Barato", obs: "Uso: Ateliê (Marca boa mas em conta)", qtd: 1 }
+                ]
+            },
+            {
+                sessao: "Limpeza",
+                itens: [
+                    { nome: "Detergente Ypê", obs: "Rosa, Transparente ou Verde", qtd: 1 },
+                    { nome: "Produto p/ Vaso (Pato/Vim)", obs: "Uso: Ateliê", qtd: 1 },
+                    { nome: "Ajax Limão", obs: "", qtd: 1 },
+                    { nome: "Pinho Lavanda", obs: "Líquido transparente", qtd: 1 },
+                    { nome: "Vim Cloro Gel", obs: "Uso: Casa", qtd: 1 }
+                ]
+            },
+            {
+                sessao: "Bebidas",
+                itens: [
+                    { nome: "Suco Prats Laranja", obs: "", qtd: 1 },
+                    { nome: "Suco Del Valle Maracujá (Lata)", obs: "", qtd: 4 },
+                    { nome: "Suco Del Valle Uva (Lata)", obs: "", qtd: 4 }
+                ]
+            }
+        ];
+
+        const container = document.getElementById('lista-container');
+
+        function renderizarLista() {
+            listaCompras.forEach((categoria) => {
+                const divCategoria = document.createElement('div');
+                divCategoria.className = 'categoria';
+                
+                let htmlItens = `<h2>${categoria.sessao}</h2>`;
+                
+                categoria.itens.forEach((item) => {
+                    const obsHtml = item.obs ? `<div class="item-obs">${item.obs}</div>` : '';
+                    
+                    htmlItens += `
+                        <div class="item" data-qtd="${item.qtd}">
+                            <div class="item-nome">${item.nome}</div>
+                            ${obsHtml}
+                            <div class="item-calculo">
+                                <span class="qtd-badge">${item.qtd} UN</span>
+                                <span>R$</span>
+                                <input type="number" step="0.01" inputmode="decimal" class="price-input" placeholder="0.00" oninput="calcularTotal()">
+                                <span class="subtotal">R$ 0,00</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                divCategoria.innerHTML = htmlItens;
+                container.appendChild(divCategoria);
+            });
+        }
+
+        function calcularTotal() {
+            let totalGeral = 0;
+            document.querySelectorAll('.item').forEach(itemElement => {
+                const qtd = parseFloat(itemElement.getAttribute('data-qtd'));
+                const inputValor = itemElement.querySelector('.price-input').value;
+                const preco = parseFloat(inputValor.replace(',', '.')) || 0;
+                const subtotal = qtd * preco;
+                
+                itemElement.querySelector('.subtotal').innerText = 'R$ ' + subtotal.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+                totalGeral += subtotal;
+            });
+            document.getElementById('total-geral').innerText = 'R$ ' + totalGeral.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+        }
+
+        renderizarLista();
+    </script>
+</body>
+</html>

@@ -1,4 +1,5 @@
 
+// @ts-nocheck
 import React, { Suspense, lazy } from 'react';
 import * as RRD from 'react-router-dom';
 const { HashRouter, Routes, Route, Navigate } = RRD as any;

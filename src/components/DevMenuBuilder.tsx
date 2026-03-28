@@ -306,7 +306,7 @@ export default function DevMenuBuilder() {
                         <Plus className="w-3 h-3" /> Adicionar Página
                       </button>
                       <div className="absolute top-full left-0 mt-2 w-48 max-h-60 overflow-y-auto bg-redhouse-card border border-white/10 rounded-xl hidden group-hover/add:block z-[60] shadow-2xl backdrop-blur-2xl no-scrollbar">
-                        {Object.values(navConfig.pages)
+                        {(Object.values(navConfig.pages) as NavPage[])
                           .filter(p => !submodule.pages.includes(p.id))
                           .map(page => (
                             <button
@@ -328,5 +328,8 @@ export default function DevMenuBuilder() {
         ))}
       </div>
     </div>
+  );
+}
+
   );
 }
