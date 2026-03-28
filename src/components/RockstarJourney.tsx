@@ -243,7 +243,6 @@ export default function RockstarJourney({ state, setState, addXP, addCoins, setA
       case 'elephant-bird': return <ElephantBirdGame addXP={addXP} onComplete={handleCompleteLesson} />;
       case 'string-maze': return <StringMazeGame addXP={addXP} onComplete={handleCompleteLesson} />;
       case 'groove-clock': return <GrooveClockGame addXP={addXP} onComplete={handleCompleteLesson} />;
-      case 'quiz-cifras': return <QuizCifras addXP={addXP} onComplete={handleCompleteLesson} />;
       case 'quiz-ritmo-avancado': return <QuizRitmoAvancado addXP={addXP} onComplete={handleCompleteLesson} />;
       case 'rhythm-domino': return <RhythmDominoGame addXP={addXP} onComplete={handleCompleteLesson} />;
       case 'chord-factory': return <ChordFactoryGame addXP={addXP} onComplete={handleCompleteLesson} instrument={currentInstrument} />;

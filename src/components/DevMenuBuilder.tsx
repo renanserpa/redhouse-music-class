@@ -330,6 +330,3 @@ export default function DevMenuBuilder() {
     </div>
   );
 }
-
-  );
-}
