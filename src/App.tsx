@@ -129,12 +129,32 @@ function AppV2() {
     soundEnabled, 
     setSoundEnabled, 
     isSidebarCollapsed, 
-    setIsSidebarCollapsed 
+    setIsSidebarCollapsed,
+    featureToggles,
+    navConfig
   } = useAppContext();
+
+  const IconMap: Record<string, any> = {
+    Home, Gamepad2, BookOpen, Printer, BarChart3, Trophy, Coins, Menu, X, Guitar, Ear, Zap, LayoutDashboard, RotateCw, Star, Volume2, VolumeX, FileText, Activity, Calendar, LogOut, LogIn, Monitor, ShieldCheck, Users, ChevronDown, ChevronUp, PlusCircle, MoreHorizontal, History, Library, Settings, Mic2, School, Moon, Sun, ChevronLeft, ChevronRight, Sparkles, ShoppingBag, User: UserIcon, Gamepad: Gamepad2, Book: BookOpen, Music
+  };
 
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [tvMode, setTvMode] = useState(() => localStorage.getItem('rh_tv_mode') === 'true');
+  
+  // Initialize expanded groups from navConfig modules
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    navConfig.modules.forEach(m => {
+      initial[m.id] = true;
+    });
+    return initial;
+  });
+
+  const toggleGroup = (id: string) => {
+    setExpandedGroups(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const [tvMode, setTvMode] = useState(false);
   const [npcMessage, setNpcMessage] = useState<string | undefined>(undefined);
   const [npcContext, setNpcContext] = useState<'lessonStart' | 'correct' | 'wrong' | 'worldComplete' | 'unlock'>('lessonStart');
   const [npcState, setNpcState] = useState<'idle' | 'celebrating' | 'encouraging'>('idle');
@@ -342,87 +362,6 @@ function AppV2() {
     }
   };
 
-  const navGroups = [
-    {
-      label: 'Aula',
-      items: [
-        { id: 'dashboard', label: 'Início', icon: Home, color: 'text-redhouse-muted' },
-        { id: 'leaderboard', label: 'Hall da Fama', icon: Trophy, color: 'text-pedagogy-yellow' },
-        { id: 'rockstar-journey', label: 'Jornada do Rockstar', icon: Star, color: 'text-yellow-500' },
-        { id: 'lesson-console', label: 'Console de Aula', icon: Monitor, color: 'text-pedagogy-red' },
-        { id: 'lesson-plan', label: 'Plano de Aula', icon: BookOpen, color: 'text-pedagogy-blue' },
-        { id: 'metronome', label: 'Metrônomo', icon: RotateCw, color: 'text-redhouse-muted' },
-        { id: 'avatar-customizer', label: 'Meu Avatar', icon: UserIcon, color: 'text-pedagogy-blue' },
-        { id: 'avatar-shop', label: 'Loja de Skins', icon: ShoppingBag, color: 'text-pedagogy-yellow' },
-        { id: 'director-dashboard', label: 'Painel Diretor', icon: ShieldCheck, color: 'text-pedagogy-purple' },
-      ]
-    },
-    {
-      label: 'Relatórios',
-      items: [
-        { id: 'lesson-report', label: 'Relatório de Aula', icon: FileText, color: 'text-pedagogy-purple' },
-        { id: 'monthly-report', label: 'Relatório Mensal', icon: Calendar, color: 'text-pedagogy-red' },
-        { id: 'reports-history', label: 'Histórico', icon: BarChart3, color: 'text-pedagogy-green' },
-      ]
-    },
-    {
-      label: 'Jogos & Dinâmicas',
-      items: [
-        { id: 'anatomy', label: 'Anatomia', icon: Guitar, color: 'text-pedagogy-orange' },
-        { id: 'ear-training', label: 'Detetive Sonoro', icon: Ear, color: 'text-pedagogy-blue' },
-        { id: 'echo-game', label: 'Jogo do Eco', icon: Volume2, color: 'text-pedagogy-purple' },
-        { id: 'rhythm-invaders', label: 'Rhythm Invaders', icon: Zap, color: 'text-pedagogy-yellow' },
-        { id: 'rhythm-challenge', label: 'Desafio Rítmico', icon: Activity, color: 'text-pedagogy-red' },
-        { id: 'rhythm-sequencer', label: 'Estúdio de Beats', icon: Zap, color: 'text-pedagogy-purple' },
-        { id: 'rhythmic-dictation', label: 'Ditado Rítmico', icon: Printer, color: 'text-pedagogy-blue' },
-        { id: 'musical-wheel', label: 'Roda Musical', icon: RotateCw, color: 'text-pedagogy-orange' },
-        { id: 'konnakkol', label: 'Konnakkol', icon: Mic2, color: 'text-pedagogy-green' },
-        { id: 'string-maze', label: 'Labirinto das Cordas', icon: Music, color: 'text-pedagogy-blue' },
-        { id: 'elefante-passarinho', label: 'Elefante vs Passarinho', icon: Gamepad2, color: 'text-pedagogy-orange' },
-        { id: 'escada-das-cores', label: 'Escada das Cores', icon: Music, color: 'text-pedagogy-green' },
-        { id: 'grande-relogio', label: 'Grande Relógio', icon: Zap, color: 'text-pedagogy-yellow' },
-        { id: 'rhythm-domino', label: 'Dominó Rítmico', icon: Gamepad2, color: 'text-pedagogy-red' },
-        { id: 'fabrica-de-acordes', label: 'Fábrica de Acordes', icon: Gamepad2, color: 'text-pedagogy-blue' },
-        { id: 'danca-mao-direita', label: 'Dança Mão Direita', icon: Gamepad2, color: 'text-pedagogy-purple' },
-        { id: 'sussurro-ou-trovao', label: 'Sussurro ou Trovão', icon: Zap, color: 'text-pedagogy-orange' },
-        { id: 'spider-walk', label: 'Caminhada da Aranha', icon: Activity, color: 'text-pedagogy-red' },
-      ]
-    },
-    {
-      label: 'Conteúdo & IA',
-      items: [
-        { id: 'pedagogy-library', label: 'Biblioteca', icon: Library, color: 'text-pedagogy-blue' },
-        { id: 'tuner', label: 'Afinador', icon: Music, color: 'text-emerald-500' },
-        { id: 'chord-lab', label: 'Lab de Acordes', icon: Star, color: 'text-pedagogy-green' },
-        { id: 'fretboard-follower', label: 'Fretboard Follower', icon: Guitar, color: 'text-pedagogy-blue' },
-        { id: 'fretboard-master', label: 'Fretboard Master', icon: Library, color: 'text-pedagogy-red' },
-        { id: 'tablature', label: 'Tablaturas Console', icon: FileText, color: 'text-pedagogy-yellow' },
-        { id: 'activity-studio', label: 'Estúdio de Atividades', icon: Gamepad2, color: 'text-pedagogy-purple' },
-        { id: 'songwriter-studio', label: 'Songwriter Studio', icon: Sparkles, color: 'text-pedagogy-purple' },
-      ]
-    },
-    {
-      label: 'Apresentação',
-      items: [
-        { id: 'presentation', label: 'Apresentação', icon: BookOpen, color: 'text-emerald-600' }
-      ]
-    },
-    {
-      label: 'Configurações',
-      items: [
-        { id: 'classrooms', label: 'Turmas', icon: School, color: 'text-pedagogy-red' },
-        { id: 'students', label: 'Alunos', icon: Users, color: 'text-pedagogy-blue' },
-        { id: 'settings', label: 'Preferências', icon: Settings, color: 'text-pedagogy-purple' },
-      ]
-    },
-    {
-      label: 'Sistema',
-      items: [
-        { id: 'change-version', label: 'Trocar Versão', icon: RotateCw, color: 'text-redhouse-primary' },
-      ]
-    }
-  ];
-
   const bottomNavItems = [
     { id: 'dashboard', label: 'Início', icon: Home },
     { id: 'lesson-console', label: 'Aula', icon: Monitor },
@@ -459,70 +398,117 @@ function AppV2() {
       </div>
 
       <nav className="flex-1 p-4 space-y-8 overflow-y-auto no-scrollbar py-8">
-        {navGroups.map((group) => {
-          // Filter items within the group based on the user's role
-          const filteredItems = group.items.filter(item => {
-            if (state.user?.role === 'dev') return true;
-            
-            // Basic role-based access rules
-            if (state.user?.role === 'student') {
-              return !['director-dashboard', 'lesson-console', 'classrooms', 'students', 'lesson-report', 'monthly-report'].includes(item.id);
-            }
-            if (state.user?.role === 'teacher') {
-              return !['director-dashboard'].includes(item.id);
-            }
-            if (state.user?.role === 'director') {
-              return !['lesson-console', 'rockstar-journey'].includes(item.id);
-            }
-            return true;
-          });
+        {navConfig.modules.map((module) => {
+          // Filter submodules and their pages
+          const filteredSubmodules = module.children.map(submodule => ({
+            ...submodule,
+            pages: submodule.pages.map(pId => navConfig.pages[pId]).filter(page => {
+              if (!page) return false;
+              
+              // Feature Toggles filtering
+              if (page.featureFlag && !featureToggles[page.featureFlag]) {
+                return false;
+              }
 
-          if (filteredItems.length === 0) return null;
+              if (state.user?.role === 'dev') return true;
+              
+              // Basic role-based access rules
+              if (state.user?.role === 'student') {
+                return !['director-dashboard', 'lesson-console', 'classrooms', 'students', 'lesson-report', 'monthly-report'].includes(page.id);
+              }
+              if (state.user?.role === 'teacher') {
+                return !['director-dashboard'].includes(page.id);
+              }
+              if (state.user?.role === 'director') {
+                return !['lesson-console', 'rockstar-journey'].includes(page.id);
+              }
+              return true;
+            })
+          })).filter(submodule => submodule.pages.length > 0);
+
+          if (filteredSubmodules.length === 0) return null;
+
+          const isExpanded = expandedGroups[module.id];
+          const ModuleIcon = IconMap[module.icon] || Home;
 
           return (
-            <div key={group.label} className="space-y-4">
+            <div key={module.id} className="space-y-4">
               {!isSidebarCollapsed && (
-                <h5 className="px-4 text-[8px] font-black text-redhouse-muted uppercase tracking-[0.4em] italic mb-2">{group.label}</h5>
+                <button 
+                  onClick={() => toggleGroup(module.id)}
+                  className="w-full flex items-center justify-between px-4 group/header"
+                >
+                  <div className="flex items-center gap-2">
+                    <ModuleIcon className="w-3 h-3 text-redhouse-muted group-hover/header:text-redhouse-text transition-colors" />
+                    <h5 className="text-[8px] font-black text-redhouse-muted group-hover/header:text-redhouse-text uppercase tracking-[0.4em] italic transition-colors">
+                      {module.label}
+                    </h5>
+                  </div>
+                  {isExpanded ? <ChevronUp className="w-3 h-3 text-redhouse-muted" /> : <ChevronDown className="w-3 h-3 text-redhouse-muted" />}
+                </button>
               )}
-              <div className="space-y-1">
-                {filteredItems.map((item) => {
-                  const isActive = activeTab === item.id;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        if (item.id === 'change-version') {
-                          sessionStorage.removeItem('rh_version');
-                          window.location.reload();
-                          return;
-                        }
-                        handleTabChange(item.id as Tab)
-                      }}
-                      title={isSidebarCollapsed ? item.label : undefined}
-                      className={`w-full flex items-center gap-3 p-3 rounded-2xl font-black transition-all relative group/item ${
-                        isActive 
-                          ? 'bg-redhouse-muted/10 text-redhouse-text shadow-sm' 
-                          : 'hover:bg-redhouse-muted/5 text-redhouse-muted'
-                      }`}
-                    >
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isActive ? 'bg-redhouse-primary text-white shadow-xl shadow-redhouse-primary/20' : 'bg-redhouse-muted/10 group-hover/item:bg-redhouse-muted/20'}`}>
-                        <item.icon className="w-5 h-5" />
+              
+              <AnimatePresence>
+                {(isExpanded || isSidebarCollapsed) && (
+                  <motion.div 
+                    initial={isSidebarCollapsed ? { opacity: 1 } : { height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="space-y-4 overflow-hidden"
+                  >
+                    {filteredSubmodules.map((submodule) => (
+                      <div key={submodule.id} className="space-y-1">
+                        {!isSidebarCollapsed && filteredSubmodules.length > 0 && (
+                          <div className="px-4 py-1">
+                            <p className="text-[7px] font-black text-redhouse-muted/50 uppercase tracking-widest italic">
+                              {submodule.label}
+                            </p>
+                            <div className="h-[1px] w-full bg-gradient-to-r from-redhouse-muted/20 to-transparent mt-1" />
+                          </div>
+                        )}
+                        {submodule.pages.map((page) => {
+                          const isActive = activeTab === page.id;
+                          const PageIcon = IconMap[page.icon] || Music;
+                          return (
+                            <button
+                              key={page.id}
+                              onClick={() => {
+                                if (page.id === 'change-version') {
+                                  sessionStorage.removeItem('rh_version');
+                                  window.location.reload();
+                                  return;
+                                }
+                                handleTabChange(page.id as Tab)
+                              }}
+                              title={isSidebarCollapsed ? page.label : undefined}
+                              className={`w-full flex items-center gap-3 p-3 rounded-2xl font-black transition-all relative group/item ${
+                                isActive 
+                                  ? 'bg-redhouse-muted/10 text-redhouse-text shadow-sm' 
+                                  : 'hover:bg-redhouse-muted/5 text-redhouse-muted'
+                              }`}
+                            >
+                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isActive ? 'bg-redhouse-primary text-white shadow-xl shadow-redhouse-primary/20' : 'bg-redhouse-muted/10 group-hover/item:bg-redhouse-muted/20'}`}>
+                                <PageIcon className="w-5 h-5" />
+                              </div>
+                              {!isSidebarCollapsed && (
+                                <span className={`text-[11px] uppercase italic tracking-tight transition-all ${isActive ? 'translate-x-1' : 'group-hover/item:translate-x-1'}`}>
+                                  {page.label}
+                                </span>
+                              )}
+                              {isActive && (
+                                <motion.div 
+                                  layoutId="nav-active" 
+                                  className="absolute right-3 w-1.5 h-1.5 bg-redhouse-primary rounded-full shadow-[0_0_10px_var(--color-redhouse-primary)]" 
+                                />
+                              )}
+                            </button>
+                          );
+                        })}
                       </div>
-                      {!isSidebarCollapsed && (
-                        <span className={`text-[11px] uppercase italic tracking-tight transition-all ${isActive ? 'translate-x-1' : 'group-hover/item:translate-x-1'}`}>
-                          {item.label}
-                        </span>
-                      )}
-                      {isActive && (
-                        <motion.div 
-                          layoutId="nav-active" 
-                          className="absolute right-3 w-1.5 h-1.5 bg-redhouse-primary rounded-full shadow-[0_0_10px_var(--color-redhouse-primary)]" 
-                        />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           );
         })}
@@ -796,7 +782,7 @@ function AppV2() {
               }} />}
               {activeTab === 'reports-history' && <ReportsHistory state={state} />}
               {activeTab === 'metronome' && <Metronome />}
-              {activeTab === 'settings' && <AppSettings />}
+              {activeTab === 'settings' && <AppSettings userRole={state.user?.role} />}
               {activeTab === 'avatar-shop' && <AvatarShop state={state} setState={setState} />}
               {activeTab === 'avatar-customizer' && <AvatarCustomizer state={state} setState={setState} />}
               {activeTab === 'string-maze' && <StringMazeGame addXP={addXP} onComplete={() => addXP(50)} />}

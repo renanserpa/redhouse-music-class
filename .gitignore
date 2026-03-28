@@ -19,3 +19,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .vercel
+
+# Temporary and Research Folders
+autoresearch/
+temp_redhouse_v1/
+temp_v1/
+# Plans
+docs/PLAN-navigation-refactor.md

@@ -109,11 +109,19 @@ class AudioEngine {
     this.playNote(note, duration);
   }
 
-  playGuitar(note: any, duration: any = '8n') {
+  playGuitar(note: any, duration: any = '8n', time?: any) {
     const prevInst = this.currentInstrument;
     this.setInstrument('guitar');
-    this.playNote(note, duration);
+    this.playNote(note, duration, time);
     this.setInstrument(prevInst);
+  }
+
+  playStart() {
+    if (!this.isInitialized) this.init();
+    const now = Tone.now();
+    const startSynth = new Tone.PolySynth(Tone.Synth).toDestination();
+    startSynth.triggerAttackRelease("C4", "16n", now);
+    startSynth.triggerAttackRelease("G4", "8n", now + 0.1);
   }
 
   playNoteByColor(note: any, _color?: any) {

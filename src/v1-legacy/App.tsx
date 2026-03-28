@@ -95,7 +95,7 @@ export default function AppV1() {
 
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [tvMode, setTvMode] = useState(() => localStorage.getItem('rh_tv_mode') === 'true');
+  const [tvMode, setTvMode] = useState(false);
   const [state, setState] = useState<AppState>({
     user: {
       uid: 'dev-user-id',

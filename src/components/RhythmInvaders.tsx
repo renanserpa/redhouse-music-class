@@ -10,6 +10,7 @@ import { Zap, Play, Square } from 'lucide-react';
 
 interface RhythmInvadersProps {
   addXP: (amount: number) => void;
+  addCoins: (amount: number) => void;
 }
 
 class Particle {
@@ -177,7 +178,7 @@ class FeedbackText {
   }
 }
 
-export default function RhythmInvaders({ addXP }: RhythmInvadersProps) {
+export default function RhythmInvaders({ addXP, addCoins }: RhythmInvadersProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showInstructions, setShowInstructions] = useState(true);
@@ -209,6 +210,7 @@ export default function RhythmInvaders({ addXP }: RhythmInvadersProps) {
     setIsPlaying(false);
     cancelAnimationFrame(requestRef.current);
     addXP(Math.floor(score / 10));
+    addCoins(Math.floor(score / 50));
   };
 
   const createParticles = (x: number, y: number, color: string, count: number = 10) => {

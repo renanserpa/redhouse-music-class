@@ -12,22 +12,45 @@ import {
   Monitor,
   Bell,
   Shield,
-  HelpCircle
+  HelpCircle,
+  Terminal,
+  Cpu,
+  Zap
 } from 'lucide-react';
 import { useAppContext } from '../contexts/AppContext';
 import ClassroomManager from './ClassroomManager';
 import StudentManager from './StudentManager';
+import DevMenuBuilder from './DevMenuBuilder';
 
-type SettingsTab = 'preferences' | 'classrooms' | 'students';
+type SettingsTab = 'preferences' | 'classrooms' | 'students' | 'developer';
 
-export default function AppSettings() {
+interface AppSettingsProps {
+  userRole?: string;
+}
+
+export default function AppSettings({ userRole }: AppSettingsProps) {
   const [activeTab, setActiveTab] = useState<SettingsTab>('preferences');
-  const { theme, setTheme, soundEnabled, setSoundEnabled } = useAppContext();
+  const { 
+    theme, 
+    setTheme, 
+    soundEnabled, 
+    setSoundEnabled,
+    featureToggles,
+    setFeatureToggle
+  } = useAppContext();
 
   const tabs = [
     { id: 'preferences', label: 'Preferências', icon: Settings },
     { id: 'classrooms', label: 'Turmas', icon: School },
     { id: 'students', label: 'Alunos', icon: Users },
+    { id: 'developer', label: 'Developer', icon: Terminal, devOnly: true },
+  ].filter(tab => !tab.devOnly || userRole === 'dev');
+
+  const availableFeatures = [
+    { id: 'ai-studio', label: 'Google AI Studio Integration', icon: Cpu, description: 'Enable advanced AI features powered by Google Gemini' },
+    { id: 'new-games', label: 'Experimental Game Dynamics', icon: Zap, description: 'Test new physics and interaction models in games' },
+    { id: 'songwriter-studio', label: 'Songwriter Studio Module', icon: Volume2, description: 'Access the early-access songwriting tools' },
+    { id: 'presentation', label: 'Institutional Presentation Page', icon: Monitor, description: 'Show the marketing-focused landing page' },
   ];
 
   return (
@@ -183,6 +206,72 @@ export default function AppSettings() {
             {activeTab === 'students' && (
               <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 border-2 border-redhouse-blue/10 dark:border-white/10 h-full overflow-y-auto">
                 <StudentManager />
+              </div>
+            )}
+
+            {activeTab === 'developer' && (
+              <div className="flex flex-col gap-6 h-full overflow-y-auto no-scrollbar pb-20">
+                <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl flex items-center gap-4">
+                  <div className="p-2 bg-amber-100 dark:bg-amber-800/50 rounded-xl">
+                    <Terminal className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-amber-800 dark:text-amber-300">Developer Mode</h4>
+                    <p className="text-xs text-amber-700 dark:text-amber-400 italic">
+                      Experimental feature flags and system configuration.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <h3 className="text-sm font-black text-redhouse-muted uppercase tracking-[0.3em] italic px-2">
+                    Feature Toggles
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {availableFeatures.map((feature) => (
+                      <div 
+                        key={feature.id}
+                        className="glass-card p-6 border-2 border-redhouse-blue/10 dark:border-white/10 flex flex-col justify-between"
+                      >
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-gray-100 dark:bg-slate-900/30 rounded-lg">
+                              <feature.icon className="w-6 h-6 text-redhouse-blue dark:text-white" />
+                            </div>
+                            <div>
+                              <h3 className="font-bold text-redhouse-blue dark:text-white">{feature.label}</h3>
+                              <code className="text-[10px] font-mono text-gray-400 uppercase tracking-tighter">
+                                {feature.id}
+                              </code>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => setFeatureToggle(feature.id, !featureToggles[feature.id])}
+                            className={`
+                              relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none
+                              ${featureToggles[feature.id] ? 'bg-green-500' : 'bg-gray-300 dark:bg-slate-700'}
+                            `}
+                          >
+                            <span
+                              className={`
+                                inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                                ${featureToggles[feature.id] ? 'translate-x-6' : 'translate-x-1'}
+                              `}
+                            />
+                          </button>
+                        </div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                          {feature.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <h3 className="text-sm font-black text-redhouse-muted uppercase tracking-[0.3em] italic px-2 mt-12">
+                    Menu Builder
+                  </h3>
+                  <DevMenuBuilder />
+                </div>
               </div>
             )}
           </motion.div>

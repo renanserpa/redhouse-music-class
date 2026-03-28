@@ -61,6 +61,8 @@ export type Tab =
   | 'spider-walk'
   | 'songwriter-studio'
   | 'presentation'
+  | 'avatar-customizer'
+  | 'avatar-shop'
   | 'settings';
 
 export type Instrument = "guitar" | "ukulele";
@@ -132,6 +134,13 @@ export interface AppState {
   studentName: string;
   instrument: Instrument;
   stats: StudentStats;
+  inventory: string[];
+  avatar: {
+    head: string;
+    body: string;
+    instrument: string;
+    background: string;
+  };
   lessonReports?: LessonReport[];
   monthlyReports?: MonthlyReport[];
   currentClassroomId?: string;
@@ -141,6 +150,34 @@ export interface AppState {
     classroomId: string;
     attendance: Record<string, boolean>;
   };
+  navConfig?: DynamicNavConfig;
+}
+
+export interface NavPage {
+  id: string;
+  label: string;
+  icon: string;
+  color?: string;
+  featureFlag?: string;
+}
+
+export interface NavSubmodule {
+  id: string;
+  label: string;
+  icon?: string;
+  pages: string[]; // Page IDs
+}
+
+export interface NavModule {
+  id: string;
+  label: string;
+  icon: string;
+  children: NavSubmodule[];
+}
+
+export interface DynamicNavConfig {
+  modules: NavModule[];
+  pages: Record<string, NavPage>;
 }
 
 export type BlockType = "aquecimento" | "revisao" | "novo_conteudo" | "pratica" | "jogo" | "fechamento";
