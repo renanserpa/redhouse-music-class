@@ -104,19 +104,24 @@ import SongwriterStudio from './components/games/SongwriterStudio';
 // Versão Legada e Seletor
 import { AppSelector } from './components/AppSelector';
 import AppV1 from './v1-legacy/App';
+import GmcApp from './v3-gmc/GmcApp';
 
 export default function App() {
-  const [version, setVersion] = useState<'v1' | 'v2'>(() => {
-    return (sessionStorage.getItem('rh_version') as 'v1' | 'v2') || 'v2';
+  const [version, setVersion] = useState<'v1' | 'v2' | 'v3'>(() => {
+    return (sessionStorage.getItem('rh_version') as 'v1' | 'v2' | 'v3') || 'v2';
   });
 
-  const handleSelectVersion = (v: 'v1' | 'v2') => {
+  const handleSelectVersion = (v: 'v1' | 'v2' | 'v3') => {
     setVersion(v);
     sessionStorage.setItem('rh_version', v);
   };
 
   if (version === 'v1') {
     return <AppV1 />;
+  }
+
+  if (version === 'v3') {
+    return <GmcApp />;
   }
 
   return <AppV2 />;
@@ -150,6 +155,19 @@ function AppV2() {
     return initial;
   });
 
+  // Sync expanded groups if modules change (e.g. via Menu Builder)
+  useEffect(() => {
+    setExpandedGroups(prev => {
+      const next = { ...prev };
+      navConfig.modules.forEach(m => {
+        if (next[m.id] === undefined) {
+          next[m.id] = true;
+        }
+      });
+      return next;
+    });
+  }, [navConfig.modules]);
+
   const toggleGroup = (id: string) => {
     setExpandedGroups(prev => ({ ...prev, [id]: !prev[id] }));
   };
@@ -160,24 +178,18 @@ function AppV2() {
   const [npcState, setNpcState] = useState<'idle' | 'celebrating' | 'encouraging'>('idle');
 
   const [state, setState] = useState<AppState>({
-    user: {
-      uid: 'dev-user-id',
-      name: 'Dev Admin',
-      email: 'serparenan@gmail.com',
-      role: 'dev',
-      photoURL: null
-    },
-    authStatus: 'authenticated',
-    xp: 450,
-    coins: 120,
+    user: null,
+    authStatus: 'loading',
+    xp: 0,
+    coins: 0,
     studentName: "Pequeno Rockstar",
     instrument: 'guitar',
     stats: {
-      tech: 80,
-      rhythm: 60,
-      theory: 40,
-      repertoire: 70,
-      expression: 90
+      tech: 0,
+      rhythm: 0,
+      theory: 0,
+      repertoire: 0,
+      expression: 0
     },
     avatar: {
       head: 'h-default',

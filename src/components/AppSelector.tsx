@@ -1,14 +1,14 @@
 import React from 'react';
-import { Music, Layout, Sparkles, History, ArrowRight } from 'lucide-react';
+import { Music, Layout, Sparkles, History, ArrowRight, Zap } from 'lucide-react';
 
 interface AppSelectorProps {
-  onSelect: (version: 'v2' | 'v1') => void;
+  onSelect: (version: 'v2' | 'v1' | 'v3') => void;
 }
 
 export const AppSelector: React.FC<AppSelectorProps> = ({ onSelect }) => {
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
-      <div className="max-w-4xl w-full">
+      <div className="max-w-6xl w-full">
         <header className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter">
             RED HOUSE <span className="text-redhouse-primary">MUSIC CLASS</span>
@@ -16,7 +16,7 @@ export const AppSelector: React.FC<AppSelectorProps> = ({ onSelect }) => {
           <p className="text-slate-400 text-lg">Selecione a versão do sistema para iniciar</p>
         </header>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-3 gap-8">
           {/* Versão Atual (V2) */}
           <button 
             onClick={() => onSelect('v2')}
@@ -37,6 +37,25 @@ export const AppSelector: React.FC<AppSelectorProps> = ({ onSelect }) => {
             
             <div className="flex items-center text-redhouse-primary font-bold group-hover:gap-2 transition-all">
               INICIAR V2 <ArrowRight className="ml-2 w-5 h-5" />
+            </div>
+          </button>
+
+          {/* Versão GMC (V3) */}
+          <button 
+            onClick={() => onSelect('v3')}
+            className="group relative bg-slate-900 border border-slate-800 p-8 rounded-3xl text-left transition-all hover:border-emerald-500 hover:bg-emerald-500/5 hover:shadow-2xl hover:shadow-emerald-500/10"
+          >
+            <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <Zap className="text-white w-8 h-8" />
+            </div>
+            
+            <h2 className="text-2xl font-bold text-white mb-2">Versão GMC (V3)</h2>
+            <p className="text-slate-400 mb-6 leading-relaxed">
+              Estado atual do projeto gmc-v2. Ideal para análise técnica e verificação de novas arquiteturas de dados.
+            </p>
+            
+            <div className="flex items-center text-emerald-500 font-bold group-hover:gap-2 transition-all">
+              ANLISAR V3 <ArrowRight className="ml-2 w-5 h-5" />
             </div>
           </button>
 
