@@ -516,11 +516,24 @@ function AppV2() {
                                 <PageIcon className="w-5 h-5" />
                               </div>
                               {!isSidebarCollapsed && (
-                                <span className={`text-[11px] uppercase italic tracking-tight transition-all ${isActive ? 'translate-x-1' : 'group-hover/item:translate-x-1'}`}>
-                                  {page.label}
-                                </span>
-                              )}
-                              {isActive && (
+                                <div className="flex flex-1 items-center justify-between overflow-hidden">
+                                  <span className={`text-[11px] uppercase italic tracking-tight transition-all ${isActive ? 'translate-x-1' : 'group-hover/item:translate-x-1'}`}>
+                                    {page.label}
+                                  </span>
+
+                                  {/* Dev Status Badges */}
+                                  {state.user?.role === 'dev' && (
+                                    <div className="flex gap-1 pr-2">
+                                      {page.featureFlag && (
+                                        <span className="text-[7px] font-black bg-amber-500/20 text-amber-500 px-1 rounded-[2px] border border-amber-500/20">BETA</span>
+                                      )}
+                                      {!page.featureFlag && (
+                                        <span className="text-[7px] font-black bg-emerald-500/20 text-emerald-500 px-1 rounded-[2px] border border-emerald-500/20">LIVE</span>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              )}                              {isActive && (
                                 <motion.div 
                                   layoutId="nav-active" 
                                   className="absolute right-3 w-1.5 h-1.5 bg-redhouse-primary rounded-full shadow-[0_0_10px_var(--color-redhouse-primary)]" 

@@ -210,6 +210,39 @@ export default function DevMenuBuilder() {
                   <p className="text-[9px] font-black text-redhouse-muted uppercase tracking-widest mt-0.5">ID: {module.id}</p>
                 </div>
               </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    const newModule = { 
+                      ...module, 
+                      id: `module-${Date.now()}`, 
+                      label: `${module.label} (Copy)` 
+                    };
+                    const newModules = [...navConfig.modules];
+                    newModules.splice(mIndex + 1, 0, newModule);
+                    updateNavConfig({ ...navConfig, modules: newModules });
+                  }}
+                  title="Clonar Módulo"
+                  className="p-2 hover:bg-emerald-500/20 text-emerald-500 rounded-xl transition-colors border border-emerald-500/20 flex items-center gap-2 font-black text-[8px] uppercase italic"
+                >
+                  <PlusCircle className="w-3 h-3" />
+                  Clonar
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirm(`Tem certeza que deseja excluir o módulo "${module.label}"?`)) {
+                      const newModules = navConfig.modules.filter(m => m.id !== module.id);
+                      updateNavConfig({ ...navConfig, modules: newModules });
+                    }
+                  }}
+                  title="Excluir Módulo"
+                  className="p-2 hover:bg-red-500/20 text-red-500 rounded-xl transition-colors border border-red-500/20 flex items-center gap-2 font-black text-[8px] uppercase italic"
+                >
+                  <Trash2 className="w-3 h-3" />
+                  Excluir
+                </button>
+              </div>
             </div>
 
             <div className="ml-16 space-y-6">
