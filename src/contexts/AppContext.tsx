@@ -47,7 +47,6 @@ export const DEFAULT_NAV_CONFIG: DynamicNavConfig = {
     'classrooms': { id: 'classrooms', label: 'Turmas', icon: 'School', color: 'text-pedagogy-red' },
     'students': { id: 'students', label: 'Alunos', icon: 'Users', color: 'text-pedagogy-blue' },
     'settings': { id: 'settings', label: 'Preferências', icon: 'Settings', color: 'text-pedagogy-purple' },
-    'change-version': { id: 'change-version', label: 'Trocar Versão', icon: 'RotateCw', color: 'text-redhouse-primary' },
   },
   modules: [
     {
@@ -96,14 +95,6 @@ export const DEFAULT_NAV_CONFIG: DynamicNavConfig = {
       icon: 'Settings',
       children: [
         { id: 'management-main', label: 'Gestão', pages: ['classrooms', 'students', 'settings'] }
-      ]
-    },
-    {
-      id: 'system',
-      label: 'System',
-      icon: 'RotateCw',
-      children: [
-        { id: 'system-main', label: 'Sistema', pages: ['change-version'] }
       ]
     }
   ]

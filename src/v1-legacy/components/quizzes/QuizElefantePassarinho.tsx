@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { audio } from '../../lib/audio';
 import { Trophy, Music, CheckCircle2, XCircle, Volume2 } from 'lucide-react';
 import { getRandomDialogue } from '../../lib/npcDialogues';

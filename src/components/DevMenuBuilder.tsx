@@ -12,6 +12,7 @@ import {
   Edit2, 
   Trash2, 
   Plus, 
+  PlusCircle,
   RefreshCcw,
   Check,
   X,
@@ -20,7 +21,7 @@ import {
   FileText
 } from 'lucide-react';
 import { useAppContext } from '../contexts/AppContext';
-import { DynamicNavConfig, NavModule, NavSubmodule } from '../types';
+import { DynamicNavConfig, NavModule, NavSubmodule, NavPage } from '../types';
 
 const ICON_OPTIONS = [
   { name: 'Home', icon: Home },

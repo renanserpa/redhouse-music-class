@@ -101,33 +101,7 @@ import SussurroOuTrovao from './components/games/SussurroOuTrovao';
 import SpiderWalk from './components/games/SpiderWalk';
 import SongwriterStudio from './components/games/SongwriterStudio';
 
-// Versão Legada e Seletor
-import { AppSelector } from './components/AppSelector';
-import AppV1 from './v1-legacy/App';
-import GmcApp from './v3-gmc/GmcApp';
-
 export default function App() {
-  const [version, setVersion] = useState<'v1' | 'v2' | 'v3'>(() => {
-    return (sessionStorage.getItem('rh_version') as 'v1' | 'v2' | 'v3') || 'v2';
-  });
-
-  const handleSelectVersion = (v: 'v1' | 'v2' | 'v3') => {
-    setVersion(v);
-    sessionStorage.setItem('rh_version', v);
-  };
-
-  if (version === 'v1') {
-    return <AppV1 />;
-  }
-
-  if (version === 'v3') {
-    return <GmcApp />;
-  }
-
-  return <AppV2 />;
-}
-
-function AppV2() {
   const { 
     theme, 
     setTheme, 
@@ -145,7 +119,7 @@ function AppV2() {
 
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
+
   // Initialize expanded groups from navConfig modules
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
@@ -258,7 +232,7 @@ function AppV2() {
     const params = new URLSearchParams(window.location.search);
     const lessonParam = params.get('lesson');
     const presentationParam = params.get('presentation');
-    
+
     if (lessonParam) {
       setActiveTab('rockstar-journey');
     } else if (presentationParam === 'true') {
@@ -286,7 +260,7 @@ function AppV2() {
       if (firebaseUser) {
         // Super-admin logic: serparenan@gmail.com always gets 'dev' role
         const isSuperAdmin = firebaseUser.email === 'serparenan@gmail.com';
-        
+
         const user: User = {
           uid: firebaseUser.uid,
           name: firebaseUser.displayName,
@@ -297,7 +271,7 @@ function AppV2() {
 
         // If not super-admin, we could fetch the real role from Firestore here
         // For now, we prioritize the email check for your access
-        
+
         setState(prev => ({ 
           ...prev, 
           user, 
@@ -370,7 +344,7 @@ function AppV2() {
             </div>
             <h1 className="text-3xl font-black text-redhouse-text uppercase italic mb-4">Bem-vindo, Mestre!</h1>
             <p className="text-redhouse-muted font-bold mb-8">Acesse sua conta para gerenciar suas turmas e relatórios na RedHouse Cuiabá.</p>
-            
+
             <button 
               onClick={handleLogin}
               className="w-full bg-white/5 border border-white/10 p-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3 hover:bg-white/10 transition-all active:scale-95 text-redhouse-text"
@@ -419,7 +393,7 @@ function AppV2() {
     <div className="h-full flex flex-col relative overflow-hidden">
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-32 bg-redhouse-primary/5 blur-3xl -z-10" />
-      
+
       <div className="p-6 border-b border-redhouse-border relative flex items-center justify-between">
         {!isSidebarCollapsed && (
           <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
@@ -441,14 +415,14 @@ function AppV2() {
             ...submodule,
             pages: submodule.pages.map(pId => navConfig.pages[pId]).filter(page => {
               if (!page) return false;
-              
+
               // Feature Toggles filtering
               if (page.featureFlag && !featureToggles[page.featureFlag]) {
                 return false;
               }
 
               if (state.user?.role === 'dev') return true;
-              
+
               // Basic role-based access rules
               if (state.user?.role === 'student') {
                 return !['director-dashboard', 'lesson-console', 'classrooms', 'students', 'lesson-report', 'monthly-report'].includes(page.id);
@@ -469,38 +443,38 @@ function AppV2() {
           const ModuleIcon = IconMap[module.icon] || Home;
 
           return (
-            <div key={module.id} className="space-y-4">
+            <div key={module.id} className="space-y-6">
               {!isSidebarCollapsed && (
                 <button 
                   onClick={() => toggleGroup(module.id)}
-                  className="w-full flex items-center justify-between px-4 group/header"
+                  className="w-full flex items-center justify-between px-4 group/header py-2"
                 >
                   <div className="flex items-center gap-2">
-                    <ModuleIcon className="w-3 h-3 text-redhouse-muted group-hover/header:text-redhouse-text transition-colors" />
-                    <h5 className="text-[8px] font-black text-redhouse-muted group-hover/header:text-redhouse-text uppercase tracking-[0.4em] italic transition-colors">
+                    <ModuleIcon className="w-4 h-4 text-redhouse-muted group-hover/header:text-redhouse-text transition-colors" />
+                    <h5 className="text-[10px] font-black text-redhouse-text group-hover/header:text-redhouse-primary uppercase tracking-[0.3em] italic transition-colors">
                       {module.label}
                     </h5>
                   </div>
-                  {isExpanded ? <ChevronUp className="w-3 h-3 text-redhouse-muted" /> : <ChevronDown className="w-3 h-3 text-redhouse-muted" />}
+                  {isExpanded ? <ChevronUp className="w-4 h-4 text-redhouse-muted" /> : <ChevronDown className="w-4 h-4 text-redhouse-muted" />}
                 </button>
               )}
-              
+
               <AnimatePresence>
                 {(isExpanded || isSidebarCollapsed) && (
                   <motion.div 
                     initial={isSidebarCollapsed ? { opacity: 1 } : { height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="space-y-4 overflow-hidden"
+                    className="space-y-6 overflow-hidden"
                   >
                     {filteredSubmodules.map((submodule) => (
-                      <div key={submodule.id} className="space-y-1">
+                      <div key={submodule.id} className="space-y-2">
                         {!isSidebarCollapsed && filteredSubmodules.length > 0 && (
                           <div className="px-4 py-1">
-                            <p className="text-[7px] font-black text-redhouse-muted/50 uppercase tracking-widest italic">
+                            <p className="text-[9px] font-black text-redhouse-muted uppercase tracking-widest italic opacity-80">
                               {submodule.label}
                             </p>
-                            <div className="h-[1px] w-full bg-gradient-to-r from-redhouse-muted/20 to-transparent mt-1" />
+                            <div className="h-[1px] w-full bg-gradient-to-r from-redhouse-muted/30 to-transparent mt-1.5" />
                           </div>
                         )}
                         {submodule.pages.map((page) => {
@@ -510,26 +484,21 @@ function AppV2() {
                             <button
                               key={page.id}
                               onClick={() => {
-                                if (page.id === 'change-version') {
-                                  sessionStorage.removeItem('rh_version');
-                                  window.location.reload();
-                                  return;
-                                }
                                 handleTabChange(page.id as Tab)
                               }}
                               title={isSidebarCollapsed ? page.label : undefined}
-                              className={`w-full flex items-center gap-3 p-3 rounded-2xl font-black transition-all relative group/item ${
+                              className={`w-full flex items-center gap-4 p-3 rounded-2xl font-black transition-all relative group/item ${
                                 isActive 
-                                  ? 'bg-redhouse-muted/10 text-redhouse-text shadow-sm' 
-                                  : 'hover:bg-redhouse-muted/5 text-redhouse-muted'
+                                  ? 'bg-redhouse-muted/15 text-redhouse-text shadow-sm' 
+                                  : 'hover:bg-redhouse-muted/10 text-redhouse-muted hover:text-redhouse-text'
                               }`}
                             >
-                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isActive ? 'bg-redhouse-primary text-white shadow-xl shadow-redhouse-primary/20' : 'bg-redhouse-muted/10 group-hover/item:bg-redhouse-muted/20'}`}>
-                                <PageIcon className="w-5 h-5" />
+                              <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${isActive ? 'bg-redhouse-primary text-white shadow-xl shadow-redhouse-primary/30' : 'bg-redhouse-muted/15 group-hover/item:bg-redhouse-muted/25'}`}>
+                                <PageIcon className="w-6 h-6" />
                               </div>
                               {!isSidebarCollapsed && (
                                 <div className="flex flex-1 items-center justify-between overflow-hidden">
-                                  <span className={`text-[11px] uppercase italic tracking-tight transition-all ${isActive ? 'translate-x-1' : 'group-hover/item:translate-x-1'}`}>
+                                  <span className={`text-[13px] uppercase italic tracking-tight transition-all ${isActive ? 'translate-x-1' : 'group-hover/item:translate-x-1'}`}>
                                     {page.label}
                                   </span>
 
@@ -537,18 +506,19 @@ function AppV2() {
                                   {state.user?.role === 'dev' && (
                                     <div className="flex gap-1 pr-2">
                                       {page.featureFlag && (
-                                        <span className="text-[7px] font-black bg-amber-500/20 text-amber-500 px-1 rounded-[2px] border border-amber-500/20">BETA</span>
+                                        <span className="text-[8px] font-black bg-amber-500/20 text-amber-500 px-1.5 py-0.5 rounded-[4px] border border-amber-500/30">BETA</span>
                                       )}
                                       {!page.featureFlag && (
-                                        <span className="text-[7px] font-black bg-emerald-500/20 text-emerald-500 px-1 rounded-[2px] border border-emerald-500/20">LIVE</span>
+                                        <span className="text-[8px] font-black bg-emerald-500/20 text-emerald-500 px-1.5 py-0.5 rounded-[4px] border border-emerald-500/30">LIVE</span>
                                       )}
                                     </div>
                                   )}
                                 </div>
-                              )}                              {isActive && (
+                              )}
+                              {isActive && (
                                 <motion.div 
                                   layoutId="nav-active" 
-                                  className="absolute right-3 w-1.5 h-1.5 bg-redhouse-primary rounded-full shadow-[0_0_10px_var(--color-redhouse-primary)]" 
+                                  className="absolute right-3 w-2 h-2 bg-redhouse-primary rounded-full shadow-[0_0_12px_var(--color-redhouse-primary)]" 
                                 />
                               )}
                             </button>
@@ -832,7 +802,7 @@ function AppV2() {
               }} />}
               {activeTab === 'reports-history' && <ReportsHistory state={state} />}
               {activeTab === 'metronome' && <Metronome />}
-              {activeTab === 'settings' && <AppSettings userRole={state.user?.role} />}
+              {activeTab === 'settings' && <AppSettings userRole={state.user?.role} userEmail={state.user?.email} />}
               {activeTab === 'avatar-shop' && <AvatarShop state={state} setState={setState} />}
               {activeTab === 'avatar-customizer' && <AvatarCustomizer state={state} setState={setState} />}
               {activeTab === 'string-maze' && <StringMazeGame addXP={addXP} onComplete={() => addXP(50)} />}

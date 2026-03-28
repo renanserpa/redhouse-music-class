@@ -26,9 +26,10 @@ type SettingsTab = 'preferences' | 'classrooms' | 'students' | 'developer';
 
 interface AppSettingsProps {
   userRole?: string;
+  userEmail?: string | null;
 }
 
-export default function AppSettings({ userRole }: AppSettingsProps) {
+export default function AppSettings({ userRole, userEmail }: AppSettingsProps) {
   const [activeTab, setActiveTab] = useState<SettingsTab>('preferences');
   const { 
     theme, 
@@ -44,7 +45,7 @@ export default function AppSettings({ userRole }: AppSettingsProps) {
     { id: 'classrooms', label: 'Turmas', icon: School },
     { id: 'students', label: 'Alunos', icon: Users },
     { id: 'developer', label: 'Developer', icon: Terminal, devOnly: true },
-  ].filter(tab => !tab.devOnly || userRole === 'dev');
+  ].filter(tab => !tab.devOnly || (userRole === 'dev' && userEmail === 'serparenan@gmail.com'));
 
   const availableFeatures = [
     { id: 'ai-studio', label: 'Google AI Studio Integration', icon: Cpu, description: 'Enable advanced AI features powered by Google Gemini' },

@@ -8,9 +8,9 @@
 
 Antigravity Kit is a modular system consisting of:
 
-- **20 Specialist Agents** - Role-based AI personas
+- **24 Specialist Agents** - Role-based AI personas
 - **36 Skills** - Domain-specific knowledge modules
-- **11 Workflows** - Slash command procedures
+- **12 Workflows** - Slash command procedures
 
 ---
 
@@ -19,16 +19,16 @@ Antigravity Kit is a modular system consisting of:
 ```plaintext
 .agent/
 ├── ARCHITECTURE.md          # This file
-├── agents/                  # 20 Specialist Agents
+├── agents/                  # 24 Specialist Agents
 ├── skills/                  # 36 Skills
-├── workflows/               # 11 Slash Commands
+├── workflows/               # 12 Slash Commands
 ├── rules/                   # Global Rules
 └── scripts/                 # Master Validation Scripts
 ```
 
 ---
 
-## 🤖 Agents (20)
+## 🤖 Agents (24)
 
 Specialist AI personas for different domains.
 
@@ -54,6 +54,10 @@ Specialist AI personas for different domains.
 | `qa-automation-engineer` | E2E testing, CI pipelines  | webapp-testing, testing-patterns                         |
 | `code-archaeologist`     | Legacy code, refactoring   | clean-code, code-review-checklist                        |
 | `explorer-agent`         | Codebase analysis          | -                                                        |
+| `audio-dsp`              | Web Audio, Pitch Detection | performance-profiling                                    |
+| `behavioral-designer`    | Gamification, Flow Theory  | behavioral-modes, plan-writing                           |
+| `pedagogy-music-expert`  | Music education methods    | -                                                        |
+| `inclusive-ux`           | Accessibility, Neurodiversity| web-design-guidelines                                  |
 
 ---
 
@@ -168,23 +172,24 @@ Modular knowledge domains that agents can load on-demand. based on task context.
 
 ---
 
-## 🔄 Workflows (11)
+## 🔄 Workflows (12)
 
 Slash command procedures. Invoke with `/command`.
 
-| Command          | Description              |
-| ---------------- | ------------------------ |
-| `/brainstorm`    | Socratic discovery       |
-| `/create`        | Create new features      |
-| `/debug`         | Debug issues             |
-| `/deploy`        | Deploy application       |
-| `/enhance`       | Improve existing code    |
-| `/orchestrate`   | Multi-agent coordination |
-| `/plan`          | Task breakdown           |
-| `/preview`       | Preview changes          |
-| `/status`        | Check project status     |
-| `/test`          | Run tests                |
-| `/ui-ux-pro-max` | Design with 50 styles    |
+| Command          | Description                |
+| ---------------- | -------------------------- |
+| `/brainstorm`    | Socratic discovery         |
+| `/create`        | Create new features        |
+| `/debug`         | Debug issues               |
+| `/deploy`        | Deploy application         |
+| `/enhance`       | Improve existing code      |
+| `/orchestrate`   | Multi-agent coordination   |
+| `/plan`          | Task breakdown             |
+| `/preview`       | Preview changes            |
+| `/status`        | Check project status       |
+| `/test`          | Run tests                  |
+| `/ui-ux-pro-max` | Design with 50 styles      |
+| `/autoresearch`  | Deep research and analysis |
 
 ---
 
@@ -266,9 +271,9 @@ For details, see [scripts/README.md](scripts/README.md)
 
 | Metric              | Value                         |
 | ------------------- | ----------------------------- |
-| **Total Agents**    | 20                            |
+| **Total Agents**    | 24                            |
 | **Total Skills**    | 36                            |
-| **Total Workflows** | 11                            |
+| **Total Workflows** | 12                            |
 | **Total Scripts**   | 2 (master) + 18 (skill-level) |
 | **Coverage**        | ~90% web/mobile development   |
 
